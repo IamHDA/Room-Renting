@@ -1,0 +1,188 @@
+.container-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #008CFF;
+    max-width: 100%;
+    height: 250px;
+    padding: 15px 50px 15px 50px;
+    color: white;
+}
+
+.logo{
+    display: flex;
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 12px 5px 12px;
+    width: 200px;
+}
+
+.logo img{
+    width: 60px;
+    height: 60px;
+}
+
+.logo p{
+    font-size: 25px;
+}
+
+.footer-logo-location-contact{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.footer-location, .footer-contact{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 240px;
+}
+
+.footer-location{
+    margin-left: -7px;
+}
+
+.footer-location img{
+    height: 40px;
+    width: 40px;
+}
+
+.footer-location p, .footer-contact p{
+    font-size: 20px;
+}
+
+.footer-contact img{
+    height: 30px;
+    width: 30px;
+}
+
+.about-urplace{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.about-urplace p{
+    font-size: 20px;
+}
+
+.about-urplace h2{
+    margin-bottom: 10px;
+}
+
+.social-media{
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.social-media h2{
+    margin-left: 30px;
+}
+
+.facebook, .youtube, .tiktok{
+    display: flex;
+    align-items: center;
+    gap: 10px
+}
+
+.facebook p, .youtube p, .tiktok p{
+    font-size: 20px;
+}
+
+.footer-hotline-sign{
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    gap: 8px;
+}
+
+.footer-hotline{
+    display: flex;
+    gap: 10px;
+}
+
+.footer-phoneRing-icon{
+    height: 40px;
+    width: 40px;
+    margin-top: 5px;
+}
+
+.title-number{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.title-number h2, .title-number h3{
+    margin: 0;
+}
+
+.footer-input-bounding{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -3px;
+    background-color: white;
+    height: 60px;
+    width: 300px;
+    border-radius: 5px;
+}
+
+.footer-input-bounding p{
+    color: #808080;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.footer-send-bounding{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid 2px;
+    border-color: #008CFF;
+    border-radius: 5px;
+    margin-right: 10px;
+    padding: 4px;
+}
+
+.footer-cskh-bct{
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.footer-cskh{
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.footer-send-bounding img{
+    height: 35px;
+    width: 35px;
+}
+
+.footer-cskh img{
+    height: 45px;
+    width: 45px;
+}
+
+.title-email{
+    display: flex;
+    flex-direction: column;
+}
+
+.title-email h2, .title-email h3{
+    margin: 0;
+}
+
+.bct-icon{
+    width: 100%;
+    height: 100px;
+}

@@ -1,0 +1,63 @@
+.container-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #008CFF;
+    width: 100%;
+    padding: 15px 15px 15px 15px;
+}
+
+.logo{
+    display: flex;
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 12px 5px 12px;
+    width: 200px;
+}
+
+.logo img{
+    width: 60px;
+    height: 60px;
+}
+
+.logo p{
+    color: white;
+    font-size: 25px;
+}
+
+.function{
+    display: flex;
+    align-items: center;
+    width: 550px;
+    gap: 52px;
+}
+
+.chat-bounding{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    height: 55px;
+    width: 55px;
+    border-radius: 50%;
+}
+
+.chat-bounding img{
+    width: 35px;
+    height: 35px;
+}
+
+.login, .register, .post{
+    color: white;
+    font-size: 21px;
+}
+
+.post{
+    font-weight: bold;
+    border-style: solid;
+    padding: 20px 20px 20px 20px;
+    border-radius: 8px;
+}
