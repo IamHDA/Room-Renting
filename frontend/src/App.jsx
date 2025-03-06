@@ -1,15 +1,14 @@
 import React from 'react';
-import Header from "./component/Header.jsx";
-import HomePage from "./component/HomePage.jsx";
-import Footer from "./component/Footer.jsx";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage.jsx";
 
 
 const MyComponent = () => {
     return (
         <div>
-            <Header />
-            <HomePage />
-            <Footer />
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+            </Routes>
         </div>
     );
 };

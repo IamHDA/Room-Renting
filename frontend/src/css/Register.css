@@ -1,0 +1,85 @@
+.curtain{
+    background-color: rgba(217, 217, 217, 0.5);
+    height: 100vh;
+    width: 100vw;
+    z-index: 100;
+    position: fixed;
+    top: 0;
+}
+
+.pop-up-register{
+    display: flex;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 1020px;
+    height: 515px;
+    background-color: white;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+}
+
+.close{
+    position: relative;
+    top: 5px;
+    right: 5px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.illustration{
+    width: 400px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.register-form{
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-left: 25px;
+}
+
+.phone-bounding, .google-sign-bounding, .facebook-sign-bounding{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    border: 2px solid #808080;
+    padding: 10px;
+    width: 300px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.phone-bounding img, .google-sign-bounding img, .facebook-sign-bounding img{
+    height: 30px;
+    width: 30px;
+}
+
+.phone-bounding input{
+    outline: none;
+    border: none;
+    font-size: 20px;
+    font-weight: 560;
+}
+
+.google-sign-bounding, .facebook-sign-bounding{
+    font-size: 20px;
+    font-weight: 560;
+}
+
+.register-form h1, .register-form h2{
+    margin: 0;
+}
+
+.register-form h1{
+    margin-bottom: 40px;
+}
+
+.register-form h2{
+    margin-bottom: 20px;
+}
+

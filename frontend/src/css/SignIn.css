@@ -1,0 +1,168 @@
+.curtain{
+    background-color: rgba(217, 217, 217, 0.5);
+    height: 100vh;
+    width: 100vw;
+    z-index: 100;
+    position: fixed;
+    top: 0;
+}
+
+.pop-up-signIn{
+    display: flex;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 1020px;
+    height: auto;
+    background-color: white;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+}
+
+.close{
+    position: relative;
+    top: 5px;
+    right: 5px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.signIn-form{
+    display: flex;
+    gap: 10px;
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 25px
+}
+
+.signIn-form h1{
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.illustration{
+    width: 400px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.account-input-bounding, .password-input-bounding{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid #808080;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.account-input-bounding img, .password-input-bounding img{
+    height: 40px;
+    width: 40px;
+}
+
+.account-input-bounding input{
+    outline: none;
+    border: none;
+    width: 300px;
+    font-size: 20px;
+    font-weight: 560;
+}
+
+.account-input{
+    height: 100%;
+}
+
+.password-input-bounding input{
+    outline: none;
+    border: none;
+    width: 270px;
+    font-size: 20px;
+    font-weight: 560;
+}
+
+.password-input{
+    height: 100%;
+}
+
+.eye-icon{
+    width:20px !important;
+    height:20px !important;
+    cursor: pointer;
+}
+
+.forget-pass-text{
+    color:#008CFF;
+    font-size: 17px;
+    margin-left: 250px;
+}
+
+.signIn-button{
+    background-color: #008CFF;
+    color: white;
+    border: none;
+    font-size: 30px;
+    font-weight: bold;
+    width: 378px;
+    height: 60px;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.third-party-signIn{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 20px;
+    color: #808080;
+}
+
+.two-signIn-method{
+    display: flex;
+    gap: 30px;
+}
+
+.google-signIn-bounding, .facebook-signIn-bounding{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    border: 2px solid #808080;
+    padding: 10px;
+    width: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.google-signIn-bounding img, .facebook-signIn-bounding img{
+    height: 30px;
+    width: 30px;
+}
+
+.back-to-register{
+    color: #808080;
+    font-size: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.back-to-register span{
+    color: #008CFF;
+    font-weight: bold;
+}
+
+.invalidAccount, .invalidPassword{
+    color: red;
+    font-size: 17px;
+}
+
+.invalidAccount{
+    margin-left: -190px;
+}
+
+.invalidPassword{
+    margin-top: -5px;
+    margin-left: -193px;
+}

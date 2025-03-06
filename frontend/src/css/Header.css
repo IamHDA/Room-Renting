@@ -16,6 +16,7 @@
     align-items: center;
     padding: 5px 12px 5px 12px;
     width: 200px;
+    text-decoration: none;
 }
 
 .logo img{
@@ -43,6 +44,7 @@
     height: 55px;
     width: 55px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .chat-bounding img{
@@ -53,6 +55,7 @@
 .login, .register, .post{
     color: white;
     font-size: 21px;
+    cursor: pointer;
 }
 
 .post{
