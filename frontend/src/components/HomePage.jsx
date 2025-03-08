@@ -83,7 +83,7 @@ const MyComponent = () => {
                                 </div>
                             </div>
                             <div className="post-save">
-                                <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
+                                <img src="../../public/homePage-icon/heart.png"/>
                             </div>
                         </div>
                     </div>
