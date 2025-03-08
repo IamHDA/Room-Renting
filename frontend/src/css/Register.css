@@ -19,8 +19,20 @@
     transform: translate(-50%, -50%);
 }
 
+.back{
+    position: absolute;
+    font-size: 20px;
+    top: 10px;
+    right: 595px;
+    cursor: pointer;
+}
+
+.js-back{
+    display: none;
+}
+
 .close{
-    position: relative;
+    position: absolute;
     top: 5px;
     right: 5px;
     font-size: 30px;
@@ -40,7 +52,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-left: 25px;
+    margin-left: -30px;
 }
 
 .phone-bounding, .google-sign-bounding, .facebook-sign-bounding{
@@ -69,6 +81,7 @@
 .google-sign-bounding, .facebook-sign-bounding{
     font-size: 20px;
     font-weight: 560;
+    cursor: pointer;
 }
 
 .register-form h1, .register-form h2{
@@ -77,9 +90,61 @@
 
 .register-form h1{
     margin-bottom: 40px;
+    position: fixed;
+    top: 40px;
 }
 
-.register-form h2{
+.register-form-account{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.js-register-form-account{
+    display: none;
+}
+
+.register-form-account h2{
     margin-bottom: 20px;
 }
 
+.register-form-password{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.js-register-form-password{
+    display: none;
+}
+
+.register-password-input, .register-password-reInput{
+    outline: none;
+    border: 2px solid #808080;
+    font-size: 25px;
+    font-weight: 560;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.password-confirm{
+    background-color: #008CFF;
+    color: white;
+    border: none;
+    font-size: 30px;
+    font-weight: bold;
+    width: 378px;
+    height: 60px;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.invalidNumber{
+    color: red;
+    font-weight: bold;
+    margin-left: -130px;
+    margin-top: -15px;
+    margin-bottom: 15px;
+}

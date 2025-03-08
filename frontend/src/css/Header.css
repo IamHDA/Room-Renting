@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     background-color: #008CFF;
-    width: 100%;
+    width: 97.6vw;
     padding: 15px 15px 15px 15px;
 }
 
@@ -32,7 +32,7 @@
 .function{
     display: flex;
     align-items: center;
-    width: 550px;
+    width: auto;
     gap: 52px;
 }
 
@@ -52,6 +52,73 @@
     height: 35px;
 }
 
+.header-user-container{
+    width: auto;
+    display: flex;
+    border:solid white;
+    padding: 6px 15px 6px 15px;
+    position: relative;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.header-user-logo{
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+}
+
+.header-user-name{
+    color: white;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.header-user-angle-down{
+    font-size: 22px;
+}
+
+.dropdown-container{
+    gap: 10px;
+    background-color: white;
+    flex-direction: column;
+    position: absolute;
+    bottom: -120px;
+    left: -1px;
+    width: 240px;
+    height: auto;
+    border: solid 1px;
+    border-radius: 5px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    display: none;
+}
+
+.js-dropdown-container{
+    display: flex;
+}
+
+.header-user-profile, .header-saved-posts, .header-posts-manage{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
+}
+
+.icon{
+    width: 25px;
+    height: 25px;
+}
+
+.header-user-profile p, .header-saved-posts p, .header-posts-manage p{
+    font-size: 20px;
+    font-weight: bold;
+}
+
 .login, .register, .post{
     color: white;
     font-size: 21px;
@@ -63,4 +130,5 @@
     border-style: solid;
     padding: 20px 20px 20px 20px;
     border-radius: 8px;
+    cursor: pointer;
 }

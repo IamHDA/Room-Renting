@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faLocationDot, faAngleDown, faMagnifyingGlass, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 import '../css/HomePage.css';
+import {Link} from "react-router-dom";
 
 const MyComponent = () => {
     return (
@@ -40,7 +41,7 @@ const MyComponent = () => {
             <div className="posts-container">
                 <h1>Một số phòng trọ nổi bật</h1>
                 <div className="post-grid">
-                    <div className="post-container">
+                    <Link to="/detail" className="post-container">
                         <img src="../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
@@ -58,11 +59,11 @@ const MyComponent = () => {
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
-                            <div className="post-save">
+                            <div className="post-save" onClick={(e) => e.preventDefault()}>
                                 <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
                             </div>
                         </div>
-                    </div>
+                    </Link>
                     <div className="post-container">
                         <img src="../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
@@ -226,11 +227,11 @@ const MyComponent = () => {
                     </div>
                 </div>
                 <div className="showmore">
-                    <p className="showmore-text">
+                    <Link to="/list" className="showmore-text">
                         <FontAwesomeIcon icon={faArrowLeft} className="arrow-left"/>
                         Xem thêm
                         <FontAwesomeIcon icon={faArrowRight} className="arrow-right"/>
-                    </p>
+                    </Link>
                 </div>
             </div>
         </div>
