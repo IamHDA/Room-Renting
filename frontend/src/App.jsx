@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage.jsx";
 import PostDetail from "./pages/PostDetail.jsx";
 import List from "./pages/List.jsx";
+import UserPage from "./pages/UserPage.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { PopUpProvider } from "./contexts/PopUpContext.jsx";
 
@@ -15,6 +16,7 @@ const MyComponent = () => {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/detail" element={<PostDetail />} />
                     <Route path="/list" element={<List />} />
+                    <Route path="/account" element={<UserPage/>} />
                 </Routes>
             </PopUpProvider>
         </AuthProvider>

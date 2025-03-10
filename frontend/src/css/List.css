@@ -204,9 +204,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: solid;
+    border: solid 1px;
     color: #808080;
-    border-width: 1px;
     border-radius: 5px;
     height: 45px;
     width: 45px;
@@ -221,7 +220,7 @@
 
 .list-pagination{
     display: flex;
-    gap: 20px;
+    gap: 10px;
     margin-top: 40px;
 }
 
@@ -245,6 +244,7 @@
 .side-criteria p{
     margin-bottom: 10px;
     cursor: pointer;
+    transition: color 0.2s ease;
 }
 
 .side-criteria p:hover{

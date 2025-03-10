@@ -60,7 +60,6 @@
     position: relative;
     align-items: center;
     gap: 10px;
-    cursor: pointer;
     border-radius: 10px;
 }
 
@@ -107,6 +106,12 @@
     align-items: center;
     justify-content: start;
     gap: 10px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.header-user-profile:hover, .header-saved-posts:hover, .header-posts-manage:hover{
+    color: #008CFF;
 }
 
 .icon{

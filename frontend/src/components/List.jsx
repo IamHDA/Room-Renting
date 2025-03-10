@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import '../css/List.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import {Link} from "react-router-dom";
 
 const MyComponent = () => {
@@ -17,7 +17,7 @@ const MyComponent = () => {
                                value={search}
                                id="list-search-input"
                                onChange={(e) => setSearch(e.target.value)}
-                               placeholder="Nhập địa chỉ để tìm kiếm"
+                               placeholder="Nhập địa chỉ. Ví dụ: Ngách 16, 278 Kim Giang, Hoàng Mai"
                         />
                         <select class="list-search-city-bounding">
                             <option value="Hà Nội">Hà Nội</option>
@@ -174,6 +174,7 @@ const MyComponent = () => {
                     <button>2</button>
                     <button>3</button>
                     <button>4</button>
+                    <button><FontAwesomeIcon icon={faAngleRight}/></button>
                 </div>
             </div>
             <div className="list-container-right">

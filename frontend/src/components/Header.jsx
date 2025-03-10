@@ -39,10 +39,10 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                 <p className="header-user-name">Hứa Duy Anh</p>
                                 <FontAwesomeIcon icon={faAngleDown} style={{color: "#ffffff",}} className="header-user-angle-down"/>
                                 <div className={`dropdown-container ${isOpen ? "js-dropdown-container" : ""}`}>
-                                    <div className="header-user-profile">
+                                    <Link to="/account" className="header-user-profile">
                                         <FontAwesomeIcon icon={faUser} className="icon"/>
                                         <p>Trang cá nhân</p>
-                                    </div>
+                                    </Link>
                                     <div className="header-saved-posts">
                                         <FontAwesomeIcon icon={faBookmark} className="icon"/>
                                         <p>Bài đăng đã lưu</p>
