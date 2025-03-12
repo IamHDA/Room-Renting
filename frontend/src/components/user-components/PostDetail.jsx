@@ -4,7 +4,7 @@ import {
     faAngleLeft,
     faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
-import '../css/PostDetail.css';
+import '../../css/user-css/PostDetail.css';
 
 const MyComponent = () => {
     return (
@@ -13,7 +13,7 @@ const MyComponent = () => {
                 <div className="post-detail">
                     <div className="post-images">
                         <div className="post-main-image">
-                            <img src="../../public/detail-icon/home.png"/>
+                            <img src="../../../public/detail-icon/home.png"/>
                             <button className="next">
                                 <FontAwesomeIcon icon={faAngleRight} />
                             </button>
@@ -22,14 +22,14 @@ const MyComponent = () => {
                             </button>
                         </div>
                         <div className="post-images-thumbnail">
-                            <img src="../../public/detail-icon/home.png" className="thumbnail"/>
-                            <img src="../../public/detail-icon/home.png" className="thumbnail"/>
-                            <img src="../../public/detail-icon/home.png" className="thumbnail"/>
-                            <img src="../../public/detail-icon/home.png" className="thumbnail"/>
+                            <img src="../../../public/detail-icon/home.png" className="thumbnail"/>
+                            <img src="../../../public/detail-icon/home.png" className="thumbnail"/>
+                            <img src="../../../public/detail-icon/home.png" className="thumbnail"/>
+                            <img src="../../../public/detail-icon/home.png" className="thumbnail"/>
                         </div>
                     </div>
                     <h1>ĐỘC QUYỀN CHO THUÊ CĂN HỘ 2PN AKARI CITY NAM LONG</h1>
-                    <img src="../../public/detail-icon/line.png" className="line"/>
+                    <img src="../../../public/detail-icon/line.png" className="line"/>
                     <div className="post-detail-mixed">
                         <div className="main-content">
                             <div className="post-detail-price">
@@ -45,21 +45,21 @@ const MyComponent = () => {
                                 <p className="emphasize">1 PN</p>
                             </div>
                             <div className="post-detail-function">
-                                <img src="../../public/detail-icon/share.png" className="share"/>
-                                <img src="../../public/detail-icon/alert.png" className="report"/>
-                                <img src="../../public/detail-icon/heart.png" className="save"/>
+                                <img src="../../../public/detail-icon/share.png" className="share"/>
+                                <img src="../../../public/detail-icon/alert.png" className="report"/>
+                                <img src="../../../public/detail-icon/heart.png" className="save"/>
                             </div>
                         </div>
                         <div className="post-location">
-                            <img src="../../public/detail-icon/location.png"/>
+                            <img src="../../../public/detail-icon/location.png"/>
                             <p>Akari City Nam Long, Võ Văn Kiệt, An Lạc, Bình Tân, Hồ Chí Minh</p>
                         </div>
                         <div className="post-time">
-                            <img src="../../public/detail-icon/clock.png"/>
+                            <img src="../../../public/detail-icon/clock.png"/>
                             <p>12:00, 13/03/2025</p>
                         </div>
                     </div>
-                    <img src="../../public/detail-icon/line.png" className="line"/>
+                    <img src="../../../public/detail-icon/line.png" className="line"/>
                     <div className="post-detail-description">
                         <h2>Thông tin mô tả</h2>
                         <div className="description-content">
@@ -91,106 +91,106 @@ const MyComponent = () => {
                             <p>Liên hệ ngay để biết thêm chi tiết và sắp xếp lịch xem nhà.</p>
                         </div>
                     </div>
-                    <img src="../../public/detail-icon/line.png" className="line"/>
+                    <img src="../../../public/detail-icon/line.png" className="line"/>
                     <div className="post-property">
                         <h2>Đặc điểm phòng trọ</h2>
                         <div className="properties">
                             <div className="left">
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/dong.png"/>
+                                        <img src="../../../public/detail-icon/dong.png"/>
                                         <p>Mức giá</p>
                                     </div>
                                     <p id="sub-price">8 triệu/tháng</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/area.png"/>
+                                        <img src="../../../public/detail-icon/area.png"/>
                                         <p>Diện tích</p>
                                     </div>
                                     <p id="sub-area">62m&sup2;</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/bedroom.png"/>
+                                        <img src="../../../public/detail-icon/bedroom.png"/>
                                         <p>Phòng ngủ</p>
                                     </div>
                                     <p id="sub-bedroom">2 phòng</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/bathroom.png"/>
+                                        <img src="../../../public/detail-icon/bathroom.png"/>
                                         <p>Phòng tắm, vệ sinh</p>
                                     </div>
                                    <p id="sub-bathroom">2 phòng</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/clock.png"/>
+                                        <img src="../../../public/detail-icon/clock.png"/>
                                         <p>Thời gian dự kiến vào ở</p>
                                     </div>
                                     <p id="sub-move-time">Ở ngay</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                             </div>
                             <div className="right">
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/electric.png"/>
+                                        <img src="../../../public/detail-icon/electric.png"/>
                                         <p>Giá điện</p>
                                     </div>
                                     <p id="electric-price">Theo nhà cung cấp</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/water.png"/>
+                                        <img src="../../../public/detail-icon/water.png"/>
                                         <p>Giá nước</p>
                                     </div>
                                     <p id="sub-water-price">Theo nhà cung cấp</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/wifi.png"/>
+                                        <img src="../../../public/detail-icon/wifi.png"/>
                                         <p>Giá Internet</p>
                                     </div>
                                     <p id="internet-price">150k/tháng</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/security.png"/>
+                                        <img src="../../../public/detail-icon/security.png"/>
                                         <p>An ninh</p>
                                     </div>
                                     <p id="sub-security">Camera, PCCC, Bảo vệ</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                                 <div className="sub">
                                     <div className="title">
-                                        <img src="../../public/detail-icon/furniture.png"/>
+                                        <img src="../../../public/detail-icon/furniture.png"/>
                                         <p>Nội thất</p>
                                     </div>
                                     <p id="sub-furniture">Căn bản</p>
                                 </div>
-                                <img src="../../public/detail-icon/line.png" className="line"/>
+                                <img src="../../../public/detail-icon/line.png" className="line"/>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="post-user">
                     <div className="user-profile">
-                        <img src="../../public/detail-icon/account.png" className="avatar"/>
+                        <img src="../../../public/detail-icon/account.png" className="avatar"/>
                         <div className="name-status">
                             <p className="name">Nguyễn Văn A</p>
                             <div className="status">
-                                <img src="../../public/detail-icon/offline.png"/>
+                                <img src="../../../public/detail-icon/offline.png"/>
                                 <p>Offline</p>
                             </div>
                         </div>
@@ -200,23 +200,23 @@ const MyComponent = () => {
                             <p>Tham gia URPLACE</p>
                             <p id="sub-join">3 ngày</p>
                         </div>
-                        <img src="../../public/detail-icon/stand-line.png" className="stand-line"/>
+                        <img src="../../../public/detail-icon/stand-line.png" className="stand-line"/>
                         <div className="sub">
                             <p>Tin đăng đang có</p>
                             <p id="sub-post">1 tin</p>
                         </div>
-                        <img src="../../public/detail-icon/stand-line.png" className="stand-line"/>
+                        <img src="../../../public/detail-icon/stand-line.png" className="stand-line"/>
                         <div className="sub">
                             <p>Tỉ lệ phản hồi</p>
                             <p id="sub-rep">90%</p>
                         </div>
                     </div>
                     <div  className="post-user-number-bounding">
-                        <img src="../../public/detail-icon/phone-ring.png"/>
+                        <img src="../../../public/detail-icon/phone-ring.png"/>
                         <p id="post-user-number">0912437812</p>
                     </div>
                     <div className="post-user-chatting-bounding">
-                        <img src="../../public/detail-icon/chat-icon.png"/>
+                        <img src="../../../public/detail-icon/chat-icon.png"/>
                         <p id="post-user-chatting">Nhắn tin ngay</p>
                     </div>
                 </div>

@@ -1,0 +1,48 @@
+.side-bar{
+    height: 100vh;
+    background-color: #008CFF;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 20px;
+}
+
+.page-title{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 50%;
+    margin: 0px 20px 0px 20px;
+}
+
+.side-bar-function-bounding{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    gap: 5px;
+}
+
+.side-bar-function{
+    display: flex;
+    gap: 20px;
+    font-size: 25px;
+    align-items: center;
+    justify-content: start;
+    padding: 15px;
+    background-color: #008CFF;
+    color: white;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.side-bar-function:hover{
+    background-color: white;
+    color: #008CFF;
+}
+
+.side-bar-function.isSelected{
+    background-color: white;
+    color: #008CFF;
+}

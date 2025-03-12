@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../css/Register.css';
+import '../../css/user-css/Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faArrowLeft, faXmark} from "@fortawesome/free-solid-svg-icons";
 
@@ -33,7 +33,7 @@ const MyComponent = ({handleRegisterPopUp}) => {
         <div>
             <div className="curtain">
                 <div className="pop-up-register">
-                    <img src="../../public/register-signIn/banner.jpg" className="illustration"/>
+                    <img src="../../../public/register-signIn/banner.jpg" className="illustration"/>
                     {!isMain && (
                         <div className="back" onClick={handleNavigate}>
                             <FontAwesomeIcon icon={faArrowLeft} />
@@ -43,7 +43,7 @@ const MyComponent = ({handleRegisterPopUp}) => {
                         <h1 className="register-form-title">Đăng ký tài khoản</h1>
                         <div className={`register-form-account ${!isMain ? "js-register-form-account" : ""}`}>
                             <div className="phone-bounding">
-                                <img src="../../public/register-signIn/phone-ring.png"/>
+                                <img src="../../../public/register-signIn/phone-ring.png"/>
                                 <input type="text" placeholder="Nhập số điện thoại" onKeyDown={(e) => {
                                     if (e.key === 'Enter'){
                                         e.preventDefault();
@@ -54,11 +54,11 @@ const MyComponent = ({handleRegisterPopUp}) => {
                             {isInValidNumber && <p className="invalidNumber">- Số điện thoại ko hợp lệ</p>}
                             <h2>Hoặc</h2>
                             <a className="google-sign-bounding">
-                                <img src="../../public/register-signIn/google-logo.png"/>
+                                <img src="../../../public/register-signIn/google-logo.png"/>
                                 Đăng nhập với Google
                             </a>
                             <a className="facebook-sign-bounding">
-                                <img src="../../public/register-signIn/facebook.png"/>
+                                <img src="../../../public/register-signIn/facebook.png"/>
                                 Đăng nhập với Facebook
                             </a>
                         </div>

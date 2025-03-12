@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import '../css/SavedPosts.css';
+import '../../css/user-css/SavedPosts.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
 import {faX} from "@fortawesome/free-solid-svg-icons";
@@ -24,7 +24,7 @@ const MyComponent = () => {
                     ) : (
                         <div className="saved-posts-container">
                             <div className="saved-posts-post">
-                                <img src="../../public/saved-posts-icon/home.png" className="post-img"/>
+                                <img src="../../../public/saved-posts-icon/home.png" className="post-img"/>
                                 <div className="saved-posts-post-information">
                                     <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
                                     <button className="delete-button">
@@ -39,11 +39,11 @@ const MyComponent = () => {
                                     </p>
                                     <div className="post-location-time">
                                         <div className="post-location-time-sub">
-                                            <img src="../../public/saved-posts-icon/location.png"/>
+                                            <img src="../../../public/saved-posts-icon/location.png"/>
                                             <p id="saved-posts-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                         </div>
                                         <div className="post-location-time-sub">
-                                            <img src="../../public/saved-posts-icon/clock.png"/>
+                                            <img src="../../../public/saved-posts-icon/clock.png"/>
                                             <p id="saved-posts-post-time">13:05, 20/02/2025</p>
                                         </div>
                                     </div>

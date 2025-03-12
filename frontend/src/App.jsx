@@ -1,29 +1,17 @@
 import React from 'react';
-import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage.jsx";
-import PostDetail from "./pages/PostDetail.jsx";
-import List from "./pages/List.jsx";
-import UserPage from "./pages/UserPage.jsx";
-import SavedPosts from "./pages/SavedPosts.jsx";
-import UserPersonalInformation from "./pages/UserPersonalInformation.jsx";
-import PostManage from "./pages/PostManage.jsx";
-import Chat from "./pages/Chat.jsx";
+import { UserRoutes, AdminRoutes } from './routes';
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { PopUpProvider } from "./contexts/PopUpContext.jsx";
+import {Route, Routes} from "react-router-dom";
+import {HomePage} from "./pages/user-pages/index.js";
 
 const MyComponent = () => {
     return (
         <AuthProvider>
             <PopUpProvider>
                 <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/detail" element={<PostDetail />} />
-                    <Route path="/list" element={<List />} />
-                    <Route path="/account" element={<UserPage/>} />
-                    <Route path="/savedPosts" element={<SavedPosts />} />
-                    <Route path="/personalInformation" element={<UserPersonalInformation/>} />
-                    <Route path="/postManage" element={<PostManage />} />
-                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/*" element={<UserRoutes />} />
+                    <Route path="/admin/*" element={<AdminRoutes />} />
                 </Routes>
             </PopUpProvider>
         </AuthProvider>

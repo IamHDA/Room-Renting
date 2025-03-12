@@ -1,10 +1,6 @@
 import React, {useContext} from 'react';
-import Footer from "../components/Footer.jsx";
-import Register from "../components/Register.jsx";
-import SignIn from "../components/SignIn.jsx";
-import Header from "../components/Header.jsx";
-import UserPage from "../components/UserPage.jsx";
-import PopUpContext from "../contexts/PopUpContext";
+import PopUpContext from "../../contexts/PopUpContext.jsx";
+import { Footer, Register, SignIn, Header, UserPage } from "../../components/user-components";
 
 const MyComponent = () => {
     const {signIn, register, handleSignInPopUp, handleRegisterPopUp} = useContext(PopUpContext);

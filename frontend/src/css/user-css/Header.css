@@ -29,7 +29,7 @@
     font-size: 25px;
 }
 
-.function{
+.container-header .function{
     display: flex;
     align-items: center;
     width: auto;

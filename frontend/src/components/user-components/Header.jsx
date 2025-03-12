@@ -2,8 +2,8 @@ import React, {useContext, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faAngleDown, faBookmark, faPenToSquare, faUser} from '@fortawesome/free-solid-svg-icons';
-import '../css/Header.css';
-import { AuthContext } from "../contexts/AuthContext.jsx";
+import '../../css/user-css/Header.css';
+import { AuthContext } from "../../contexts/AuthContext.jsx";
 
 const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
     const { isAuthenticated, userName } = useContext(AuthContext);
@@ -17,12 +17,12 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
         <div>
             <div className="container-header">
                 <Link to="/" className="logo">
-                    <img src="../../public/header-icon/handHouse.png"/>
+                    <img src="../../../public/header-icon/handHouse.png"/>
                     <p>URPLACE</p>
                 </Link>
                 <div className="function">
                     <Link to="/chat" className="chat-bounding">
-                        <img src="../../public/header-icon/chatIcon.png"/>
+                        <img src="../../../public/header-icon/chatIcon.png"/>
                     </Link>
                     {!isAuthenticated ? (
                         <>
@@ -35,7 +35,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                  onMouseEnter={() => handleProfileHover()}
                                  onMouseLeave={() => handleProfileHover()}
                             >
-                                <img src="../../public/header-icon/account.png" className="header-user-logo"/>
+                                <img src="../../../public/header-icon/account.png" className="header-user-logo"/>
                                 <p className="header-user-name">{userName}</p>
                                 <FontAwesomeIcon icon={faAngleDown} style={{color: "#ffffff",}} className="header-user-angle-down"/>
                                 <div className={`dropdown-container ${isOpen ? "js-dropdown-container" : ""}`}>

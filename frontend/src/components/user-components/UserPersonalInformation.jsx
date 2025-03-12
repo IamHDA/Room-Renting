@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react';
-import '../css/PersonalInformation.css';
-import { AuthContext } from '../contexts/AuthContext.jsx';
+import '../../css/user-css/PersonalInformation.css';
+import { AuthContext } from '../../contexts/AuthContext.jsx';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDown, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 

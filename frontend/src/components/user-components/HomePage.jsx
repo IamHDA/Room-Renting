@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faLocationDot, faAngleDown, faMagnifyingGlass, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
-import '../css/HomePage.css';
+import '../../css/user-css/HomePage.css';
 import {Link} from "react-router-dom";
 
 const MyComponent = () => {
@@ -14,7 +14,7 @@ const MyComponent = () => {
                             <FontAwesomeIcon icon={faLocationDot} className="location-icon"/>
                             <p>Thành phố</p>
                             <FontAwesomeIcon icon={faAngleDown} className="arrow-down-icon"/>
-                            <img src="../../public/homePage-icon/pipe.png" className="pipe"/>
+                            <img src="../../../public/homePage-icon/pipe.png" className="pipe"/>
                         </div>
                         <div className="search">
                             <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon"/>
@@ -42,7 +42,7 @@ const MyComponent = () => {
                 <h1>Một số phòng trọ nổi bật</h1>
                 <div className="post-grid">
                     <Link to="/detail" className="post-container">
-                        <img src="../../public/homePage-icon/home.png" className="post-image"/>
+                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
                             <p className="post-price"><span>3,4</span> triệu/tháng</p>
@@ -51,21 +51,21 @@ const MyComponent = () => {
                         <div className="post-location-time-save">
                             <div className="post-location-time">
                                 <div className="post-location">
-                                    <img src="../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
                                     <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
                                 </div>
                                 <div className="post-time">
-                                    <img src="../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
                             <div className="post-save" onClick={(e) => e.preventDefault()}>
-                                <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
+                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
                             </div>
                         </div>
                     </Link>
                     <div className="post-container">
-                        <img src="../../public/homePage-icon/home.png" className="post-image"/>
+                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
                             <p className="post-price"><span>3,4</span> triệu/tháng</p>
@@ -74,21 +74,21 @@ const MyComponent = () => {
                         <div className="post-location-time-save">
                             <div className="post-location-time">
                                 <div className="post-location">
-                                    <img src="../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
                                     <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
                                 </div>
                                 <div className="post-time">
-                                    <img src="../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
                             <div className="post-save">
-                                <img src="../../public/homePage-icon/heart.png"/>
+                                <img src="../../../public/homePage-icon/heart.png"/>
                             </div>
                         </div>
                     </div>
                     <div className="post-container">
-                        <img src="../../public/homePage-icon/home.png" className="post-image"/>
+                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
                             <p className="post-price"><span>3,4</span> triệu/tháng</p>
@@ -97,21 +97,21 @@ const MyComponent = () => {
                         <div className="post-location-time-save">
                             <div className="post-location-time">
                                 <div className="post-location">
-                                    <img src="../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
                                     <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
                                 </div>
                                 <div className="post-time">
-                                    <img src="../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
                             <div className="post-save">
-                                <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
+                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
                             </div>
                         </div>
                     </div>
                     <div className="post-container">
-                        <img src="../../public/homePage-icon/home.png" className="post-image"/>
+                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
                             <p className="post-price"><span>3,4</span> triệu/tháng</p>
@@ -120,21 +120,21 @@ const MyComponent = () => {
                         <div className="post-location-time-save">
                             <div className="post-location-time">
                                 <div className="post-location">
-                                    <img src="../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
                                     <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
                                 </div>
                                 <div className="post-time">
-                                    <img src="../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
                             <div className="post-save">
-                                <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
+                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
                             </div>
                         </div>
                     </div>
                     <div className="post-container">
-                        <img src="../../public/homePage-icon/home.png" className="post-image"/>
+                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
                             <p className="post-price"><span>3,4</span> triệu/tháng</p>
@@ -143,21 +143,21 @@ const MyComponent = () => {
                         <div className="post-location-time-save">
                             <div className="post-location-time">
                                 <div className="post-location">
-                                    <img src="../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
                                     <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
                                 </div>
                                 <div className="post-time">
-                                    <img src="../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
                             <div className="post-save">
-                                <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
+                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
                             </div>
                         </div>
                     </div>
                     <div className="post-container">
-                        <img src="../../public/homePage-icon/home.png" className="post-image"/>
+                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
                             <p className="post-price"><span>3,4</span> triệu/tháng</p>
@@ -166,21 +166,21 @@ const MyComponent = () => {
                         <div className="post-location-time-save">
                             <div className="post-location-time">
                                 <div className="post-location">
-                                    <img src="../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
                                     <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
                                 </div>
                                 <div className="post-time">
-                                    <img src="../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
                             <div className="post-save">
-                                <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
+                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
                             </div>
                         </div>
                     </div>
                     <div className="post-container">
-                        <img src="../../public/homePage-icon/home.png" className="post-image"/>
+                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
                             <p className="post-price"><span>3,4</span> triệu/tháng</p>
@@ -189,21 +189,21 @@ const MyComponent = () => {
                         <div className="post-location-time-save">
                             <div className="post-location-time">
                                 <div className="post-location">
-                                    <img src="../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
                                     <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
                                 </div>
                                 <div className="post-time">
-                                    <img src="../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
                             <div className="post-save">
-                                <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
+                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
                             </div>
                         </div>
                     </div>
                     <div className="post-container">
-                        <img src="../../public/homePage-icon/home.png" className="post-image"/>
+                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
                         <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
                         <div className="post-price-and-area">
                             <p className="post-price"><span>3,4</span> triệu/tháng</p>
@@ -212,16 +212,16 @@ const MyComponent = () => {
                         <div className="post-location-time-save">
                             <div className="post-location-time">
                                 <div className="post-location">
-                                    <img src="../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
                                     <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
                                 </div>
                                 <div className="post-time">
-                                    <img src="../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
                                     <p className="time">12:00, 21/03/2025</p>
                                 </div>
                             </div>
                             <div className="post-save">
-                                <img src="../../public/homePage-icon/heart.png" className="post-save-icon"/>
+                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
                             </div>
                         </div>
                     </div>

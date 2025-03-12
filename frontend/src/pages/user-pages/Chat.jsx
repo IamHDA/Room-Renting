@@ -1,9 +1,6 @@
 import React, {useContext} from 'react';
-import Header from "../components/Header.jsx";
-import Chat from "../components/Chat.jsx";
-import Register from "../components/Register.jsx";
-import SignIn from "../components/SignIn.jsx";
-import PopUpContext from "../contexts/PopUpContext";
+import PopUpContext from "../../contexts/PopUpContext.jsx";
+import { Header, Chat, Register, SignIn } from "../../components/user-components";
 
 const MyComponent = () => {
 

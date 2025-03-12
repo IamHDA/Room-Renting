@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useLocation} from 'react-router-dom';
-import '../css/PostManage.css';
+import '../../css/user-css/PostManage.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faCamera,
@@ -87,7 +87,7 @@ const MyComponent = () => {
                                     Đăng tin
                                 </button>
                             </div>
-                            <img src="../../public/post-manage-icon/stand-line.png" className="stand-line"/>
+                            <img src="../../../public/post-manage-icon/stand-line.png" className="stand-line"/>
                             <div className="right">
                                 <div className="address">
                                     <h1>Địa chỉ</h1>
@@ -259,14 +259,14 @@ const MyComponent = () => {
                         <div class="post-manage-main-content">
                             <div className="switch-posts">
                                 <p className={isVisiblePosts ? "visible-posts show" : "visible-posts"} onClick={() => setIsVisiblePosts(true)}>Bài đăng đang hiển thị (n/n)</p>
-                                <img src="../../public/post-manage-icon/stand-line.png" className="stand-line"/>
+                                <img src="../../../public/post-manage-icon/stand-line.png" className="stand-line"/>
                                 <p className={!isVisiblePosts ? "invisible-posts show" : "invisible-posts"} onClick={() => setIsVisiblePosts(false)}>Bài đăng đã ẩn(n/n)</p>
                             </div>
-                            <img src="../../public/post-manage-icon/line.png" className="line"/>
+                            <img src="../../../public/post-manage-icon/line.png" className="line"/>
                             {isVisiblePosts ? (
                                 <div className="visible-posts-container">
                                     <div className="visible-posts-post">
-                                        <img src="../../public/saved-posts-icon/home.png" className="post-img"/>
+                                        <img src="../../../public/saved-posts-icon/home.png" className="post-img"/>
                                         <div className="visible-posts-post-information">
                                             <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
                                             <button className="delete-button">
@@ -284,11 +284,11 @@ const MyComponent = () => {
                                             </p>
                                             <div className="post-location-time">
                                                 <div className="post-location-time-sub">
-                                                    <img src="../../public/saved-posts-icon/location.png"/>
+                                                    <img src="../../../public/saved-posts-icon/location.png"/>
                                                     <p id="visible-posts-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                                 </div>
                                                 <div className="post-location-time-sub">
-                                                    <img src="../../public/saved-posts-icon/clock.png"/>
+                                                    <img src="../../../public/saved-posts-icon/clock.png"/>
                                                     <p id="visible-posts-post-time">13:05, 20/02/2025</p>
                                                 </div>
                                             </div>
@@ -299,7 +299,7 @@ const MyComponent = () => {
                             ) : (
                                 <div className="invisible-posts-container">
                                     <div className="invisible-posts-post">
-                                        <img src="../../public/saved-posts-icon/home.png" className="post-img"/>
+                                        <img src="../../../public/saved-posts-icon/home.png" className="post-img"/>
                                         <div className="invisible-posts-post-information">
                                             <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
                                             <button className="delete-button">
@@ -317,11 +317,11 @@ const MyComponent = () => {
                                             </p>
                                             <div className="post-location-time">
                                                 <div className="post-location-time-sub">
-                                                    <img src="../../public/saved-posts-icon/location.png"/>
+                                                    <img src="../../../public/saved-posts-icon/location.png"/>
                                                     <p id="invisible-posts-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                                 </div>
                                                 <div className="post-location-time-sub">
-                                                    <img src="../../public/saved-posts-icon/clock.png"/>
+                                                    <img src="../../../public/saved-posts-icon/clock.png"/>
                                                     <p id="invisible-posts-post-time">13:05, 20/02/2025</p>
                                                 </div>
                                             </div>

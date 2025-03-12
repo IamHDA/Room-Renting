@@ -1,9 +1,9 @@
 import React, {useContext} from 'react';
-import '../css/UserPage.css';
+import '../../css/user-css/UserPage.css';
 import {faAngleRight, faCamera, faStar as faStarSolid} from "@fortawesome/free-solid-svg-icons";
 import {faStar as faStarRegular, faMessage, faCalendar, faCompass} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {AuthContext} from "../contexts/AuthContext.jsx";
+import {AuthContext} from "../../contexts/AuthContext.jsx";
 import {Link} from "react-router-dom";
 
 const MyComponent = () => {
@@ -33,13 +33,13 @@ const MyComponent = () => {
             <div className="user-page-container">
                 <div className="user-page-profile">
                     <div className="user-avatar-background">
-                        <img src="../../public/user-page-icon/background.png" id="user-background-img"/>
+                        <img src="../../../public/user-page-icon/background.png" id="user-background-img"/>
                         <div className="camera-bounding-background">
                             <FontAwesomeIcon icon={faCamera} />
                         </div>
                         <div className="user-avatar-container-rel">
                             <div className="user-avatar-container">
-                                <img src="../../public/user-page-icon/account.png" id="user-avatar-img"/>
+                                <img src="../../../public/user-page-icon/account.png" id="user-avatar-img"/>
                                 <div className="camera-bounding-avatar">
                                     <FontAwesomeIcon icon={faCamera} />
                                 </div>
@@ -109,13 +109,13 @@ const MyComponent = () => {
                             </div>
                         </div>
                         <div className="blue-line">
-                            <img src="../../public/user-page-icon/blue-line.png" className={isLeft ? "left-line" : ""}/>
-                            <img src="../../public/user-page-icon/blue-line.png" className={isRight ? "right-line" : ""}/>
+                            <img src="../../../public/user-page-icon/blue-line.png" className={isLeft ? "left-line" : ""}/>
+                            <img src="../../../public/user-page-icon/blue-line.png" className={isRight ? "right-line" : ""}/>
                         </div>
                     </div>
                     <div className="user-page-posts-container">
                         <div className="user-page-post">
-                            <img src="../../public/user-page-icon/home.png" className="post-img"/>
+                            <img src="../../../public/user-page-icon/home.png" className="post-img"/>
                             <div className="user-page-post-information">
                                 <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
                                 <div className="post-price-area">
@@ -124,18 +124,18 @@ const MyComponent = () => {
                                 </div>
                                 <div className="post-location-time">
                                     <div className="post-location-time-sub">
-                                        <img src="../../public/user-page-icon/location.png"/>
+                                        <img src="../../../public/user-page-icon/location.png"/>
                                         <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                     </div>
                                     <div className="post-location-time-sub">
-                                        <img src="../../public/user-page-icon/clock.png"/>
+                                        <img src="../../../public/user-page-icon/clock.png"/>
                                         <p id="user-page-post-time">13:05, 20/02/2025</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="user-page-post">
-                            <img src="../../public/user-page-icon/home.png" className="post-img"/>
+                            <img src="../../../public/user-page-icon/home.png" className="post-img"/>
                             <div className="user-page-post-information">
                                 <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
                                 <div className="post-price-area">
@@ -144,18 +144,18 @@ const MyComponent = () => {
                                 </div>
                                 <div className="post-location-time">
                                     <div className="post-location-time-sub">
-                                        <img src="../../public/user-page-icon/location.png"/>
+                                        <img src="../../../public/user-page-icon/location.png"/>
                                         <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                     </div>
                                     <div className="post-location-time-sub">
-                                        <img src="../../public/user-page-icon/clock.png"/>
+                                        <img src="../../../public/user-page-icon/clock.png"/>
                                         <p id="user-page-post-time">13:05, 20/02/2025</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="user-page-post">
-                            <img src="../../public/user-page-icon/home.png" className="post-img"/>
+                            <img src="../../../public/user-page-icon/home.png" className="post-img"/>
                             <div className="user-page-post-information">
                                 <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
                                 <div className="post-price-area">
@@ -164,18 +164,18 @@ const MyComponent = () => {
                                 </div>
                                 <div className="post-location-time">
                                     <div className="post-location-time-sub">
-                                        <img src="../../public/user-page-icon/location.png"/>
+                                        <img src="../../../public/user-page-icon/location.png"/>
                                         <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                     </div>
                                     <div className="post-location-time-sub">
-                                        <img src="../../public/user-page-icon/clock.png"/>
+                                        <img src="../../../public/user-page-icon/clock.png"/>
                                         <p id="user-page-post-time">13:05, 20/02/2025</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="user-page-post">
-                            <img src="../../public/user-page-icon/home.png" className="post-img"/>
+                            <img src="../../../public/user-page-icon/home.png" className="post-img"/>
                             <div className="user-page-post-information">
                                 <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
                                 <div className="post-price-area">
@@ -184,11 +184,11 @@ const MyComponent = () => {
                                 </div>
                                 <div className="post-location-time">
                                     <div className="post-location-time-sub">
-                                        <img src="../../public/user-page-icon/location.png"/>
+                                        <img src="../../../public/user-page-icon/location.png"/>
                                         <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                     </div>
                                     <div className="post-location-time-sub">
-                                        <img src="../../public/user-page-icon/clock.png"/>
+                                        <img src="../../../public/user-page-icon/clock.png"/>
                                         <p id="user-page-post-time">13:05, 20/02/2025</p>
                                     </div>
                                 </div>

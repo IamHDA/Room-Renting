@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import '../css/List.css';
+import '../../css/user-css/List.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import {Link} from "react-router-dom";
@@ -12,7 +12,7 @@ const MyComponent = () => {
             <div className="list-container-left">
                 <div className="list-search-container">
                     <div className="list-search-bounding">
-                        <img src="../../public/list-icon/search.png"/>
+                        <img src="../../../public/list-icon/search.png"/>
                         <input type="text"
                                value={search}
                                id="list-search-input"
@@ -27,7 +27,7 @@ const MyComponent = () => {
                     </div>
                     <div className="list-search-criteria">
                         <div className="filter">
-                            <img src="../../public/list-icon/filter.png"/>
+                            <img src="../../../public/list-icon/filter.png"/>
                             <p>Lọc</p>
                         </div>
                         <div className="criteria">
@@ -65,7 +65,7 @@ const MyComponent = () => {
                 </select>
                 <div className="list-posts-container">
                     <Link to="/detail" className="list-post">
-                        <img src="../../public/list-icon/home.png"/>
+                        <img src="../../../public/list-icon/home.png"/>
                         <div className="list-post-information">
                             <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.</h2>
                             <div className="list-post-price-area">
@@ -76,22 +76,22 @@ const MyComponent = () => {
                             <div className="list-post-location-time-save">
                                 <div className="list-post-location-time">
                                     <div className="list-post-location-container">
-                                        <img src="../../public/list-icon/location-black.png"/>
+                                        <img src="../../../public/list-icon/location-black.png"/>
                                         <p id="list-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                     </div>
                                     <div className="list-post-time-container">
-                                        <img src="../../public/list-icon/clock.png"/>
+                                        <img src="../../../public/list-icon/clock.png"/>
                                         <p id="list-post-time">13:05, 20/02/2025</p>
                                     </div>
                                 </div>
                                 <div className="list-post-save" onClick={(e) => e.preventDefault()}>
-                                    <img src="../../public/homePage-icon/heart.png"/>
+                                    <img src="../../../public/homePage-icon/heart.png"/>
                                 </div>
                             </div>
                         </div>
                     </Link>
                     <Link to="/detail" className="list-post">
-                        <img src="../../public/list-icon/home.png"/>
+                        <img src="../../../public/list-icon/home.png"/>
                         <div className="list-post-information">
                             <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.</h2>
                             <div className="list-post-price-area">
@@ -102,22 +102,22 @@ const MyComponent = () => {
                             <div className="list-post-location-time-save">
                                 <div className="list-post-location-time">
                                     <div className="list-post-location-container">
-                                        <img src="../../public/list-icon/location-black.png"/>
+                                        <img src="../../../public/list-icon/location-black.png"/>
                                         <p id="list-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                     </div>
                                     <div className="list-post-time-container">
-                                        <img src="../../public/list-icon/clock.png"/>
+                                        <img src="../../../public/list-icon/clock.png"/>
                                         <p id="list-post-time">13:05, 20/02/2025</p>
                                     </div>
                                 </div>
                                 <div className="list-post-save" onClick={(e) => e.preventDefault()}>
-                                    <img src="../../public/homePage-icon/heart.png"/>
+                                    <img src="../../../public/homePage-icon/heart.png"/>
                                 </div>
                             </div>
                         </div>
                     </Link>
                     <Link to="/detail" className="list-post">
-                        <img src="../../public/list-icon/home.png"/>
+                        <img src="../../../public/list-icon/home.png"/>
                         <div className="list-post-information">
                             <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.</h2>
                             <div className="list-post-price-area">
@@ -128,22 +128,22 @@ const MyComponent = () => {
                             <div className="list-post-location-time-save">
                                 <div className="list-post-location-time">
                                     <div className="list-post-location-container">
-                                        <img src="../../public/list-icon/location-black.png"/>
+                                        <img src="../../../public/list-icon/location-black.png"/>
                                         <p id="list-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                     </div>
                                     <div className="list-post-time-container">
-                                        <img src="../../public/list-icon/clock.png"/>
+                                        <img src="../../../public/list-icon/clock.png"/>
                                         <p id="list-post-time">13:05, 20/02/2025</p>
                                     </div>
                                 </div>
                                 <div className="list-post-save" onClick={(e) => e.preventDefault()}>
-                                    <img src="../../public/homePage-icon/heart.png"/>
+                                    <img src="../../../public/homePage-icon/heart.png"/>
                                 </div>
                             </div>
                         </div>
                     </Link>
                     <Link to="/detail" className="list-post">
-                        <img src="../../public/list-icon/home.png"/>
+                        <img src="../../../public/list-icon/home.png"/>
                         <div className="list-post-information">
                             <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.</h2>
                             <div className="list-post-price-area">
@@ -154,16 +154,16 @@ const MyComponent = () => {
                             <div className="list-post-location-time-save">
                                 <div className="list-post-location-time">
                                     <div className="list-post-location-container">
-                                        <img src="../../public/list-icon/location-black.png"/>
+                                        <img src="../../../public/list-icon/location-black.png"/>
                                         <p id="list-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
                                     </div>
                                     <div className="list-post-time-container">
-                                        <img src="../../public/list-icon/clock.png"/>
+                                        <img src="../../../public/list-icon/clock.png"/>
                                         <p id="list-post-time">13:05, 20/02/2025</p>
                                     </div>
                                 </div>
                                 <div className="list-post-save" onClick={(e) => e.preventDefault()}>
-                                    <img src="../../public/homePage-icon/heart.png"/>
+                                    <img src="../../../public/homePage-icon/heart.png"/>
                                 </div>
                             </div>
                         </div>
