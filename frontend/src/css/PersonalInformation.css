@@ -1,0 +1,208 @@
+.personal-information-body{
+    height: 700px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    background: #E8E8E8;
+}
+
+.personal-information-container{
+    width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.personal-information-content{
+    display: flex;
+    justify-content: space-between;
+}
+
+.personal-information-content-left{
+    background: white;
+    height: 100px;
+    width: 300px;
+    border-radius: 10px;
+    padding-left: 20px;
+    padding-top: 15px;
+}
+
+.personal-information-container h1{
+    margin: 0;
+}
+
+.personal-information-content-left p{
+    font-size: 25px;
+    margin-top: 5px;
+    font-weight: bold;
+    color: #9a9a9a;
+    transition: color 0.25s ease;
+    cursor: pointer;
+}
+
+.personal-information-content-left p:hover{
+    color: black;
+}
+
+.personal-information-content-left .is-selected{
+    color: black;
+}
+
+.personal-information-content-right{
+    background: white;
+    min-height: 180px;
+    width: 980px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 50px 40px 50px;
+    gap: 30px;
+}
+
+.personal-information-name-contact{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.username, .contact, .personal-information-address{
+    padding: 10px 15px 10px 15px;
+    border: 2px solid #B7B7B7;
+    border-radius: 5px;
+    position: relative;
+}
+
+.username .title, .contact .title, .personal-information-address .title{
+    margin-top: -5px;
+    color: #818181;
+    position: absolute;
+    top: 10px;
+    left: 17px;
+    font-size: 18px;
+}
+
+.username input, .contact input{
+    border: none;
+    outline: none;
+    font-size: 25px;
+    margin-top: 15px;
+}
+
+.personal-information-address{
+    height: 50px;
+    display: flex;
+    align-items: center;
+    font-size: 25px;
+}
+
+.personal-information-address p{
+    margin-top: 15px;
+}
+
+.personal-information-address .angle-right{
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.address-detail{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #c3c3c3;
+    border-radius: 10px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    align-items: center;
+}
+
+.address-detail input{
+    font-size: 22px;
+    padding: 10px 20px 10px 20px;
+    outline: none;
+    border: 2px solid #B7B7B7;
+    border-radius: 5px;
+}
+
+.city-district, .ward-detail{
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.address-detail .submit-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 60px;
+    font-size: 25px;
+    font-weight: bold;
+    background-color: #008CFF;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+}
+
+.address-detail .submit-button:hover{
+    background: #007de3;
+}
+
+.address-detail {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.address-detail.show {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.input-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.password-input{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    border: 2px solid #B7B7B7;
+    border-radius: 10px;
+    align-items: center;
+    font-size: 25px;
+    gap: 10px;
+}
+
+#current-password, #new-password-1, #new-password-2{
+    font-size: 25px;
+    outline: none;
+    border: none;
+    width: 100%;
+}
+
+.submit-password-button{
+    width: 200px;
+    padding: 20px;
+    font-size: 25px;
+    background: #008CFF;
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 10px;
+    margin-left: 380px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+}
+
+.submit-password-button:hover{
+    background: #007de3;
+}

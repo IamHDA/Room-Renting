@@ -6,7 +6,7 @@ import '../css/Header.css';
 import { AuthContext } from "../contexts/AuthContext.jsx";
 
 const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, userName } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleProfileHover = async () => {
@@ -36,26 +36,26 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                  onMouseLeave={() => handleProfileHover()}
                             >
                                 <img src="../../public/header-icon/account.png" className="header-user-logo"/>
-                                <p className="header-user-name">Hứa Duy Anh</p>
+                                <p className="header-user-name">{userName}</p>
                                 <FontAwesomeIcon icon={faAngleDown} style={{color: "#ffffff",}} className="header-user-angle-down"/>
                                 <div className={`dropdown-container ${isOpen ? "js-dropdown-container" : ""}`}>
                                     <Link to="/account" className="header-user-profile">
                                         <FontAwesomeIcon icon={faUser} className="icon"/>
                                         <p>Trang cá nhân</p>
                                     </Link>
-                                    <div className="header-saved-posts">
+                                    <Link to="/savedPosts" className="header-saved-posts">
                                         <FontAwesomeIcon icon={faBookmark} className="icon"/>
                                         <p>Bài đăng đã lưu</p>
-                                    </div>
-                                    <div className="header-posts-manage">
+                                    </Link>
+                                    <Link to="/postManage" state={{ toManage: true }} className="header-posts-manage" >
                                         <FontAwesomeIcon icon={faPenToSquare} className="icon"/>
                                         <p>Quản lý bài đăng</p>
-                                    </div>
+                                    </Link>
                                 </div>
                             </div>
                         </>
                     )}
-                    <p className="post">Đăng tin</p>
+                    <Link to="/postManage" state={{ toManage: false }} className="post">Đăng tin</Link>
                 </div>
             </div>
         </div>

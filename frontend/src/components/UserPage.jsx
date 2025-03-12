@@ -1,12 +1,17 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import '../css/UserPage.css';
 import {faAngleRight, faCamera, faStar as faStarSolid} from "@fortawesome/free-solid-svg-icons";
 import {faStar as faStarRegular, faMessage, faCalendar, faCompass} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {AuthContext} from "../contexts/AuthContext.jsx";
+import {Link} from "react-router-dom";
 
 const MyComponent = () => {
     const [isLeft, setIsLeft] = React.useState(false);
     const [isRight, setIsRight] = React.useState(false);
+    const [onReview, setOnReview] = React.useState(false);
+    const {isAuthenticated} = useContext(AuthContext);
+    const [selectedStar, setSelectedStar] = React.useState(0);
 
     const toggleLeftLine = () => {
         setIsLeft(true);
@@ -17,6 +22,10 @@ const MyComponent = () => {
         setIsRight(true)
         setIsLeft(false);
         console.log(isRight);
+    }
+
+    const toggleOnReview = () => {
+        setOnReview(prev => !prev);
     }
 
     return (
@@ -38,9 +47,9 @@ const MyComponent = () => {
                         </div>
                     </div>
                     <div className="user-lower-information">
-                        <h2 id="user-page-username">Hứa Duy Anh</h2>
+                        <h2 id="user-page-username">Nguyễn Văn A</h2>
                         <div className="user-rating">
-                            <div className="star">
+                            <div className="rating-star">
                                 <FontAwesomeIcon icon={faStarRegular} id="star-1"/>
                                 <FontAwesomeIcon icon={faStarRegular} id="star-2"/>
                                 <FontAwesomeIcon icon={faStarRegular} id="star-3"/>
@@ -49,9 +58,28 @@ const MyComponent = () => {
                             </div>
                             <p id="rating-count">(n)</p>
                         </div>
-                        <button className="change-personal-information">
-                            Chỉnh sửa thông tin cá nhân
-                        </button>
+                        {isAuthenticated ?
+                            <Link to="/personalInformation" className="change-personal-information">
+                                Chỉnh sửa thông tin cá nhân
+                            </Link>:
+                            (
+                                <>
+                                    <button className={!onReview ? "review-user" : "review-user-js"} onClick={toggleOnReview}>
+                                        <p >Đánh giá người dùng</p>
+                                    </button>
+                                    <div className={onReview ? "review-star" : "review-star-js"} onClick={toggleOnReview}>
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <FontAwesomeIcon
+                                                key={star}
+                                                icon={star <= selectedStar ? faStarSolid : faStarRegular}
+                                                className={star <= selectedStar ? "selected-star" : ""}
+                                                onClick={() => setSelectedStar(star)}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
+                            )
+                        }
                         <div className="sub-bounding">
                             <FontAwesomeIcon icon={faMessage}/>
                             <p className="title">Phản hồi chat:</p>
@@ -173,10 +201,10 @@ const MyComponent = () => {
                             <button>4</button>
                             <button><FontAwesomeIcon icon={faAngleRight}/></button>
                         </div>
-                        <div className="user-page-posts-empty">
-                            <h2>Bạn chưa đăng tin nào!</h2>
-                            <button className="user-page-submit-post">Đăng tin ngay</button>
-                        </div>
+                        {/*<div className="user-page-posts-empty">*/}
+                        {/*    <h2>Bạn chưa đăng tin nào!</h2>*/}
+                        {/*    <button className="user-page-submit-post">Đăng tin ngay</button>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
             </div>

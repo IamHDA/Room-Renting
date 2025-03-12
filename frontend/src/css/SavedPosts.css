@@ -1,0 +1,206 @@
+.saved-posts-body{
+    background-color: #E8E8E8;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.saved-posts-bounding{
+    width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    gap: 20px;
+}
+
+.saved-posts-bounding-left {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 700px;
+    width: 1040px;
+    flex-grow: 1;
+}
+
+.saved-posts-bounding-left .title{
+    margin: 0;
+    font-size: 28px;
+}
+
+.saved-posts-empty{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 220px;
+}
+
+.saved-posts-reminder1, .saved-posts-reminder2{
+    font-size: 22px;
+}
+
+.saved-posts-reminder2{
+    color: #7D7D7D;
+}
+
+.start-explore-button{
+    background-color: #008CFF;
+    border: none;
+    border-radius: 10px;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    height: 60px;
+    width: 300px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+}
+
+.start-explore-button:hover{
+    background-color: #0077d9;
+}
+
+.saved-posts-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.saved-posts-post{
+    display: flex;
+    gap: 10px;
+    border: none;
+    box-shadow: 5px 0px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.saved-posts-post .post-img{
+    width: 300px;
+    height: 250px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.saved-posts-post-information{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 750px;
+    position: relative;
+    padding-right: 10px;
+}
+
+.saved-posts-post-information .title{
+    font-size: 22px;
+    width: 670px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.delete-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    position: absolute;
+    font-size: 25px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.saved-posts-post-information .post-price-area{
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#saved-posts-post-price{
+    font-size: 28px;
+    color: red;
+    font-weight: bold;
+}
+
+#saved-posts-post-area{
+    font-size: 22px;
+    font-weight: bold;
+    margin-right: 76px;
+}
+
+.saved-posts-post-information .post-description{
+    font-size: 18px;
+    width: 600px;
+}
+
+.saved-posts-post-information .chat-button{
+    background-color: #008CFF;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    position: absolute;
+    padding: 10px 20px 10px 20px;
+    border-radius: 10px;
+    border: none;
+    bottom: 10px;
+    right: 10px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+}
+
+.saved-posts-post-information .chat-button:hover{
+    background-color: #0077d9;
+}
+
+.saved-posts-post-information .post-location-time{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 10px;
+    margin-left: -1px;
+}
+
+.saved-posts-post-information .post-location-time-sub{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.saved-posts-post-information .post-location-time-sub img{
+    width: 30px;
+    height: 30px;
+}
+
+.saved-posts-post-information .post-location-time-sub p{
+    font-size: 20px;
+    color: #6B6B6B;
+}
+
+.saved-posts-post-information .saved-posts-bounding-right{
+    width: 270px;
+    height: 170px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.saved-posts-bounding-right h1{
+    margin: 0;
+}
+
+.saved-posts-bounding-right p{
+    font-size: 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: color 0.25s ease;
+}
+
+.saved-posts-bounding-right p:hover{
+    color: #0077d9;
+}
