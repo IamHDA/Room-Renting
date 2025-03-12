@@ -7,6 +7,7 @@ import UserPage from "./pages/UserPage.jsx";
 import SavedPosts from "./pages/SavedPosts.jsx";
 import UserPersonalInformation from "./pages/UserPersonalInformation.jsx";
 import PostManage from "./pages/PostManage.jsx";
+import Chat from "./pages/Chat.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { PopUpProvider } from "./contexts/PopUpContext.jsx";
 
@@ -22,6 +23,7 @@ const MyComponent = () => {
                     <Route path="/savedPosts" element={<SavedPosts />} />
                     <Route path="/personalInformation" element={<UserPersonalInformation/>} />
                     <Route path="/postManage" element={<PostManage />} />
+                    <Route path="/chat" element={<Chat />} />
                 </Routes>
             </PopUpProvider>
         </AuthProvider>

@@ -21,9 +21,9 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                     <p>URPLACE</p>
                 </Link>
                 <div className="function">
-                    <div className="chat-bounding">
+                    <Link to="/chat" className="chat-bounding">
                         <img src="../../public/header-icon/chatIcon.png"/>
-                    </div>
+                    </Link>
                     {!isAuthenticated ? (
                         <>
                             <p className="login" onClick={handleSignInPopUp}>Đăng nhập</p>
