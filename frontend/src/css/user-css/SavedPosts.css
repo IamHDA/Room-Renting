@@ -14,8 +14,7 @@
 .saved-posts-bounding-left {
     background-color: white;
     border-radius: 10px;
-    padding: 30px;
-    padding-top: 20px;
+    padding: 20px 30px 30px 30px;
     display: flex;
     flex-direction: column;
     min-height: 700px;
@@ -67,6 +66,7 @@
     flex-direction: column;
     gap: 10px;
     margin-top: 20px;
+    align-items: center;
 }
 
 .saved-posts-post{
@@ -177,12 +177,12 @@
     height: 30px;
 }
 
-.saved-posts-post-information .post-location-time-sub p{
+.post-location-time-sub p{
     font-size: 20px;
     color: #6B6B6B;
 }
 
-.saved-posts-post-information .saved-posts-bounding-right{
+.saved-posts-bounding-right{
     width: 270px;
     height: 170px;
     background-color: white;

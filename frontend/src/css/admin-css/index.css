@@ -1,0 +1,142 @@
+.account-manage-body, .admin-post-manage-body, .statistic-body{
+    background-color: #f0f0f0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+}
+
+table{
+    border: 1px solid rgb(166, 166, 166);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: white;
+    font-size: 18px;
+    overflow: hidden;
+}
+
+td, th{
+    border: 1px solid rgb(166, 166, 166);
+    padding: 12px;
+}
+
+th{
+    position: relative;
+    background-color: #008CFF;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+th:first-child {
+    border-top-left-radius: 5px;
+}
+
+th:last-child {
+    border-top-right-radius: 5px;
+}
+
+tr .stt, tr .id{
+    width: 70px;
+    text-align: center;
+}
+
+td{
+    text-align: left;
+    padding: 10px;
+}
+
+tr:hover{
+    background-color: #eaeaea;
+}
+
+tr{
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+tr .report-number{
+    width: 180px;
+}
+
+.admin-post-manage-body .curtain, .account-manage-body .curtain{
+    margin-left: -290px;
+}
+
+.pop-up{
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+    z-index: 100;
+}
+
+.content-container{
+    position: relative;
+    display: flex;
+    gap: 20px;
+    background-color: white;
+    height: 700px;
+    width: 1320px;
+    border-radius: 15px;
+    overflow: auto;
+    padding: 30px;
+    display: flex;
+}
+
+.report-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    height: auto;
+    background-color: rgba(205, 205, 205, 0.99);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.report-container h1, h3{
+    margin: 0;
+}
+
+.report-bounding{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 94%;
+    height: auto;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.report-content{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.report-bounding p{
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow-y: auto;
+}
+
+.report-bounding .close{
+    font-size: 20px;
+}
+
+.reporter{
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.reporter-container h3{
+    color: #008CFF;
+}

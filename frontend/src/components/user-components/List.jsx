@@ -3,6 +3,7 @@ import '../../css/user-css/List.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import {Link} from "react-router-dom";
+import Pagination from '../Pagination.jsx';
 
 const MyComponent = () => {
     const [search, setSearch] = useState('');
@@ -169,13 +170,7 @@ const MyComponent = () => {
                         </div>
                     </Link>
                 </div>
-                <div className="list-pagination">
-                    <button>1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>4</button>
-                    <button><FontAwesomeIcon icon={faAngleRight}/></button>
-                </div>
+                <Pagination/>
             </div>
             <div className="list-container-right">
                 <div className="side-criteria">

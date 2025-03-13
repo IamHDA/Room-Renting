@@ -11,6 +11,7 @@ import {
     faPenToSquare, faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
+import Pagination from "../Pagination.jsx";
 
 const MyComponent = () => {
 
@@ -295,6 +296,7 @@ const MyComponent = () => {
                                             <button className="visible-button">Hiển thị</button>
                                         </div>
                                     </div>
+                                    <Pagination/>
                                 </div>
                             ) : (
                                 <div className="invisible-posts-container">
@@ -328,6 +330,7 @@ const MyComponent = () => {
                                             <button className="invisible-button">Đã ẩn</button>
                                         </div>
                                     </div>
+                                    <Pagination/>
                                 </div>
                             )}
                         </div>

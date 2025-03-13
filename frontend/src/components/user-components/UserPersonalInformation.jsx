@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDown, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 
 const MyComponent = () => {
-    const [isSelected, setIsSelected] = React.useState(-1);
+    const [isSelected, setIsSelected] = React.useState(true);
     const { userName, setUserName } = useContext(AuthContext);
     const [tmpUserName, settmpUserName] = useState();
     const [pickAddress, setPickAddress] = useState(false);
@@ -56,11 +56,11 @@ const MyComponent = () => {
                 <h1>Thay đổi thông tin</h1>
                 <div className="personal-information-content">
                     <div className="personal-information-content-left">
-                        <p className={isSelected === 0 ? "is-selected" : ""} onClick={() => toggleSelected(0)}>Thông tin cá nhân</p>
-                        <p className={isSelected === 1 ? "is-selected" : ""} onClick={() => toggleSelected(1)}>Thay đổi mật khẩu</p>
+                        <p className={isSelected === true ? "is-selected" : ""} onClick={() => toggleSelected(true)}>Thông tin cá nhân</p>
+                        <p className={isSelected === false ? "is-selected" : ""} onClick={() => toggleSelected(false)}>Thay đổi mật khẩu</p>
                     </div>
                     <div className="personal-information-content-right">
-                        {isSelected === 0 ? (
+                        {isSelected === true ? (
                             <>
                                 <div className="personal-information-name-contact">
                                     <div className="username">
@@ -106,32 +106,32 @@ const MyComponent = () => {
                                 </div>
                             </>
                         ) : (
-                                <div className="input-container">
-                                    <div className="password-input">
-                                        <input
-                                            type={showPassword !== 0 ? "password" : "text"}
-                                            id="current-password"
-                                            placeholder="Mật khẩu hiện tại"/>
-                                        <FontAwesomeIcon icon={showPassword !== 0 ? faEye : faEyeSlash} style={{cursor: "pointer"}} onClick={() => handleShowPassword(0)}/>
-                                    </div>
-                                    <div className="password-input">
-                                        <input
-                                            type={showPassword !== 1 ? "password" : "text"}
-                                            id="new-password-1"
-                                            placeholder="Mật khẩu mới"/>
-                                        <FontAwesomeIcon icon={showPassword !== 1 ? faEye : faEyeSlash} style={{cursor: "pointer"}} onClick={() => handleShowPassword(1)}/>
-                                    </div>
-                                    <div className="password-input">
-                                        <input
-                                            type={showPassword !== 2 ? "password" : "text"}
-                                            id="new-password-2"
-                                            placeholder="Nhập lại mật khẩu mới"/>
-                                        <FontAwesomeIcon icon={showPassword !== 2 ? faEye : faEyeSlash} style={{cursor: "pointer"}} onClick={() => handleShowPassword(2)}/>
-                                    </div>
-                                    <button className="submit-password-button">
-                                        Xác nhận
-                                    </button>
+                            <div className="input-container">
+                                <div className="password-input">
+                                    <input
+                                        type={showPassword !== 0 ? "password" : "text"}
+                                        id="current-password"
+                                        placeholder="Mật khẩu hiện tại"/>
+                                    <FontAwesomeIcon icon={showPassword !== 0 ? faEye : faEyeSlash} style={{cursor: "pointer"}} onClick={() => handleShowPassword(0)}/>
                                 </div>
+                                <div className="password-input">
+                                    <input
+                                        type={showPassword !== 1 ? "password" : "text"}
+                                        id="new-password-1"
+                                        placeholder="Mật khẩu mới"/>
+                                    <FontAwesomeIcon icon={showPassword !== 1 ? faEye : faEyeSlash} style={{cursor: "pointer"}} onClick={() => handleShowPassword(1)}/>
+                                </div>
+                                <div className="password-input">
+                                    <input
+                                        type={showPassword !== 2 ? "password" : "text"}
+                                        id="new-password-2"
+                                        placeholder="Nhập lại mật khẩu mới"/>
+                                    <FontAwesomeIcon icon={showPassword !== 2 ? faEye : faEyeSlash} style={{cursor: "pointer"}} onClick={() => handleShowPassword(2)}/>
+                                </div>
+                                <button className="submit-password-button">
+                                    Xác nhận
+                                </button>
+                            </div>
                             )
                         }
                     </div>

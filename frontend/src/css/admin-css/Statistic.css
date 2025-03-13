@@ -1,5 +1,40 @@
 .statistic-body{
-    background-color: #f0f0f0;
-    flex-grow: 1;
+    justify-content: space-between;
 }
 
+.statistic-body .row{
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.statistic-body h1, .statistic-body h2{
+    margin: 0;
+}
+
+.statistic-body .row .content{
+    display: flex;
+    justify-content: space-between;
+}
+
+.content .detail{
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.content .detail .number{
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.content .detail p{
+    margin-top: 10px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.detail h2{
+    color: #656565;
+}

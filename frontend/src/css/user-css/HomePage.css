@@ -149,7 +149,7 @@
     margin-bottom: 10px;
 }
 
-.post-price{
+.post-price-and-area .post-price{
     font-size: 23px;
     display: flex;
     gap: 10px;

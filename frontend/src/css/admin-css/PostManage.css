@@ -1,0 +1,41 @@
+tr .user-id{
+    width: 130px;
+}
+
+tr .post-price{
+    width: 130px;
+}
+
+tr .update-time{
+    width: 220px;
+}
+
+tr .user-id{
+    text-align: center;
+}
+
+td.post-title{
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.delete{
+    text-align: center;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.sort-icon{
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.content-container{
+    margin-left: -25px;
+}
+

@@ -16,22 +16,18 @@ const MyComponent = () => {
                     <FontAwesomeIcon icon={faSquarePollVertical} />
                     <p>Thống kê</p>
                 </Link>
-                <div id="function-2" className="side-bar-function">
+                <Link to="/admin/postManage" id="function-2" className="side-bar-function">
                     <FontAwesomeIcon icon={faReceipt} />
                     <p>Quản lý bài đăng</p>
-                </div>
-                <div id="function-3" className="side-bar-function">
+                </Link>
+                <Link to="/admin/accountManage" id="function-3" className="side-bar-function">
                     <FontAwesomeIcon icon={faUser} />
-                    <p>Quản lý người dùng</p>
-                </div>
-                <div id="function-4" className="side-bar-function">
-                    <FontAwesomeIcon icon={faFlag} />
-                    <p>Quản lý báo cáo</p>
-                </div>
-                <div id="function-5" className="side-bar-function">
+                    <p>Quản lý tài khoản</p>
+                </Link>
+                <Link to="/" id="function-4" className="side-bar-function">
                     <FontAwesomeIcon icon={faRightFromBracket}  flip="horizontal"/>
                     <p>Đăng xuất</p>
-                </div>
+                </Link>
                 <div></div>
             </div>
         </div>

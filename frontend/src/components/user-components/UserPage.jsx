@@ -1,10 +1,11 @@
 import React, {useContext} from 'react';
 import '../../css/user-css/UserPage.css';
-import {faAngleRight, faCamera, faStar as faStarSolid} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faStar as faStarSolid} from "@fortawesome/free-solid-svg-icons";
 import {faStar as faStarRegular, faMessage, faCalendar, faCompass} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {AuthContext} from "../../contexts/AuthContext.jsx";
 import {Link} from "react-router-dom";
+import Pagination from "../Pagination.jsx";
 
 const MyComponent = () => {
     const [isLeft, setIsLeft] = React.useState(false);
@@ -194,13 +195,7 @@ const MyComponent = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="user-page-pagination">
-                            <button>1</button>
-                            <button>2</button>
-                            <button>3</button>
-                            <button>4</button>
-                            <button><FontAwesomeIcon icon={faAngleRight}/></button>
-                        </div>
+                        <Pagination/>
                         {/*<div className="user-page-posts-empty">*/}
                         {/*    <h2>Bạn chưa đăng tin nào!</h2>*/}
                         {/*    <button className="user-page-submit-post">Đăng tin ngay</button>*/}
