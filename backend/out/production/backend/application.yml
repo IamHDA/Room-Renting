@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: backend
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/RentingRoom
+    username: iamhda
+    password: Duyanh090@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: roomRenting
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
