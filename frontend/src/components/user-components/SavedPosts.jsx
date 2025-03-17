@@ -59,7 +59,7 @@ const MyComponent = () => {
                 </div>
                 {!isEmpty && (
                     <div className="saved-posts-bounding-right">
-                        <h1>Sắp xếp tin đăng</h1>
+                        <h1>Sắp xếp</h1>
                         <p>Ngày lưu tăng dần</p>
                         <p>Ngày lưu giảm dần</p>
                         <p>Giá tăng dần</p>

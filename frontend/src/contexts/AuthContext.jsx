@@ -7,7 +7,7 @@ export const AuthProvider = ({children}) => {
     const [userName, setUserName] = useState('');
 
     useEffect(() => {
-        const token = "ads";
+        const token = "";
         setIsAuthenticated(!!token);
     }, []);
 
