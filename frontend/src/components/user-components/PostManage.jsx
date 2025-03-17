@@ -35,8 +35,8 @@ const MyComponent = () => {
             { (pickAddress || editPost) && <div className="curtain"></div>}
             <div className="post-manage-container">
                 <div className="switcher">
-                    <button className={!isSelected ? "is-selected" : ""} onClick={() => setIsSelected(false)}>Đăng bài</button>
-                    <button className={isSelected ? "is-selected" : ""} onClick={() => setIsSelected(true)}>Quản lý bài</button>
+                    <button className={!isSelected ? "is-selected" : ""} onClick={() => setIsSelected(false)}>Đăng tin</button>
+                    <button className={isSelected ? "is-selected" : ""} onClick={() => setIsSelected(true)}>Quản lý tin</button>
                 </div>
                 {!isSelected ? (
                     <>

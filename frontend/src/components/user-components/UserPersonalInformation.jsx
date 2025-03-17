@@ -13,8 +13,10 @@ const MyComponent = () => {
     const [showPassword, setShowPassword] = useState(-1);
 
     useEffect(() => {
-        settmpUserName(userName)
-    }, [isSelected]);
+        settmpUserName(userName);
+        setIsSelected(true);
+        console.log(isSelected);
+    }, []);
 
     const toggleSelected = (num) => {
         setIsSelected(num);
@@ -60,7 +62,7 @@ const MyComponent = () => {
                         <p className={isSelected === false ? "is-selected" : ""} onClick={() => toggleSelected(false)}>Thay đổi mật khẩu</p>
                     </div>
                     <div className="personal-information-content-right">
-                        {isSelected === true ? (
+                        {isSelected === true && (
                             <>
                                 <div className="personal-information-name-contact">
                                     <div className="username">
@@ -105,7 +107,8 @@ const MyComponent = () => {
                                     <button className="submit-button" onClick={handleSubmitAddress}>Xác nhận</button>
                                 </div>
                             </>
-                        ) : (
+                        )}
+                        {isSelected === false && (
                             <div className="input-container">
                                 <div className="password-input">
                                     <input

@@ -27,6 +27,7 @@
     background-color: white;
     border-radius: 8px;
     padding: 10px 15px 10px 15px;
+    cursor: pointer;
 }
 
 .city-selector{
@@ -98,6 +99,7 @@
     border: solid 2px;
     border-color: white;
     border-radius: 7px;
+    cursor: pointer;
 }
 
 .category p, .price p, .area p{

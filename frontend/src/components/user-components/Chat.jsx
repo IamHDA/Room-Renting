@@ -29,7 +29,9 @@ const MyComponent = () => {
                     </div>
                     <img src="../../../public/chat-icon/line.png" className="line"/>
                     <div className="chat-room-container">
-                        <div className={"chat-room-bounding"}>
+                        <div className="chat-room-bounding" onClick={(e) => {
+                            e.currentTarget.classList.add("isSelected");
+                        }}>
                             <div className="img-container">
                                 <img src="../../../public/header-icon/account.png" className="opponent-img"/>
                                 <div className="status-dot online"></div>
@@ -40,7 +42,9 @@ const MyComponent = () => {
                             </div>
                             <img src="../../../public/list-icon/home.png" className="chat-post-img"/>
                         </div>
-                        <div className="chat-room-bounding">
+                        <div className="chat-room-bounding" onClick={(e) => {
+                            e.currentTarget.classList.add("isSelected");
+                        }}>
                             <div className="img-container">
                                 <img src="../../../public/header-icon/account.png" className="opponent-img"/>
                                 <div className="status-dot online"></div>
@@ -51,7 +55,9 @@ const MyComponent = () => {
                             </div>
                             <img src="../../../public/list-icon/home.png" className="chat-post-img"/>
                         </div>
-                        <div className="chat-room-bounding">
+                        <div className="chat-room-bounding" onClick={(e) => {
+                            e.currentTarget.classList.add("isSelected");
+                        }}>
                             <div className="img-container">
                                 <img src="../../../public/header-icon/account.png" className="opponent-img"/>
                                 <div className="status-dot online"></div>
@@ -62,7 +68,9 @@ const MyComponent = () => {
                             </div>
                             <img src="../../../public/list-icon/home.png" className="chat-post-img"/>
                         </div>
-                        <div className="chat-room-bounding">
+                        <div className="chat-room-bounding" onClick={(e) => {
+                            e.currentTarget.classList.add("isSelected");
+                        }}>
                             <div className="img-container">
                                 <img src="../../../public/header-icon/account.png" className="opponent-img"/>
                                 <div className="status-dot online"></div>
@@ -73,7 +81,9 @@ const MyComponent = () => {
                             </div>
                             <img src="../../../public/list-icon/home.png" className="chat-post-img"/>
                         </div>
-                        <div className="chat-room-bounding">
+                        <div className="chat-room-bounding" onClick={(e) => {
+                            e.currentTarget.classList.add("isSelected");
+                        }}>
                             <div className="img-container">
                                 <img src="../../../public/header-icon/account.png" className="opponent-img"/>
                                 <div className="status-dot online"></div>
@@ -189,7 +199,13 @@ const MyComponent = () => {
                             Đây là mesage
                         </div>
                         <div className="sender-message">
-                            Đây là mesage
+                            <div className="image-grid image-count-5">
+                                <img src="../../../public/chat-icon/premium_photo-1673306778968-5aab577a7365.avif" className="chat-image"/>
+                                <img src="../../../public/chat-icon/premium_photo-1673306778968-5aab577a7365.avif" className="chat-image"/>
+                                <img src="../../../public/chat-icon/premium_photo-1673306778968-5aab577a7365.avif" className="chat-image"/>
+                                <img src="../../../public/chat-icon/premium_photo-1673306778968-5aab577a7365.avif" className="chat-image"/>
+                                <img src="../../../public/chat-icon/premium_photo-1673306778968-5aab577a7365.avif" className="chat-image"/>
+                            </div>
                         </div>
                         <div ref={messageEndRef} />
                     </div>

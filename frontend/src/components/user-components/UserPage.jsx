@@ -8,7 +8,7 @@ import {Link} from "react-router-dom";
 import Pagination from "../Pagination.jsx";
 
 const MyComponent = () => {
-    const [isLeft, setIsLeft] = React.useState(false);
+    const [isLeft, setIsLeft] = React.useState(true);
     const [isRight, setIsRight] = React.useState(false);
     const [onReview, setOnReview] = React.useState(false);
     const {isAuthenticated} = useContext(AuthContext);
@@ -22,7 +22,6 @@ const MyComponent = () => {
     const toggleRightLine = () => {
         setIsRight(true)
         setIsLeft(false);
-        console.log(isRight);
     }
 
     const toggleOnReview = () => {
@@ -115,86 +114,98 @@ const MyComponent = () => {
                         </div>
                     </div>
                     <div className="user-page-posts-container">
-                        <div className="user-page-post">
-                            <img src="../../../public/user-page-icon/home.png" className="post-img"/>
-                            <div className="user-page-post-information">
-                                <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                <div className="post-price-area">
-                                    <p id="user-page-post-price">8 triệu/tháng</p>
-                                    <p id="user-page-post-area">23m&sup2;</p>
-                                </div>
-                                <div className="post-location-time">
-                                    <div className="post-location-time-sub">
-                                        <img src="../../../public/user-page-icon/location.png"/>
-                                        <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                    </div>
-                                    <div className="post-location-time-sub">
-                                        <img src="../../../public/user-page-icon/clock.png"/>
-                                        <p id="user-page-post-time">13:05, 20/02/2025</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="user-page-post">
-                            <img src="../../../public/user-page-icon/home.png" className="post-img"/>
-                            <div className="user-page-post-information">
-                                <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                <div className="post-price-area">
-                                    <p id="user-page-post-price">8 triệu/tháng</p>
-                                    <p id="user-page-post-area">23m&sup2;</p>
-                                </div>
-                                <div className="post-location-time">
-                                    <div className="post-location-time-sub">
-                                        <img src="../../../public/user-page-icon/location.png"/>
-                                        <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                    </div>
-                                    <div className="post-location-time-sub">
-                                        <img src="../../../public/user-page-icon/clock.png"/>
-                                        <p id="user-page-post-time">13:05, 20/02/2025</p>
+                        {isLeft && (
+                            <>
+                                <div className="user-page-post">
+                                    <img src="../../../public/user-page-icon/home.png" className="post-img"/>
+                                    <div className="user-page-post-information">
+                                        <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                        <div className="post-price-area">
+                                            <p id="user-page-post-price">8 triệu/tháng</p>
+                                            <p id="user-page-post-area">23m&sup2;</p>
+                                        </div>
+                                        <div className="post-location-time">
+                                            <div className="post-location-time-sub">
+                                                <img src="../../../public/user-page-icon/location.png"/>
+                                                <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
+                                            </div>
+                                            <div className="post-location-time-sub">
+                                                <img src="../../../public/user-page-icon/clock.png"/>
+                                                <p id="user-page-post-time">13:05, 20/02/2025</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div className="user-page-post">
-                            <img src="../../../public/user-page-icon/home.png" className="post-img"/>
-                            <div className="user-page-post-information">
-                                <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                <div className="post-price-area">
-                                    <p id="user-page-post-price">8 triệu/tháng</p>
-                                    <p id="user-page-post-area">23m&sup2;</p>
-                                </div>
-                                <div className="post-location-time">
-                                    <div className="post-location-time-sub">
-                                        <img src="../../../public/user-page-icon/location.png"/>
-                                        <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                    </div>
-                                    <div className="post-location-time-sub">
-                                        <img src="../../../public/user-page-icon/clock.png"/>
-                                        <p id="user-page-post-time">13:05, 20/02/2025</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="user-page-post">
-                            <img src="../../../public/user-page-icon/home.png" className="post-img"/>
-                            <div className="user-page-post-information">
-                                <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                <div className="post-price-area">
-                                    <p id="user-page-post-price">8 triệu/tháng</p>
-                                    <p id="user-page-post-area">23m&sup2;</p>
-                                </div>
-                                <div className="post-location-time">
-                                    <div className="post-location-time-sub">
-                                        <img src="../../../public/user-page-icon/location.png"/>
-                                        <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                    </div>
-                                    <div className="post-location-time-sub">
-                                        <img src="../../../public/user-page-icon/clock.png"/>
-                                        <p id="user-page-post-time">13:05, 20/02/2025</p>
+                                <div className="user-page-post">
+                                    <img src="../../../public/user-page-icon/home.png" className="post-img"/>
+                                    <div className="user-page-post-information">
+                                        <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                        <div className="post-price-area">
+                                            <p id="user-page-post-price">8 triệu/tháng</p>
+                                            <p id="user-page-post-area">23m&sup2;</p>
+                                        </div>
+                                        <div className="post-location-time">
+                                            <div className="post-location-time-sub">
+                                                <img src="../../../public/user-page-icon/location.png"/>
+                                                <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
+                                            </div>
+                                            <div className="post-location-time-sub">
+                                                <img src="../../../public/user-page-icon/clock.png"/>
+                                                <p id="user-page-post-time">13:05, 20/02/2025</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                                <div className="user-page-post">
+                                    <img src="../../../public/user-page-icon/home.png" className="post-img"/>
+                                    <div className="user-page-post-information">
+                                        <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                        <div className="post-price-area">
+                                            <p id="user-page-post-price">8 triệu/tháng</p>
+                                            <p id="user-page-post-area">23m&sup2;</p>
+                                        </div>
+                                        <div className="post-location-time">
+                                            <div className="post-location-time-sub">
+                                                <img src="../../../public/user-page-icon/location.png"/>
+                                                <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
+                                            </div>
+                                            <div className="post-location-time-sub">
+                                                <img src="../../../public/user-page-icon/clock.png"/>
+                                                <p id="user-page-post-time">13:05, 20/02/2025</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="user-page-post">
+                                    <img src="../../../public/user-page-icon/home.png" className="post-img"/>
+                                    <div className="user-page-post-information">
+                                        <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                        <div className="post-price-area">
+                                            <p id="user-page-post-price">8 triệu/tháng</p>
+                                            <p id="user-page-post-area">23m&sup2;</p>
+                                        </div>
+                                        <div className="post-location-time">
+                                            <div className="post-location-time-sub">
+                                                <img src="../../../public/user-page-icon/location.png"/>
+                                                <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
+                                            </div>
+                                            <div className="post-location-time-sub">
+                                                <img src="../../../public/user-page-icon/clock.png"/>
+                                                <p id="user-page-post-time">13:05, 20/02/2025</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                        {isRight && (
+                            <>
+                                <div className="user-page-post-disabled">
+                                    <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</h2>
+                                    <p>20:13, 13/03/2025</p>
+                                </div>
+                            </>
+                        )}
                         <Pagination/>
                         {/*<div className="user-page-posts-empty">*/}
                         {/*    <h2>Bạn chưa đăng tin nào!</h2>*/}
