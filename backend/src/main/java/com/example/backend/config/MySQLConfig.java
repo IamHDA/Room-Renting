@@ -29,9 +29,6 @@ import java.util.Objects;
 )
 public class MySQLConfig {
 
-    @Autowired
-    private Environment environment;
-
     @Primary
     @Bean(name = "mysqlDataSource")
     @ConfigurationProperties(prefix = "spring.datasource")
@@ -49,13 +46,11 @@ public class MySQLConfig {
     public LocalContainerEntityManagerFactoryBean mysqlEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
             @Qualifier("mysqlDataSource") DataSource mysqlDataSource) {
-        LocalContainerEntityManagerFactoryBean emf = builder
+        return builder
                 .dataSource(mysqlDataSource)
                 .packages("com.example.backend.entity.mySQL")
                 .persistenceUnit("mysqlPU")
                 .build();
-        System.out.println("MySQL EntityManagerFactory initialized");
-        return emf;
     }
 
     @Primary
