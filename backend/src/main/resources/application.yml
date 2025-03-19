@@ -25,4 +25,6 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/roomRenting
+      uri: mongodb://localhost:27017/room_renting
+      database: room_renting
+      auto-index-creation: true
