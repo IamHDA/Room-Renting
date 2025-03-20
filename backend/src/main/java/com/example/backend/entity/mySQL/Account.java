@@ -1,8 +1,11 @@
 package com.example.backend.entity.mySQL;
 
 import com.example.backend.Enum.Provider;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -20,4 +23,8 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Token> tokens;
 }
