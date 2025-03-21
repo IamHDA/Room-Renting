@@ -29,5 +29,6 @@ public class CustomLogoutHandler implements LogoutHandler {
             storedToken.setLoggedOut(true);
             tokenRepo.save(storedToken);
         }
+        System.out.println("Đây là logout");
     }
 }

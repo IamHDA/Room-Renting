@@ -16,6 +16,7 @@ import com.example.backend.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +24,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.file.Files;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,9 +54,19 @@ public class AuthenticationServiceImplement implements AuthenticationService {
         User newUser = userRepo.findByPhoneNumberOrEmail(request.getIdentifier(), request.getIdentifier()).orElseGet(() -> {
             User user = new User();
             user.setFullName(request.getFullName());
+            user.setPhoneNumber(request.getIdentifier());
             user.setCreateAt(LocalDateTime.now());
             user.setRole(Role.USER);
             user.setStatus(UserStatus.ONLINE);
+
+            try {
+                ClassPathResource avatarResource = new ClassPathResource("static/default-avatar.jpeg");
+                user.setAvatar(Files.readAllBytes(avatarResource.getFile().toPath()));
+                ClassPathResource bgResource = new ClassPathResource("static/default-background.jpeg");
+                user.setBackgroundImage(Files.readAllBytes(bgResource.getFile().toPath()));
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
             userRepo.save(user);
             return user;
         });
@@ -60,9 +74,6 @@ public class AuthenticationServiceImplement implements AuthenticationService {
         account.setIdentifier(request.getIdentifier());
         account.setPassword(new BCryptPasswordEncoder(12).encode(request.getPassword()));
         account.setUser(newUser);
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-        boolean isMatch = encoder.matches(request.getPassword(), account.getPassword());
-        System.out.println("Password matches: " + isMatch);
         accountRepo.save(account);
         String accessToken = jwtTokenProvider.generateAccessToken(account);
         String refreshToken = jwtTokenProvider.generateRefreshToken(account);

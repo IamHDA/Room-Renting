@@ -3,7 +3,6 @@ package com.example.backend.controller;
 import com.example.backend.dto.AuthenticationResponse;
 import com.example.backend.dto.payload.LoginRequest;
 import com.example.backend.dto.payload.RegisterRequest;
-import com.example.backend.entity.mySQL.User;
 import com.example.backend.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

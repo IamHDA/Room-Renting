@@ -19,6 +19,12 @@ public class User {
     private String email;
     @Column(length = 11)
     private String phoneNumber;
+    @Lob
+    @Column(name = "avatar", columnDefinition = "LONGBLOB")
+    private byte[] avatar;
+    @Lob
+    @Column(name = "background_image", columnDefinition = "LONGBLOB")
+    private byte[] backgroundImage;
     private LocalDateTime createAt;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
