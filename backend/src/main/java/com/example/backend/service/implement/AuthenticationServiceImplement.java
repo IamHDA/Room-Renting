@@ -58,7 +58,6 @@ public class AuthenticationServiceImplement implements AuthenticationService {
             user.setCreateAt(LocalDateTime.now());
             user.setRole(Role.USER);
             user.setStatus(UserStatus.ONLINE);
-
             try {
                 ClassPathResource avatarResource = new ClassPathResource("static/default-avatar.jpeg");
                 user.setAvatar(Files.readAllBytes(avatarResource.getFile().toPath()));

@@ -1,15 +1,13 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.AddressDTO;
 import com.example.backend.entity.mySQL.City;
 import com.example.backend.entity.mySQL.District;
 import com.example.backend.entity.mySQL.Ward;
 import com.example.backend.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 

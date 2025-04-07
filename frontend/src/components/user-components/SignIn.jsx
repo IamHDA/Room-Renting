@@ -1,42 +1,47 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import '../../css/user-css/SignIn.css';
+import * as authService from '../../apiServices/authentication.js';
+import * as userService from '../../apiServices/user.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {AuthContext} from '../../contexts/AuthContext.jsx';
 
 const MyComponent = ({handleSignInPopUp}) => {
 
-    const [legitAccount, setLegitAccount] = useState(true);
-    const [legitPassword, setLegitPassword] = useState(true);
+    const [legitAccount, setLegitAccount] = useState(1);
+    const [legitPassword, setLegitPassword] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
+    const {setUser, setIsAuthenticated} = useContext(AuthContext);
+4
+    const handleLogin = async () =>{
+        const identifier = document.querySelector('.account-input').value;
+        const password = document.querySelector('.password-input').value;
+        if(identifier === "") setLegitAccount(0);
+        if(password === "") setLegitPassword(0);
+        else if (legitAccount === 1 && legitPassword === 1){
+            try{
+                const response = await authService.login(identifier, password);
+                if(response.message === "Account not found!"){
+                    setLegitAccount(-1)
+                }else if(response.message === "Password is incorrect!"){
+                    setLegitPassword(-1);
+                }else{
+                    localStorage.setItem('accessToken', response.accessToken);
+                    localStorage.setItem('refreshToken', response.refreshToken);
+                    const user = await userService.currentUser();
+                    localStorage.setItem('user', JSON.stringify(user));
+                    setIsAuthenticated(true);
+                    setUser(user);
+                    handleSignInPopUp();
+                }
+            }catch(e){
+                console.log(e);
+            }
+        }
+    }
 
     const handleShowPassword = () => {
         setShowPassword(!showPassword);
-    }
-
-    const checkAccount = () =>{
-        return new Promise((resolve) => {
-            const account = document.querySelector('.account-input').value;
-            if(account === ""){
-                setLegitAccount(false);
-                resolve(false);
-            }else{
-                setLegitAccount(true);
-                resolve(true);
-            }
-        })
-    }
-
-    const checkPass = () => {
-        return new Promise((resolve) => {
-            const password = document.querySelector('.password-input').value;
-            if(password === ""){
-                setLegitPassword(false);
-                resolve(false);
-            }else{
-                setLegitPassword(true);
-                resolve(true);
-            }
-        })
     }
 
     return (
@@ -57,13 +62,14 @@ const MyComponent = ({handleSignInPopUp}) => {
                                  className="eye-icon"
                                  onClick={handleShowPassword}/>
                         </div>
-                        {!legitAccount && <p className="invalidAccount">-Tài khoản không hợp lệ</p>}
-                        {!legitPassword && <p className="invalidPassword">-Mật khẩu không hợp lệ</p>}
+                        <div className="login-error">
+                            {legitAccount === 0 && <p className="invalidAccount">-Tài khoản không hợp lệ</p>}
+                            {legitAccount === -1 && <p className="invalidAccount">-Tài khoản không tồn tại</p>}
+                            {legitPassword === 0 && <p className="invalidPassword">-Mật khẩu không hợp lệ</p>}
+                            {legitPassword === -1 && <p className="invalidPassword">-Sai mật khẩu</p>}
+                        </div>
                         <p className="forget-pass-text">Quên mật khẩu?</p>
-                        <button className="signIn-button" onClick= {async () => {
-                            await checkAccount();
-                            await checkPass();
-                        }}>Xác nhận</button>
+                        <button className="signIn-button" onClick= {handleLogin}>Xác nhận</button>
                         <p className="third-party-signIn">- Hoặc đăng nhập bằng -</p>
                         <div className="two-signIn-method">
                             <a className="google-signIn-bounding">

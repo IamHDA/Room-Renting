@@ -17,16 +17,16 @@ const MyComponent = () => {
                 <h1>Người dùng</h1>
                 <div className="content">
                     <div className="detail">
-                        <h2>Tổng số tài khoản</h2>
-                        <p><span className="number">300</span> tài khoản</p>
+                        <h2>Tổng số người dùng</h2>
+                        <p><span className="number">300</span> người dùng</p>
                     </div>
                     <div className="detail">
                         <h2>Tài khoản mới trong tháng</h2>
-                        <p><span className="number">50</span> tài khoản</p>
+                        <p><span className="number">50</span> người dùng</p>
                     </div>
                     <div className="detail">
                         <h2>Tài khoản mới trong ngày</h2>
-                        <p><span className="number">10</span> tài khoản</p>
+                        <p><span className="number">10</span> người dùng</p>
                     </div>
                 </div>
             </div>

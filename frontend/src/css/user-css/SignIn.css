@@ -158,11 +158,9 @@
     font-size: 17px;
 }
 
-.invalidAccount{
-    margin-left: -190px;
-}
-
-.invalidPassword{
-    margin-top: -5px;
-    margin-left: -193px;
+.login-error{
+    display: flex;
+    flex-direction: column;
+    width: 378px;
+    align-items: start;
 }

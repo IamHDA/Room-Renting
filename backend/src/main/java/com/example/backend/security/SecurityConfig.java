@@ -52,7 +52,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
                                 "/",
-                                "/authenticate/**"
+                                "/authenticate/**",
+                                "/test/**",
+                                "/PostMedia/**"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

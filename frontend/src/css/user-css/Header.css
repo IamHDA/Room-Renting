@@ -84,7 +84,7 @@
     background-color: white;
     flex-direction: column;
     position: absolute;
-    bottom: -120px;
+    bottom: -150px;
     left: -1px;
     width: 240px;
     height: auto;
@@ -101,7 +101,7 @@
     display: flex;
 }
 
-.header-user-profile, .header-saved-posts, .header-posts-manage{
+.header-user-profile, .header-saved-posts, .header-posts-manage, .header-log-out{
     display: flex;
     width: 100%;
     align-items: center;
@@ -111,7 +111,7 @@
     transition: color 0.2s ease;
 }
 
-.header-user-profile:hover, .header-saved-posts:hover, .header-posts-manage:hover{
+.header-user-profile:hover, .header-saved-posts:hover, .header-posts-manage:hover, .header-log-out:hover{
     color: #008CFF;
 }
 
@@ -120,7 +120,7 @@
     height: 25px;
 }
 
-.header-user-profile p, .header-saved-posts p, .header-posts-manage p{
+.header-user-profile p, .header-saved-posts p, .header-posts-manage p, .header-log-out p{
     font-size: 20px;
     font-weight: bold;
 }

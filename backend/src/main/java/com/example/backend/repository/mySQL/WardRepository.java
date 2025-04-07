@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface WardRepository extends JpaRepository<Ward, Integer> {
     List<Ward> findByDistrict_Id(int id);
+    Ward findById(int id);
 }

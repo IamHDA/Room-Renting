@@ -20,13 +20,13 @@ public class UserServiceImplement implements UserService {
     private ModelMapper modelMapper;
 
     @Override
-    public UserHeader getCurrentUser() {
+    public User getCurrentUser() {
         String currentIdentifier = "";
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(!(authentication instanceof AnonymousAuthenticationToken)){
             currentIdentifier = authentication.getName();
         }
         User currentUser = userRepo.findByPhoneNumberOrEmail(currentIdentifier, currentIdentifier).orElseThrow();
-        return modelMapper.map(currentUser, UserHeader.class);
+        return currentUser;
     }
 }

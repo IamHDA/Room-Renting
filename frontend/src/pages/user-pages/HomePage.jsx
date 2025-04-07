@@ -5,7 +5,6 @@ import PopUpContext from "../../contexts/PopUpContext.jsx";
 const MyComponent = () => {
 
     const {signIn, register, handleSignInPopUp, handleRegisterPopUp} = useContext(PopUpContext);
-
     return (
         <div>
             <Header handleSignInPopUp={handleSignInPopUp} handleRegisterPopUp={handleRegisterPopUp}/>

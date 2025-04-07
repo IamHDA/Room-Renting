@@ -39,7 +39,7 @@ const MyComponent = () => {
                 </div>
             </div>
             <div className="posts-container">
-                <h1>Một số phòng trọ nổi bật</h1>
+                <h1>Tin đăng mới nhất</h1>
                 <div className="post-grid">
                     <Link to="/detail" className="post-container">
                         <img src="../../../public/homePage-icon/home.png" className="post-image"/>

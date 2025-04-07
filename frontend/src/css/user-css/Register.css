@@ -71,7 +71,7 @@
     width: 30px;
 }
 
-.phone-bounding input{
+#register-identifier-input{
     outline: none;
     border: none;
     font-size: 20px;
@@ -109,17 +109,23 @@
     margin-bottom: 20px;
 }
 
-.register-form-password{
+.register-form-name-password{
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.js-register-form-password{
-    display: none;
+.register-form-name-password p{
+    color: red;
+    align-self: start;
 }
 
-.register-password-input, .register-password-reInput{
+.register-name{
+    display: flex;
+    flex-direction: column;
+}
+
+#register-password-input, #register-password-reInput, #register-name-input{
     outline: none;
     border: 2px solid #808080;
     font-size: 25px;

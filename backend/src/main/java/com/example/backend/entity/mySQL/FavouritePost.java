@@ -1,5 +1,6 @@
 package com.example.backend.entity.mySQL;
 
+import com.example.backend.entity.id.FavouritePostId;
 import jakarta.persistence.*;
 import lombok.Data;
 

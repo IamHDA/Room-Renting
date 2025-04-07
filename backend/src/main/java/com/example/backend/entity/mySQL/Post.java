@@ -3,27 +3,33 @@ package com.example.backend.entity.mySQL;
 import com.example.backend.Enum.PostStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.modelmapper.internal.bytebuddy.build.HashCodeAndEqualsPlugin;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
 @Table(name = "post")
 public class Post {
+    public Post() {}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
-    private double price;
-    @Column(nullable = false)
     private String description;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PostStatus status;
+    private PostStatus status = PostStatus.ENABLED;
     @Column(nullable = false)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -43,4 +49,8 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<FavouritePost> favouritePosts;
+
+    @ManyToOne
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 }

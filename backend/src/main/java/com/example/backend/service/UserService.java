@@ -1,7 +1,7 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.UserHeader;
+import com.example.backend.entity.mySQL.User;
 
 public interface UserService {
-    public UserHeader getCurrentUser();
+    public User getCurrentUser();
 }

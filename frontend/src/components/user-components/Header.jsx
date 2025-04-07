@@ -1,16 +1,30 @@
 import React, {useContext, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faAngleDown, faBookmark, faPenToSquare, faUser} from '@fortawesome/free-solid-svg-icons';
+import {faAngleDown, faBookmark, faPenToSquare, faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import '../../css/user-css/Header.css';
 import { AuthContext } from "../../contexts/AuthContext.jsx";
+import * as authService from '../../apiServices/authentication.js';
 
 const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
-    const { isAuthenticated, userName } = useContext(AuthContext);
+    const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleProfileHover = async () => {
         setIsOpen(prev => !prev);
+    }
+
+    const handleLogout = async () => {
+        try{
+            const response = await authService.logout();
+            setIsAuthenticated(false);
+            localStorage.clear();
+            setUser(null);
+            setIsOpen(false);
+            return response;
+        }catch(e){
+            console.log(e);
+        }
     }
 
     return (
@@ -35,8 +49,8 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                  onMouseEnter={() => handleProfileHover()}
                                  onMouseLeave={() => handleProfileHover()}
                             >
-                                <img src="../../../public/header-icon/account.png" className="header-user-logo"/>
-                                <p className="header-user-name">{userName}</p>
+                                <img src={`data:image/jpeg;base64,${user.avatar}`} className="header-user-logo"/>
+                                <p className="header-user-name">{user.fullName}</p>
                                 <FontAwesomeIcon icon={faAngleDown} style={{color: "#ffffff",}} className="header-user-angle-down"/>
                                 <div className={`dropdown-container ${isOpen ? "js-dropdown-container" : ""}`}>
                                     <Link to="/account" className="header-user-profile">
@@ -51,6 +65,10 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                         <FontAwesomeIcon icon={faPenToSquare} className="icon"/>
                                         <p>Quản lý bài đăng</p>
                                     </Link>
+                                    <div className="header-log-out" onClick={handleLogout}>
+                                        <FontAwesomeIcon icon={faRightFromBracket} className="icon" flip="horizontal"/>
+                                        <p>Đăng xuất</p>
+                                    </div>
                                 </div>
                             </div>
                         </>

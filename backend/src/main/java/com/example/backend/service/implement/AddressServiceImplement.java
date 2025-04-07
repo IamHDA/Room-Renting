@@ -1,12 +1,16 @@
 package com.example.backend.service.implement;
 
+import com.example.backend.dto.AddressDTO;
+import com.example.backend.entity.mySQL.Address;
 import com.example.backend.entity.mySQL.City;
 import com.example.backend.entity.mySQL.District;
 import com.example.backend.entity.mySQL.Ward;
+import com.example.backend.repository.mySQL.AddressRepository;
 import com.example.backend.repository.mySQL.CityRepository;
 import com.example.backend.repository.mySQL.DistrictRepository;
 import com.example.backend.repository.mySQL.WardRepository;
 import com.example.backend.service.AddressService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +25,8 @@ public class AddressServiceImplement implements AddressService {
     private DistrictRepository districtRepo;
     @Autowired
     private CityRepository cityRepo;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public List<City> getAllCities() {

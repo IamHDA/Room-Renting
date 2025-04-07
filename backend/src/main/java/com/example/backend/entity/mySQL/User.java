@@ -17,7 +17,7 @@ public class User {
     private long id;
     private String fullName;
     private String email;
-    @Column(length = 11)
+    @Column(length = 10)
     private String phoneNumber;
     @Lob
     @Column(name = "avatar", columnDefinition = "LONGBLOB")
@@ -60,4 +60,8 @@ public class User {
     @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<ChatRoom> receivedChatRooms;
+
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Report> reports;
 }

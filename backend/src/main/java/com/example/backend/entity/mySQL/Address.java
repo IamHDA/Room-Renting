@@ -15,10 +15,6 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String detail;
-    @Column(precision = 9, scale = 6)
-    private BigDecimal latitude;
-    @Column(precision = 9, scale = 6)
-    private BigDecimal longitude;
 
     @ManyToOne
     @JoinColumn(name = "ward_id",  nullable = false)
@@ -26,7 +22,7 @@ public class Address {
 
     @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<PostDetail> postDetails;
+    private List<Post> posts;
 }
 
 
