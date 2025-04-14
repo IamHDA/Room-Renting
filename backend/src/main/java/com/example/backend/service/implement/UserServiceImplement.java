@@ -1,5 +1,6 @@
 package com.example.backend.service.implement;
 
+import com.example.backend.Enum.UserStatus;
 import com.example.backend.dto.UserHeader;
 import com.example.backend.entity.mySQL.User;
 import com.example.backend.repository.mySQL.UserRepository;
@@ -16,8 +17,6 @@ public class UserServiceImplement implements UserService {
 
     @Autowired
     private UserRepository userRepo;
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Override
     public User getCurrentUser() {
@@ -27,6 +26,8 @@ public class UserServiceImplement implements UserService {
             currentIdentifier = authentication.getName();
         }
         User currentUser = userRepo.findByPhoneNumberOrEmail(currentIdentifier, currentIdentifier).orElseThrow();
+        currentUser.setStatus(UserStatus.ONLINE);
+        userRepo.save(currentUser);
         return currentUser;
     }
 }

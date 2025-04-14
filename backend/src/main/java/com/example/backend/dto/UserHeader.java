@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserHeader {
-    private Long id;
+    private long id;
     private String fullName;
     private byte[] avatar;
 }

@@ -1,6 +1,7 @@
 package com.example.backend.entity.mySQL;
 
 import com.example.backend.Enum.PostStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,17 +16,16 @@ import java.util.List;
 @Entity
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "post")
 public class Post {
-    public Post() {}
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 8000)
     private String description;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -41,10 +41,6 @@ public class Post {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "detail_id", nullable = false)
     private PostDetail postDetail;
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<PostCategory> postCategories;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

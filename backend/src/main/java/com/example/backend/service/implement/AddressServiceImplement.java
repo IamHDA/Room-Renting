@@ -44,4 +44,13 @@ public class AddressServiceImplement implements AddressService {
         List<Ward> wards = wardRepo.findByDistrict_Id(id);
         return wards;
     }
+
+    @Override
+    public String getAddress(Address address) {
+        String addressDetail = address.getDetail();
+        Ward addressWard = address.getWard();
+        District addressDistrict = addressWard.getDistrict();
+        City addressCity = addressDistrict.getCity();
+        return addressDetail.isBlank() ? "" : (addressDetail + ", ") + addressWard.getName() + ", " + addressDistrict.getName() + ", " + addressCity.getName();
+    }
 }

@@ -23,7 +23,7 @@ public class District {
     @JsonIgnore
     private List<Ward> wards;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "city_id",  nullable = false)
     private City city;
 }

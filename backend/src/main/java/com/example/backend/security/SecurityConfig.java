@@ -51,9 +51,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
-                                "/",
                                 "/authenticate/**",
-                                "/test/**",
+                                "/post/newPosts",
+                                "/post/specificPost/**",
                                 "/PostMedia/**"
                         ).permitAll()
                         .anyRequest().authenticated())

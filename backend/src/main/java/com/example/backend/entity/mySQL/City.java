@@ -21,6 +21,6 @@ public class City {
     private String name;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @JsonIgnore()
     private List<District> districts;
 }

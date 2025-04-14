@@ -10,7 +10,8 @@ import com.example.backend.entity.mySQL.Ward;
 import java.util.List;
 
 public interface AddressService {
-    public List<City> getAllCities();
-    public List<District> getDistrictByCity(int id);
-    public List<Ward> getWardByDistrict(int id);
+    List<City> getAllCities();
+    List<District> getDistrictByCity(int id);
+    List<Ward> getWardByDistrict(int id);
+    String getAddress(Address address);
 }

@@ -26,4 +26,6 @@ public class PostDetail {
     private String electric;
     private String parking;
     private String wifi;
+    private String security;
+    private String furniture;
 }
