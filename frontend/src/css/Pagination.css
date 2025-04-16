@@ -10,11 +10,27 @@
     font-size: 20px;
 }
 
-.pagination button{
+.page-index{
     padding: 5px 10px 5px 10px;
     background-color: white;
     font-size: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
+
+.page-index.disable{
+    border: 2px solid #a3a3a3;
+}
+
+.page-index.active{
+    border: 2px solid #349fff;
+}
+
+.icon-bounding{
+    background-color: white;
     border: 2px solid #a3a3a3;
     border-radius: 5px;
     cursor: pointer;
+    padding: 6.5px 10px 6.5px 10px;
 }

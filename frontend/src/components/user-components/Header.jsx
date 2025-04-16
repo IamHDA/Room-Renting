@@ -1,14 +1,16 @@
 import React, {useContext, useState} from 'react';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faAngleDown, faBookmark, faPenToSquare, faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import '../../css/user-css/Header.css';
 import { AuthContext } from "../../contexts/AuthContext.jsx";
 import * as authService from '../../apiServices/authentication.js';
+import {getImageMime} from '../../utils/format.js';
 
 const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
     const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     const handleProfileHover = async () => {
         setIsOpen(prev => !prev);
@@ -21,6 +23,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
             localStorage.clear();
             setUser(null);
             setIsOpen(false);
+            navigate("/")
             return response;
         }catch(e){
             console.log(e);
@@ -49,7 +52,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                  onMouseEnter={() => handleProfileHover()}
                                  onMouseLeave={() => handleProfileHover()}
                             >
-                                <img src={`data:image/jpeg;base64,${user.avatar}`} className="header-user-logo"/>
+                                <img src={`data:${getImageMime(user.avatar)};base64,${user.avatar}`} className="header-user-logo"/>
                                 <p className="header-user-name">{user.fullName}</p>
                                 <FontAwesomeIcon icon={faAngleDown} style={{color: "#ffffff",}} className="header-user-angle-down"/>
                                 <div className={`dropdown-container ${isOpen ? "js-dropdown-container" : ""}`}>
@@ -73,7 +76,19 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                             </div>
                         </>
                     )}
-                    <Link to="/postManage" state={{ toManage: false }} className="post">Đăng tin</Link>
+                    <Link
+                        to="/postManage"
+                        state={{ toManage: false }}
+                        className="post"
+                        onClick={(e) => {
+                            if(!isAuthenticated){
+                                e.preventDefault();
+                                alert("Đăng nhập để sử dụng chức năng này!")
+                            }
+                        }}
+                    >
+                        Đăng tin
+                    </Link>
                 </div>
             </div>
         </div>

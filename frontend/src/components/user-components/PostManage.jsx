@@ -11,15 +11,14 @@ import {
     faPenToSquare, faXmark, faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
-import Pagination from "../Pagination.jsx";
+import Pagination from "../PagePagination.jsx";
 import * as addressService from "../../apiServices/address.js";
-import * as postManageService from "../../apiServices/postManage.js";
+import * as postManageService from "../../apiServices/post.js";
 
 const MyComponent = () => {
 
     const location = useLocation();
     const isPost = location.state?.toManage;
-    const [isPosted, setIsPosted ] = useState(false);
     const [isSelected, setIsSelected] = useState(isPost);
     const [pickAddressPopUp, setPickAddressPopUp] = useState(false);
     const [pickAddress, setPickAddress] = useState(2);
@@ -98,17 +97,17 @@ const MyComponent = () => {
         const address = document.getElementById("show-address").value;
         const images = imageList;
         const videos = videoList;
-        const imagesLength = images.files.length;
-        const videosLength = videos.files.length;
+        const imagesLength = images.length;
+        const videosLength = videos.length;
         if(imagesLength < 3) alert("Đăng ít nhất 3 ảnh");
         else if(title === "" || area === "" || address === "") alert("Vui lòng điền những thông tin quan trọng")
         else{
             const formData = new FormData();
-            for(const file of images.files){
+            for(const file of images){
                 formData.append("file", file);
             }
             if(videosLength > 0){
-                for(const file of videos.files){
+                for(const file of videos){
                     formData.append("file", file);
                 }
             }
@@ -128,6 +127,8 @@ const MyComponent = () => {
                     electric: document.getElementById("post-create-electric").value,
                     parking : document.getElementById("post-create-parking").value,
                     wifi : document.getElementById("post-create-internet").value,
+                    security: document.getElementById("post-create-security").value,
+                    furniture: document.getElementById("post-create-furniture").value
                 }
             };
             const jsonBlob = new Blob([JSON.stringify(postCreateRequest)], {
@@ -135,11 +136,13 @@ const MyComponent = () => {
             });
             formData.append("post", jsonBlob);
             const response = await postManageService.createPost(formData);
-            if (response === "Post created") alert("Đã đăng thành công");
+            if (response === "Post created"){
+                alert("Đã đăng thành công");
+                window.location.reload();
+            }
             else {
                 alert("Đã xảy ra lỗi");
             }
-            setIsPosted(prev => !prev);
         }
     }
 
@@ -231,7 +234,7 @@ const MyComponent = () => {
                                                             accept="image/*"
                                                             multiple
                                                             hidden
-                                                            onChange={(e) => setImageList(prev => prev.concat([...prev, e.target.files]))}
+                                                            onChange={(e) => setImageList([...e.target.files])}
                                                         />
                                                     </label>
                                             ) : (
@@ -245,17 +248,17 @@ const MyComponent = () => {
                                                             accept="image/*"
                                                             multiple
                                                             hidden
-                                                            onChange={(e) => setImageList([...e.target.files])}
+                                                            onChange={(e) => setImageList(prev => prev.concat(...prev, ...e.target.files))}
                                                         />
                                                     </label>
                                                     {imageList.map((image, index) => (
-                                                        <div className="media-container">
+                                                        <div className="media-container" key={`container-${index}`}>
                                                             <img src={URL.createObjectURL(image)}
                                                                  alt=""
                                                                  key={index}
                                                                  style={{ maxWidth: "70px" , maxHeight: "70px", border: "1px solid lightgray" }}
                                                             />
-                                                            <div className="delete-container" onClick={() => handleDeleteImage(index)}>
+                                                            <div className="delete-container" key={index + imageList.length} onClick={() => handleDeleteImage(index)}>
                                                                 <FontAwesomeIcon icon={faXmark} style={{fontSize: "15px", color: "white"}}/>
                                                             </div>
                                                         </div>
@@ -293,16 +296,15 @@ const MyComponent = () => {
                                                         />
                                                     </label>
                                                     {videoList.map((video, index) => (
-                                                        <div className="media-container">
+                                                        <div className="media-container" key={`container-${index}`}>
                                                             <video key={index}
                                                                    poster={"../../../public/post-manage-icon/play-video.png"}
                                                                    style={{ maxWidth: "70px", maxHeight: "70px", border: "1px solid lightgray" }}>
                                                                 <source src={URL.createObjectURL(video)} type="video/mp4"/>
                                                                 <source src={URL.createObjectURL(video)} type="video/webm"/>
                                                                 <source src={URL.createObjectURL(video)} type="video/quicktime"/>
-                                                                Your browser does not support the video tag.
                                                             </video>
-                                                            <div className="delete-container" onClick={() => handleDeleteVideo(index)}>
+                                                            <div className="delete-container" key={index + imageList.length} onClick={() => handleDeleteVideo(index)}>
                                                                 <FontAwesomeIcon icon={faXmark} style={{fontSize: "15px", color: "white"}}/>
                                                             </div>
                                                         </div>

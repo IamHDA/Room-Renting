@@ -5,7 +5,7 @@
 .post-detail-container{
     display: flex;
     width: 1440px;
-    min-height: 2285px;
+    min-height: 1850px;
     margin: 0 auto;
     padding-top: 60px;
     gap: 60px;
@@ -18,20 +18,67 @@
     gap: 10px;
 }
 
-.post-images{
+.post-media{
     display: flex;
     flex-direction: column;
 }
 
-.post-main-image{
+.post-main-media{
     position: relative;
 }
 
-.post-main-image img{
+.post-main-media img, .post-main-media video{
     width: 860px;
     height: 500px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 15px;
+}
+
+.post-main-media img{
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.post-detail-body .curtain{
+    background-color: #252525;
+}
+
+.post-detail-body .close-image{
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+}
+
+.full-view{
+    position: absolute;
+    top: 27%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+}
+
+.full-view img{
+    max-width: 700px;
+    max-height: 700px;
+    object-fit: contain;
+}
+
+.full-image-swiper{
+    height: 170px;
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+}
+
+.full-image-swiper .thumbnail{
+    width: 150px;
+    height: 150px;
+}
+
+.full-image-swiper .thumbnail.js{
+    border: 4px solid white;
 }
 
 .next, .prev{
@@ -56,17 +103,15 @@
     transform: translateY(-50%);
 }
 
-.post-images-thumbnail{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-
 .thumbnail{
     width: 200px;
     height: 200px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: 15px;
+}
+
+.thumbnail.js{
+    border: 2px solid black
 }
 
 .post-detail-mixed{
@@ -83,10 +128,14 @@
     align-items: center;
 }
 
-.post-detail-price, .post-detail-area, .post-detail-bedroom{
+.post-detail-price, .post-detail-area{
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.post-detail-area{
+    margin-left: -300px;
 }
 
 .main-content .title{
@@ -102,6 +151,14 @@
 .post-detail-function{
     display: flex;
     gap: 25px;
+    cursor: pointer;
+}
+
+.post-detail-image-container{
+    display: flex;
+    width: auto;
+    justify-content: flex-start;
+    gap: 15px;
 }
 
 .share, .report, .save{
@@ -112,7 +169,8 @@
 
 .post-detail-mixed .post-location, .post-detail-mixed .post-time{
     display: flex;
-    width: 600px;
+    align-items: center;
+    width: 640px;
     gap: 10px;
 }
 
@@ -123,16 +181,25 @@
 
 .post-location p, .post-time p{
     font-size: 18px;
-    margin-top: 5px;
-}
-
-.post-location-time-save .post-time{
-    margin-top: -20px;
 }
 
 .post-detail h2{
     font-size: 28px;
     margin-top: 10px;
+}
+
+.post-creator-status-dot-online{
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: #00a600;
+}
+
+.post-creator-status-dot-offline{
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: #696969;
 }
 
 .post-detail-description{
@@ -226,7 +293,8 @@
 .name-status .status{
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 5px;
+    font-weight: bold;
 }
 
 .status p{
@@ -269,10 +337,6 @@
     font-size: 22px;
     font-weight: bold;
     color: black;
-}
-
-#sub-rep{
-    margin-top: 20px;
 }
 
 .post-user-number-bounding, .post-user-chatting-bounding{

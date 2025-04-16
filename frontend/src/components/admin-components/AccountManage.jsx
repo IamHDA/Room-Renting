@@ -11,7 +11,7 @@ import {
     faX,
     faXmark
 } from "@fortawesome/free-solid-svg-icons";
-import Pagination from "../Pagination.jsx";
+import Pagination from "../PagePagination.jsx";
 import {faCalendar, faCompass, faMessage, faStar as faStarRegular} from "@fortawesome/free-regular-svg-icons";
 import {Link} from "react-router-dom";
 

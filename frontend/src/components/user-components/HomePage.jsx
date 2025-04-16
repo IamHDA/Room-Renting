@@ -1,10 +1,85 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faLocationDot, faAngleDown, faMagnifyingGlass, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
+import {faHeart as redHeart } from "@fortawesome/free-solid-svg-icons";
+import {faHeart as normalHeart } from "@fortawesome/free-regular-svg-icons";
 import '../../css/user-css/HomePage.css';
 import {Link} from "react-router-dom";
+import {getNewPosts} from '../../apiServices/post.js';
+import {addToFavourite, getFavouritePostsIdByUser, removeFromFavourite} from '../../apiServices/favouritePost.js';
+import AuthContext from "../../contexts/AuthContext.jsx";
+import {priceFormat} from "../../utils/format.js";
+
 
 const MyComponent = () => {
+    const {isAuthenticated} = useContext(AuthContext);
+    const [newPosts, setNewPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [favouritePostIds, setFavouritePostIds] = useState([]);
+    const {user} = useContext(AuthContext);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            const tmpPosts = localStorage.getItem("posts");
+            if(tmpPosts) setNewPosts(JSON.parse(tmpPosts));
+            else{
+                try{
+                    const response = await getNewPosts();
+                    localStorage.setItem("posts", JSON.stringify(response));
+                    setNewPosts(response);
+                }catch(e){
+                    console.log(e.response.data);
+                }
+            }
+
+            if(isAuthenticated){
+                const tmpFav = localStorage.getItem("favouritePostsId");
+                if(tmpFav) setFavouritePostIds(JSON.parse(tmpFav));
+                else{
+                    try {
+                        const response = await getFavouritePostsIdByUser();
+                        localStorage.setItem("favouritePostsId", JSON.stringify(response));
+                        setFavouritePostIds(response);
+                    }catch(e){
+                        console.log(e.response.data);
+                        setFavouritePostIds([]);
+                    }
+                }
+            } else {
+                setFavouritePostIds([]);
+            }
+            setLoading(false);
+        }
+
+        fetchData();
+    }, [isAuthenticated]);
+
+    const heartButtonHandle = async (postId) => {
+        if(!isAuthenticated) alert("Đăng nhập để sử dụng chức năng này");
+        if(favouritePostIds.includes(postId)){
+            const response = await removeFromFavourite(postId);
+            if(response !== "Removed post from favourite") alert("Có lỗi xảy ra");
+            else{
+                const newFavouritePostList = [...favouritePostIds].filter(id => id !== postId);
+                setFavouritePostIds(newFavouritePostList);
+                localStorage.setItem("favouritePostsId", JSON.stringify(newFavouritePostList));
+            }
+        }else{
+            try{
+                const response = await addToFavourite(postId);
+                if(response !== "Added post to favourite") alert("Có lỗi xảy ra");
+                else{
+                    const newFavouritePostList = [...favouritePostIds, postId];
+                    setFavouritePostIds(newFavouritePostList);
+                    localStorage.setItem("favouritePostsId", JSON.stringify(newFavouritePostList));
+                }
+            }catch(e){
+                console.log(e);
+            }
+        }
+    }
+
     return (
         <div>
             <div className="search-container">
@@ -23,10 +98,6 @@ const MyComponent = () => {
                         <div className="search-button">Tìm kiếm</div>
                     </div>
                     <div className="lower">
-                        <div className="category">
-                            <p>Loại trọ</p>
-                            <FontAwesomeIcon icon={faAngleDown} className="arrow-down-icon"/>
-                        </div>
                         <div className="price">
                             <p>Mức giá</p>
                             <FontAwesomeIcon icon={faAngleDown} className="arrow-down-icon"/>
@@ -40,192 +111,43 @@ const MyComponent = () => {
             </div>
             <div className="posts-container">
                 <h1>Tin đăng mới nhất</h1>
-                <div className="post-grid">
-                    <Link to="/detail" className="post-container">
-                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
-                        <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
-                        <div className="post-price-and-area">
-                            <p className="post-price"><span>3,4</span> triệu/tháng</p>
-                            <p className="post-area">23m&sup2;</p>
-                        </div>
-                        <div className="post-location-time-save">
-                            <div className="post-location-time">
-                                <div className="post-location">
-                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                    <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
+                {!loading && (
+                    <div className="post-grid">
+                        {newPosts.map((post, index) => (
+                            <Link to={`/detail/${post.id}`} className="post-container" key={index}>
+                                <img src={post.thumbnailURL} className="post-image"/>
+                                <h2 className="post-title">{post.title}</h2>
+                                <div className="post-price-and-area">
+                                    <p className="post-price"><span>{priceFormat(post.postDetailSummaryDTO.price)}</span> triệu/tháng</p>
+                                    <p className="post-area">{post.postDetailSummaryDTO.area.toString()}m&sup2;</p>
                                 </div>
-                                <div className="post-time">
-                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
-                                    <p className="time">12:00, 21/03/2025</p>
+                                <div className="post-location-time-save">
+                                    <div className="post-location-time">
+                                        <div className="post-location">
+                                            <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
+                                            <p className="location">{post.dtoAddress}</p>
+                                        </div>
+                                        <div className="post-time">
+                                            <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
+                                            <p className="time">{post.updatedAt !== null ? post.updatedAt : post.createdAt}</p>
+                                        </div>
+                                    </div>
+                                    {(user === null || post.userId !== user.id) && (
+                                        <div className="post-save" onClick={(e) => {
+                                            e.preventDefault();
+                                            heartButtonHandle(post.id);
+                                        }}>
+                                            {!favouritePostIds.includes(post.id) ?
+                                                    <FontAwesomeIcon icon={normalHeart} style={{fontSize: '30px', color: 'black'}}/>:
+                                                    <FontAwesomeIcon icon={redHeart} style={{fontSize: '30px', color: "#ed333b"}}/>
+                                            }
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                            <div className="post-save" onClick={(e) => e.preventDefault()}>
-                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
-                            </div>
-                        </div>
-                    </Link>
-                    <div className="post-container">
-                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
-                        <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
-                        <div className="post-price-and-area">
-                            <p className="post-price"><span>3,4</span> triệu/tháng</p>
-                            <p className="post-area">23m&sup2;</p>
-                        </div>
-                        <div className="post-location-time-save">
-                            <div className="post-location-time">
-                                <div className="post-location">
-                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                    <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
-                                </div>
-                                <div className="post-time">
-                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
-                                    <p className="time">12:00, 21/03/2025</p>
-                                </div>
-                            </div>
-                            <div className="post-save">
-                                <img src="../../../public/homePage-icon/heart.png"/>
-                            </div>
-                        </div>
+                            </Link>
+                        ))}
                     </div>
-                    <div className="post-container">
-                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
-                        <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
-                        <div className="post-price-and-area">
-                            <p className="post-price"><span>3,4</span> triệu/tháng</p>
-                            <p className="post-area">23m&sup2;</p>
-                        </div>
-                        <div className="post-location-time-save">
-                            <div className="post-location-time">
-                                <div className="post-location">
-                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                    <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
-                                </div>
-                                <div className="post-time">
-                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
-                                    <p className="time">12:00, 21/03/2025</p>
-                                </div>
-                            </div>
-                            <div className="post-save">
-                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="post-container">
-                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
-                        <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
-                        <div className="post-price-and-area">
-                            <p className="post-price"><span>3,4</span> triệu/tháng</p>
-                            <p className="post-area">23m&sup2;</p>
-                        </div>
-                        <div className="post-location-time-save">
-                            <div className="post-location-time">
-                                <div className="post-location">
-                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                    <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
-                                </div>
-                                <div className="post-time">
-                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
-                                    <p className="time">12:00, 21/03/2025</p>
-                                </div>
-                            </div>
-                            <div className="post-save">
-                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="post-container">
-                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
-                        <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
-                        <div className="post-price-and-area">
-                            <p className="post-price"><span>3,4</span> triệu/tháng</p>
-                            <p className="post-area">23m&sup2;</p>
-                        </div>
-                        <div className="post-location-time-save">
-                            <div className="post-location-time">
-                                <div className="post-location">
-                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                    <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
-                                </div>
-                                <div className="post-time">
-                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
-                                    <p className="time">12:00, 21/03/2025</p>
-                                </div>
-                            </div>
-                            <div className="post-save">
-                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="post-container">
-                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
-                        <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
-                        <div className="post-price-and-area">
-                            <p className="post-price"><span>3,4</span> triệu/tháng</p>
-                            <p className="post-area">23m&sup2;</p>
-                        </div>
-                        <div className="post-location-time-save">
-                            <div className="post-location-time">
-                                <div className="post-location">
-                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                    <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
-                                </div>
-                                <div className="post-time">
-                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
-                                    <p className="time">12:00, 21/03/2025</p>
-                                </div>
-                            </div>
-                            <div className="post-save">
-                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="post-container">
-                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
-                        <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
-                        <div className="post-price-and-area">
-                            <p className="post-price"><span>3,4</span> triệu/tháng</p>
-                            <p className="post-area">23m&sup2;</p>
-                        </div>
-                        <div className="post-location-time-save">
-                            <div className="post-location-time">
-                                <div className="post-location">
-                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                    <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
-                                </div>
-                                <div className="post-time">
-                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
-                                    <p className="time">12:00, 21/03/2025</p>
-                                </div>
-                            </div>
-                            <div className="post-save">
-                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="post-container">
-                        <img src="../../../public/homePage-icon/home.png" className="post-image"/>
-                        <h2 className="post-title">Trọ xây mới tại dãy trọ sóng thần</h2>
-                        <div className="post-price-and-area">
-                            <p className="post-price"><span>3,4</span> triệu/tháng</p>
-                            <p className="post-area">23m&sup2;</p>
-                        </div>
-                        <div className="post-location-time-save">
-                            <div className="post-location-time">
-                                <div className="post-location">
-                                    <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                    <p className="location">278, Kim Giang, Hoàng Mai, Hà Nội</p>
-                                </div>
-                                <div className="post-time">
-                                    <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>
-                                    <p className="time">12:00, 21/03/2025</p>
-                                </div>
-                            </div>
-                            <div className="post-save">
-                                <img src="../../../public/homePage-icon/heart.png" className="post-save-icon"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                )}
                 <div className="showmore">
                     <Link to="/list" className="showmore-text">
                         <FontAwesomeIcon icon={faArrowLeft} className="arrow-left"/>

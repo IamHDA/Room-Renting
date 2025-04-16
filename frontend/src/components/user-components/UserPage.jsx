@@ -5,7 +5,7 @@ import {faStar as faStarRegular, faMessage, faCalendar, faCompass} from "@fortaw
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {AuthContext} from "../../contexts/AuthContext.jsx";
 import {Link} from "react-router-dom";
-import Pagination from "../Pagination.jsx";
+import Pagination from "../PagePagination.jsx";
 
 const MyComponent = () => {
     const [isLeft, setIsLeft] = React.useState(true);
@@ -91,7 +91,8 @@ const MyComponent = () => {
                             <p>1 ngày</p>
                         </div>
                         <div className="sub-bounding">
-                            <FontAwesomeIcon icon={faCompass} />                            <p className="title">Địa chỉ:</p>
+                            <FontAwesomeIcon icon={faCompass} />
+                            <p className="title">Địa chỉ:</p>
                             <p>Chưa cung cấp</p>
                         </div>
                     </div>

@@ -3,7 +3,7 @@ import '../../css/admin-css/PostManage.css';
 import '../../css/admin-css/index.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleLeft, faAngleRight, faSort, faX, faXmark} from "@fortawesome/free-solid-svg-icons";
-import Pagination from "../Pagination.jsx";
+import Pagination from "../PagePagination.jsx";
 
 const MyComponent = () => {
     const [isSelected, setIsSelected] = useState(false);

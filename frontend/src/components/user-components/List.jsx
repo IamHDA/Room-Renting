@@ -3,7 +3,7 @@ import '../../css/user-css/List.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import {Link} from "react-router-dom";
-import Pagination from '../Pagination.jsx';
+import Pagination from '../PagePagination.jsx';
 
 const MyComponent = () => {
     const [search, setSearch] = useState('');
