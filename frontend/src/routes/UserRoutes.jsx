@@ -9,6 +9,7 @@ import { HomePage,
     PostManage,
     Chat
 } from '../pages/user-pages';
+import { AddressProvider } from '../contexts/AddressContext.jsx';
 
 const MyComponent = () => {
     return (
@@ -16,10 +17,18 @@ const MyComponent = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/detail/:postId" element={<PostDetail />} />
             <Route path="/list" element={<List />} />
-            <Route path="/account" element={<UserPage/>} />
+            <Route path="/account/:userId" element={<UserPage/> }/>
             <Route path="/savedPosts/:pageIndex?" element={<SavedPosts />} />
-            <Route path="/personalInformation" element={<UserPersonalInformation/>} />
-            <Route path="/postManage" element={<PostManage />} />
+            <Route path="/personalInformation" element={
+                <AddressProvider>
+                    <UserPersonalInformation/>
+                </AddressProvider>
+            } />
+            <Route path="/postManage" element={
+                <AddressProvider>
+                    <PostManage />
+                </AddressProvider>
+            } />
             <Route path="/chat" element={<Chat />} />
         </Routes>
     );

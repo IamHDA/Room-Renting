@@ -11,7 +11,7 @@ const MyComponent = ({handleSignInPopUp}) => {
     const [legitAccount, setLegitAccount] = useState(1);
     const [legitPassword, setLegitPassword] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
-    const {setUser, setIsAuthenticated} = useContext(AuthContext);
+    const {setUser} = useContext(AuthContext);
 4
     const handleLogin = async () =>{
         const identifier = document.querySelector('.account-input').value;
@@ -30,7 +30,6 @@ const MyComponent = ({handleSignInPopUp}) => {
                     localStorage.setItem('refreshToken', response.refreshToken);
                     const user = await userService.currentUser();
                     localStorage.setItem('user', JSON.stringify(user));
-                    setIsAuthenticated(true);
                     setUser(user);
                     handleSignInPopUp();
                 }

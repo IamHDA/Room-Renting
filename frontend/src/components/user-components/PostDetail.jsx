@@ -11,7 +11,7 @@ import {Link, useParams} from "react-router-dom";
 
 const MyComponent = () => {
     const {postId} = useParams();
-    const { user, isAuthenticated } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [post, setPost] = useState(null);
     const [postImages, setPostImages] = useState(null);
     const [postVideos, setPostVideos] = useState(null);
@@ -233,10 +233,10 @@ const MyComponent = () => {
                                         <div className="post-detail-function">
                                             <img src="../../../public/detail-icon/share.png" className="share"/>
                                             <img src="../../../public/detail-icon/alert.png" className="report" onClick={(e) => {
-                                                if(!isAuthenticated) alert("Đăng nhập để sử dụng chức năng này!")
+                                                if(!user) alert("Đăng nhập để sử dụng chức năng này!")
                                             }}/>
                                             <img src="../../../public/detail-icon/heart.png" className="save" onClick={(e) => {
-                                                if(!isAuthenticated) alert("Đăng nhập để sử dụng chức năng này!")
+                                                if(!user) alert("Đăng nhập để sử dụng chức năng này!")
                                             }}/>
                                         </div>
                                     )}
@@ -244,7 +244,7 @@ const MyComponent = () => {
                                 </div>
                                 <div className="post-location">
                                     <img src="../../../public/detail-icon/location.png"/>
-                                    <p>{post.dtoAddress}</p>
+                                    <p>{post.addressDTO}</p>
                                 </div>
                                 <div className="post-time">
                                     <img src="../../../public/detail-icon/clock.png"/>
@@ -385,7 +385,7 @@ const MyComponent = () => {
                             </div>
                         </div>
                         <div className="post-user">
-                            <Link to="/account" className="user-profile">
+                            <Link to={`/account/${post.postCreator.id}`} className="user-profile">
                                 <img src={`data:${getImageMime(post.postCreator.avatar)};base64,${post.postCreator.avatar}`} className="avatar"/>
                                 <div className="name-status">
                                     <p className="name">{post.postCreator.fullName}</p>
@@ -398,12 +398,12 @@ const MyComponent = () => {
                             <div className="user-background">
                                 <div className="sub">
                                     <p>Tham gia URPLACE</p>
-                                    <p id="sub-join">{post.postCreator.joinTime}</p>
+                                    <p id="sub-join">{post.postCreator.joinTime} ngày</p>
                                 </div>
                                 <img src="../../../public/detail-icon/stand-line.png" className="stand-line"/>
                                 <div className="sub">
                                     <p>Tin đăng đang có</p>
-                                    <p id="sub-post">{post.postCreator.totalPosts}</p>
+                                    <p id="sub-post">{post.postCreator.totalPosts} tin</p>
                                 </div>
                                 <img src="../../../public/detail-icon/stand-line.png" className="stand-line"/>
                                 <div className="sub">

@@ -98,7 +98,7 @@ const MyComponent = () => {
                                                 <div className="post-location-time">
                                                     <div className="post-location-time-sub">
                                                         <img src="../../../public/saved-posts-icon/location.png"/>
-                                                        <p>{post.dtoAddress}</p>
+                                                        <p>{post.addressDTO}</p>
                                                     </div>
                                                     <div className="post-location-time-sub">
                                                         <img src="../../../public/saved-posts-icon/clock.png"/>

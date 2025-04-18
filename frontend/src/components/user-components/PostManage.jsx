@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import '../../css/user-css/PostManage.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -8,29 +8,28 @@ import {
     faAngleRight,
     faAngleDown,
     faX,
-    faPenToSquare, faXmark, faPlus,
+    faXmark, faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
-import Pagination from "../PagePagination.jsx";
-import * as addressService from "../../apiServices/address.js";
 import * as postManageService from "../../apiServices/post.js";
+import AddressContext from "../../contexts/AddressContext.jsx";
+import PostManageEnablePost from "./PostManageEnablePost.jsx";
+import PostManageDisablePost from "./PostManageDisablePost.jsx";
 
 const MyComponent = () => {
-
+    const {allCities, allDistricts, allWards, fetchDistrictsByCity, fetchWardsByDistrict, setAllWards, setAllDistricts} = useContext(AddressContext);
     const location = useLocation();
     const isPost = location.state?.toManage;
+    const userId = location.state?.userId;
     const [isSelected, setIsSelected] = useState(isPost);
     const [pickAddressPopUp, setPickAddressPopUp] = useState(false);
     const [pickAddress, setPickAddress] = useState(2);
     const [isVisiblePosts, setIsVisiblePosts] = useState(true);
     const [editPost, setEditPost] = useState(false);
-    const [allCities, setAllCities] = useState();
-    const [allDistricts, setAllDistricts] = useState();
-    const [allWards, setAllWards] = useState();
     const [selectedFurniture, setSelectedFurniture] = useState("");
     const [showFurnitureOption, setShowFurnitureOption] = useState(false);
     const [imageList, setImageList] = useState([]);
     const [videoList, setVideoList] = useState([]);
+    const [currentPostId, setCurrentPostId] = useState(null);
 
     const togglePickAddress = async (num) => {
         if(pickAddress === num) setPickAddress(2);
@@ -39,32 +38,12 @@ const MyComponent = () => {
 
     const togglePickAddressPopUp = () => {
         setPickAddressPopUp(!pickAddressPopUp);
+        setAllWards(null);
+        setAllDistricts(null);
     }
 
     const toggleEditPost = () => {
         setEditPost(!editPost);
-    }
-
-    useEffect(() => {
-        const fetchCities = async () => {
-            try{
-                const response = await addressService.getCities();
-                setAllCities(response);
-            }catch(e){
-                console.log(e.response.data);
-            }
-        }
-        fetchCities();
-    }, [])
-
-    const fetchDistrictsByCity = async (cityId) => {
-        const response = await addressService.getDistrictsByCity(cityId);
-        setAllDistricts(response);
-    }
-
-    const fetchWardsByDistrict = async (districtId) => {
-        const response = await addressService.getWardsByDistrict(districtId);
-        setAllWards(response);
     }
 
     const handleSubmitAddressButton = () => {
@@ -74,7 +53,7 @@ const MyComponent = () => {
         let district = document.getElementById("choose-address-district").innerText;
         let city = document.getElementById("choose-address-city").innerText;
         togglePickAddressPopUp();
-        document.getElementById("show-address").innerHTML = (detail ? detail + ", " : "") + ward + ", " + district + ", " + city;
+        document.getElementById("show-address").innerHTML = city + ", " + district + ", " + ward + (detail ? ", " + detail : "");
     }
 
     const handleFurnitureOption = (e) => {
@@ -182,7 +161,7 @@ const MyComponent = () => {
                                         <FontAwesomeIcon icon={faAngleDown} style={{fontSize: "30px"}}/>
                                         {pickAddress === 0 && (
                                             <div className="address-choice-dropdown">
-                                                {allDistricts.map((district, index) => (
+                                                {allDistricts && allDistricts.map((district, index) => (
                                                     <p key={index} onClick={async () => {
                                                         await fetchWardsByDistrict(district.id);
                                                         document.getElementById('choose-address-district').innerText = district.name;
@@ -198,7 +177,7 @@ const MyComponent = () => {
                                         <FontAwesomeIcon icon={faAngleDown} style={{fontSize: "30px"}}/>
                                         {pickAddress === -1 && (
                                             <div className="address-choice-dropdown">
-                                                {allWards.map((ward, index) => (
+                                                {allWards && allWards.map((ward, index) => (
                                                     <p key={index} onClick={() => {
                                                         document.getElementById('choose-address-ward').innerText = ward.name;
                                                         localStorage.setItem("wardId", ward.id);
@@ -224,7 +203,7 @@ const MyComponent = () => {
                                     <div className="upload-container">
                                         <div className="container">
                                             {imageList.length === 0 ? (
-                                                    <label htmlFor="imageUpload" className="upload-box">
+                                                    <label   className="upload-box">
                                                         <FontAwesomeIcon icon={faImage} style={{fontSize: "50px"}}/>
                                                         <p>Đăng từ <strong>03 - 12</strong> hình</p>
                                                         <input
@@ -503,79 +482,14 @@ const MyComponent = () => {
                         <div class="post-manage-main-content">
                             <div className="switch-posts">
                                 <p className={isVisiblePosts ? "visible-posts show" : "visible-posts"} onClick={() => setIsVisiblePosts(true)}>Bài đăng đang hiển thị (n/n)</p>
-                                <img src="../../../public/post-manage-icon/stand-line.png" className="stand-line"/>
+                                <img src="../../../public/post-manage-icon/stand-line.png" className="stand-line" style={{height: "60px"}}/>
                                 <p className={!isVisiblePosts ? "invisible-posts show" : "invisible-posts"} onClick={() => setIsVisiblePosts(false)}>Bài đăng đã ẩn(n/n)</p>
                             </div>
                             <img src="../../../public/post-manage-icon/line.png" className="line"/>
-                            {isVisiblePosts ? (
-                                <div className="visible-posts-container">
-                                    <div className="visible-posts-post">
-                                        <img src="../../../public/saved-posts-icon/home.png" className="post-img"/>
-                                        <div className="visible-posts-post-information">
-                                            <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                            <button className="delete-button">
-                                                <FontAwesomeIcon icon={faTrashCan} />
-                                            </button>
-                                            <button className="edit-button">
-                                                <FontAwesomeIcon icon={faPenToSquare} onClick={toggleEditPost}/>
-                                            </button>
-                                            <div className="post-price-area">
-                                                <p id="visible-posts-post-price">8 triệu/tháng</p>
-                                                <p id="visible-posts-post-area">23m&sup2;</p>
-                                            </div>
-                                            <p className="post-description">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
-                                            </p>
-                                            <div className="post-location-time">
-                                                <div className="post-location-time-sub">
-                                                    <img src="../../../public/saved-posts-icon/location.png"/>
-                                                    <p id="visible-posts-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                                </div>
-                                                <div className="post-location-time-sub">
-                                                    <img src="../../../public/saved-posts-icon/clock.png"/>
-                                                    <p id="visible-posts-post-time">13:05, 20/02/2025</p>
-                                                </div>
-                                            </div>
-                                            <button className="visible-button">Hiển thị</button>
-                                        </div>
-                                    </div>
-                                    <Pagination/>
-                                </div>
-                            ) : (
-                                <div className="invisible-posts-container">
-                                    <div className="invisible-posts-post">
-                                        <img src="../../../public/saved-posts-icon/home.png" className="post-img"/>
-                                        <div className="invisible-posts-post-information">
-                                            <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                            <button className="delete-button">
-                                                <FontAwesomeIcon icon={faTrashCan} />
-                                            </button>
-                                            <button className="edit-button">
-                                                <FontAwesomeIcon icon={faPenToSquare} />
-                                            </button>
-                                            <div className="post-price-area">
-                                                <p id="invisible-posts-post-price">8 triệu/tháng</p>
-                                                <p id="invisible-posts-post-area">23m&sup2;</p>
-                                            </div>
-                                            <p className="post-description">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
-                                            </p>
-                                            <div className="post-location-time">
-                                                <div className="post-location-time-sub">
-                                                    <img src="../../../public/saved-posts-icon/location.png"/>
-                                                    <p id="invisible-posts-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                                </div>
-                                                <div className="post-location-time-sub">
-                                                    <img src="../../../public/saved-posts-icon/clock.png"/>
-                                                    <p id="invisible-posts-post-time">13:05, 20/02/2025</p>
-                                                </div>
-                                            </div>
-                                            <button className="invisible-button">Đã ẩn</button>
-                                        </div>
-                                    </div>
-                                    <Pagination/>
-                                </div>
-                            )}
+                            {isVisiblePosts ?
+                                <PostManageEnablePost toggleEditPost={toggleEditPost} setCurrentPostId={setCurrentPostId} userId={userId}/> :
+                                <PostManageDisablePost toggleEditPost={toggleEditPost} setCurrentPostId={setCurrentPostId} userId={userId}/>
+                            }
                         </div>
                     </>
                 )}

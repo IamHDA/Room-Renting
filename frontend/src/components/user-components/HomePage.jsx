@@ -12,7 +12,6 @@ import {priceFormat} from "../../utils/format.js";
 
 
 const MyComponent = () => {
-    const {isAuthenticated} = useContext(AuthContext);
     const [newPosts, setNewPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [favouritePostIds, setFavouritePostIds] = useState([]);
@@ -33,7 +32,7 @@ const MyComponent = () => {
                 }
             }
 
-            if(isAuthenticated){
+            if(user){
                 const tmpFav = localStorage.getItem("favouritePostsId");
                 if(tmpFav) setFavouritePostIds(JSON.parse(tmpFav));
                 else{
@@ -53,10 +52,10 @@ const MyComponent = () => {
         }
 
         fetchData();
-    }, [isAuthenticated]);
+    }, [user]);
 
     const heartButtonHandle = async (postId) => {
-        if(!isAuthenticated) alert("Đăng nhập để sử dụng chức năng này");
+        if(!user) alert("Đăng nhập để sử dụng chức năng này");
         if(favouritePostIds.includes(postId)){
             const response = await removeFromFavourite(postId);
             if(response !== "Removed post from favourite") alert("Có lỗi xảy ra");
@@ -125,7 +124,7 @@ const MyComponent = () => {
                                     <div className="post-location-time">
                                         <div className="post-location">
                                             <img src="../../../public/homePage-icon/location-black.png" className="post-location-icon"/>
-                                            <p className="location">{post.dtoAddress}</p>
+                                            <p className="location">{post.addressDTO}</p>
                                         </div>
                                         <div className="post-time">
                                             <img src="../../../public/homePage-icon/clock.png" className="post-time-icon"/>

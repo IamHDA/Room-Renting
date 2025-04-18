@@ -10,7 +10,7 @@ const MyComponent = ({handleRegisterPopUp}) => {
     const [isMain, setIsMain] = useState(false);
     const [isInValidNumber, setIsInValidNumber] = useState(false);
     const [isValidPassword, setIsValidPassword] = useState(true);
-    const {setIsAuthenticated, setUser} = useContext(AuthContext);
+    const { setUser } = useContext(AuthContext);
 
     const handleNavigate = () => {
         setIsMain(prev => !prev);
@@ -23,7 +23,7 @@ const MyComponent = ({handleRegisterPopUp}) => {
     const checkError = (e) => {
         return new Promise(resolve => {
             const number = e.target.value;
-            if (number === "" || (number.length != 10) || containCharacter(number)) {
+            if (number === "" || (number.length !== 10) || containCharacter(number)) {
                 setIsInValidNumber(true)
                 resolve(true);
             } else {
@@ -51,7 +51,6 @@ const MyComponent = ({handleRegisterPopUp}) => {
                     localStorage.setItem('refreshToken', response.refreshToken);
                     const user = await userService.currentUser();
                     localStorage.setItem('user', JSON.stringify(user));
-                    setIsAuthenticated(true);
                     setUser(user);
                     handleRegisterPopUp();
                 }

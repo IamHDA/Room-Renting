@@ -1,18 +1,40 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import '../../css/user-css/UserPage.css';
-import {faCamera, faStar as faStarSolid} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faPhone, faSignal, faStar as faStarSolid} from "@fortawesome/free-solid-svg-icons";
 import {faStar as faStarRegular, faMessage, faCalendar, faCompass} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {AuthContext} from "../../contexts/AuthContext.jsx";
-import {Link} from "react-router-dom";
-import Pagination from "../PagePagination.jsx";
+import {Link, useParams} from "react-router-dom";
+import UserDisablePost from "./UserDisablePost.jsx";
+import UserEnablePost from "./UserEnablePost.jsx";
+import {getUserProfile} from "../../apiServices/user.js";
+import {getImageMime} from "../../utils/format.js";
+import { changeAvatar, changeBackgroundImage} from "../../apiServices/user.js";
+import { currentUser} from "../../apiServices/user.js";
 
 const MyComponent = () => {
     const [isLeft, setIsLeft] = React.useState(true);
     const [isRight, setIsRight] = React.useState(false);
     const [onReview, setOnReview] = React.useState(false);
-    const {isAuthenticated} = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
     const [selectedStar, setSelectedStar] = React.useState(0);
+    const {userId} = useParams();
+    const[userProfile, setUserProfile] = useState(null);
+    const [enablePostLength, setEnablePostLength] = useState(0);
+    const [disablePostLength, setDisablePostLength] = useState(0);
+    const [changeImage, setChangeImage] = useState(false);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await getUserProfile(userId);
+                setUserProfile(response);
+            }catch(err) {
+                console.error(err);
+            }
+        }
+        fetchUser();
+    }, [changeImage, userId]);
 
     const toggleLeftLine = () => {
         setIsLeft(true);
@@ -28,85 +50,140 @@ const MyComponent = () => {
         setOnReview(prev => !prev);
     }
 
+    const updateImageHandle = async (image, type) => {
+        let formData = new FormData();
+        try {
+            if(type === "avatar"){
+                formData.append("avatar", image);
+                await changeAvatar(formData);
+                const user = await currentUser();
+                setUser(user);
+                alert("Thay đổi ảnh đại diện thành công");
+            }else{
+                formData.append("backgroundImage", image);
+                await changeBackgroundImage(formData);
+                alert("Thay đổi hình nền thành công");
+            }
+        }catch(err) {
+            alert("Có lỗi xảy ra");
+            console.error(err);
+        }
+        setChangeImage(prev => !prev);
+    }
+
     return (
         <div className="user-page-body">
             <div className="user-page-container">
-                <div className="user-page-profile">
-                    <div className="user-avatar-background">
-                        <img src="../../../public/user-page-icon/background.png" id="user-background-img"/>
-                        <div className="camera-bounding-background">
-                            <FontAwesomeIcon icon={faCamera} />
-                        </div>
-                        <div className="user-avatar-container-rel">
-                            <div className="user-avatar-container">
-                                <img src="../../../public/user-page-icon/account.png" id="user-avatar-img"/>
-                                <div className="camera-bounding-avatar">
+                {userProfile && (
+                    <div className="user-page-profile">
+                        <div className="user-avatar-background">
+                            <img src={`data:${getImageMime(userProfile.backgroundImage)};base64,${userProfile.backgroundImage}`} id="user-background-img"/>
+                            {userProfile.id === user.id && (
+                                <label htmlFor="backgroundUpload" className="camera-bounding-background">
                                     <FontAwesomeIcon icon={faCamera} />
+                                    <input
+                                        type="file"
+                                        id="backgroundUpload"
+                                        name="images"
+                                        accept="image/*"
+                                        hidden
+                                        onChange={(e) => updateImageHandle(e.target.files[0], "backgroundImage")}
+                                    />
+                                </label>
+                            )}
+                            <div className="user-avatar-container-rel">
+                                <div className="user-avatar-container">
+                                    <img src={`data:${getImageMime(userProfile.avatar)};base64,${userProfile.avatar}`} id="user-avatar-img"/>
+                                    {userProfile.id === user.id && (
+                                        <label htmlFor="avatarUpload" className="camera-bounding-avatar">
+                                            <FontAwesomeIcon icon={faCamera} />
+                                            <input
+                                                type="file"
+                                                id="avatarUpload"
+                                                name="images"
+                                                accept="image/*"
+                                                hidden
+                                                onChange={(e) => updateImageHandle(e.target.files[0], "avatar")}
+                                            />
+                                        </label>
+                                    )}
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="user-lower-information">
-                        <h2 id="user-page-username">Nguyễn Văn A</h2>
-                        <div className="user-rating">
-                            <div className="rating-star">
-                                <FontAwesomeIcon icon={faStarRegular} id="star-1"/>
-                                <FontAwesomeIcon icon={faStarRegular} id="star-2"/>
-                                <FontAwesomeIcon icon={faStarRegular} id="star-3"/>
-                                <FontAwesomeIcon icon={faStarRegular} id="star-4"/>
-                                <FontAwesomeIcon icon={faStarRegular} id="star-5"/>
+                        <div className="user-lower-information">
+                            <h2 id="user-page-username">{userProfile.fullName}</h2>
+                            <div className="user-rating">
+                                <div className="rating-star">
+                                    <FontAwesomeIcon icon={faStarRegular} id="star-1"/>
+                                    <FontAwesomeIcon icon={faStarRegular} id="star-2"/>
+                                    <FontAwesomeIcon icon={faStarRegular} id="star-3"/>
+                                    <FontAwesomeIcon icon={faStarRegular} id="star-4"/>
+                                    <FontAwesomeIcon icon={faStarRegular} id="star-5"/>
+                                </div>
+                                <p id="rating-count">(n)</p>
                             </div>
-                            <p id="rating-count">(n)</p>
-                        </div>
-                        {isAuthenticated ?
-                            <Link to="/personalInformation" className="change-personal-information">
-                                Chỉnh sửa thông tin cá nhân
-                            </Link>:
-                            (
-                                <>
-                                    <button className={!onReview ? "review-user" : "review-user-js"} onClick={toggleOnReview}>
-                                        <p >Đánh giá người dùng</p>
-                                    </button>
-                                    <div className={onReview ? "review-star" : "review-star-js"} onClick={toggleOnReview}>
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <FontAwesomeIcon
-                                                key={star}
-                                                icon={star <= selectedStar ? faStarSolid : faStarRegular}
-                                                className={star <= selectedStar ? "selected-star" : ""}
-                                                onClick={() => setSelectedStar(star)}
-                                            />
-                                        ))}
-                                    </div>
-                                </>
-                            )
-                        }
-                        <div className="sub-bounding">
-                            <FontAwesomeIcon icon={faMessage}/>
-                            <p className="title">Phản hồi chat:</p>
-                            <p>Chưa có thông tin</p>
-                        </div>
-                        <div className="sub-bounding">
-                            <FontAwesomeIcon icon={faCalendar} />
-                            <p className="title">Đã tham gia:</p>
-                            <p>1 ngày</p>
-                        </div>
-                        <div className="sub-bounding">
-                            <FontAwesomeIcon icon={faCompass} />
-                            <p className="title">Địa chỉ:</p>
-                            <p>Chưa cung cấp</p>
+                            {userProfile.id === user.id ?
+                                <Link to="/personalInformation" className="change-personal-information">
+                                    Chỉnh sửa thông tin cá nhân
+                                </Link>:
+                                (
+                                    <>
+                                        <button className={!onReview ? "review-user" : "review-user-js"} onClick={toggleOnReview}>
+                                            <p >Đánh giá người dùng</p>
+                                        </button>
+                                        <div className={onReview ? "review-star" : "review-star-js"} onClick={toggleOnReview}>
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <FontAwesomeIcon
+                                                    key={star}
+                                                    icon={star <= selectedStar ? faStarSolid : faStarRegular}
+                                                    className={star <= selectedStar ? "selected-star" : ""}
+                                                    onClick={() => setSelectedStar(star)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </>
+                                )
+                            }
+                            <div className="sub-bounding">
+                                <FontAwesomeIcon icon={faSignal} />
+                                <p className="title">Trạng thái:</p>
+                                <p>{userProfile.status}</p>
+                            </div>
+                            <div className="sub-bounding">
+                                <FontAwesomeIcon icon={faMessage}/>
+                                <p className="title">Phản hồi chat:</p>
+                                <p>Chưa có thông tin</p>
+                            </div>
+                            <div className="sub-bounding">
+                                <FontAwesomeIcon icon={faCalendar} />
+                                <p className="title">Đã tham gia:</p>
+                                <p>{userProfile.joinTime} ngày</p>
+                            </div>
+                            <div className="sub-bounding" style={{alignItems: "flex-start"}}>
+                                <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
+                                    <FontAwesomeIcon icon={faCompass} />
+                                    <p className="title" style={{width: "70px"}}>Địa chỉ:</p>
+                                </div>
+                                <p>{userProfile.dtoAddress === "" ? "Chưa cung cấp" : userProfile.dtoAddress}</p>
+                            </div>
+                            <div className="sub-bounding">
+                                <FontAwesomeIcon icon={faPhone} />
+                                <p className="title">Số điện thoại:</p>
+                                <p>{userProfile.phoneNumber}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
                 <div className="user-page-posts">
                     <div className="user-page-posts-header">
                         <div className="user-page-posts-header-title">
                             <div className="left" onClick={toggleLeftLine}>
                                 <h2>Đang hiển thị</h2>
-                                <p>(0)</p>
+                                <p>({enablePostLength})</p>
                             </div>
                             <div className="right" onClick={toggleRightLine}>
                                 <h2>Đã ẩn</h2>
-                                <p>(0)</p>
+                                <p>({disablePostLength})</p>
                             </div>
                         </div>
                         <div className="blue-line">
@@ -115,103 +192,8 @@ const MyComponent = () => {
                         </div>
                     </div>
                     <div className="user-page-posts-container">
-                        {isLeft && (
-                            <>
-                                <div className="user-page-post">
-                                    <img src="../../../public/user-page-icon/home.png" className="post-img"/>
-                                    <div className="user-page-post-information">
-                                        <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                        <div className="post-price-area">
-                                            <p id="user-page-post-price">8 triệu/tháng</p>
-                                            <p id="user-page-post-area">23m&sup2;</p>
-                                        </div>
-                                        <div className="post-location-time">
-                                            <div className="post-location-time-sub">
-                                                <img src="../../../public/user-page-icon/location.png"/>
-                                                <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                            </div>
-                                            <div className="post-location-time-sub">
-                                                <img src="../../../public/user-page-icon/clock.png"/>
-                                                <p id="user-page-post-time">13:05, 20/02/2025</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="user-page-post">
-                                    <img src="../../../public/user-page-icon/home.png" className="post-img"/>
-                                    <div className="user-page-post-information">
-                                        <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                        <div className="post-price-area">
-                                            <p id="user-page-post-price">8 triệu/tháng</p>
-                                            <p id="user-page-post-area">23m&sup2;</p>
-                                        </div>
-                                        <div className="post-location-time">
-                                            <div className="post-location-time-sub">
-                                                <img src="../../../public/user-page-icon/location.png"/>
-                                                <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                            </div>
-                                            <div className="post-location-time-sub">
-                                                <img src="../../../public/user-page-icon/clock.png"/>
-                                                <p id="user-page-post-time">13:05, 20/02/2025</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="user-page-post">
-                                    <img src="../../../public/user-page-icon/home.png" className="post-img"/>
-                                    <div className="user-page-post-information">
-                                        <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                        <div className="post-price-area">
-                                            <p id="user-page-post-price">8 triệu/tháng</p>
-                                            <p id="user-page-post-area">23m&sup2;</p>
-                                        </div>
-                                        <div className="post-location-time">
-                                            <div className="post-location-time-sub">
-                                                <img src="../../../public/user-page-icon/location.png"/>
-                                                <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                            </div>
-                                            <div className="post-location-time-sub">
-                                                <img src="../../../public/user-page-icon/clock.png"/>
-                                                <p id="user-page-post-time">13:05, 20/02/2025</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="user-page-post">
-                                    <img src="../../../public/user-page-icon/home.png" className="post-img"/>
-                                    <div className="user-page-post-information">
-                                        <p className="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                                        <div className="post-price-area">
-                                            <p id="user-page-post-price">8 triệu/tháng</p>
-                                            <p id="user-page-post-area">23m&sup2;</p>
-                                        </div>
-                                        <div className="post-location-time">
-                                            <div className="post-location-time-sub">
-                                                <img src="../../../public/user-page-icon/location.png"/>
-                                                <p id="user-page-post-location">Km10, Nguyễn Trãi, Trần Phú, Hà Đông, Hà Nội</p>
-                                            </div>
-                                            <div className="post-location-time-sub">
-                                                <img src="../../../public/user-page-icon/clock.png"/>
-                                                <p id="user-page-post-time">13:05, 20/02/2025</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                        {isRight && (
-                            <>
-                                <div className="user-page-post-disabled">
-                                    <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</h2>
-                                    <p>20:13, 13/03/2025</p>
-                                </div>
-                            </>
-                        )}
-                        <Pagination/>
-                        {/*<div className="user-page-posts-empty">*/}
-                        {/*    <h2>Bạn chưa đăng tin nào!</h2>*/}
-                        {/*    <button className="user-page-submit-post">Đăng tin ngay</button>*/}
-                        {/*</div>*/}
+                        {isLeft && <UserEnablePost userId={userId} setEnablePostLength={setEnablePostLength} />}
+                        {isRight && <UserDisablePost userId={userId} setDisablePostLength={setDisablePostLength} />}
                     </div>
                 </div>
             </div>

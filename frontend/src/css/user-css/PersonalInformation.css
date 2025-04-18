@@ -59,20 +59,24 @@
     gap: 30px;
 }
 
-.personal-information-name-contact{
+.personal-information-name-email-contact{
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.username, .contact, .personal-information-address{
+.information-input-bounding{
+    width: 200px;
+}
+
+.information-input-bounding, .personal-information-address{
     padding: 10px 15px 10px 15px;
     border: 2px solid #B7B7B7;
     border-radius: 5px;
     position: relative;
 }
 
-.username .title, .contact .title, .personal-information-address .title{
+.information-input-bounding .title, .personal-information-address .title{
     margin-top: -5px;
     color: #818181;
     position: absolute;
@@ -81,11 +85,12 @@
     font-size: 18px;
 }
 
-.username input, .contact input{
+.information-input-bounding input{
     border: none;
     outline: none;
-    font-size: 25px;
-    margin-top: 15px;
+    width: 100%;
+    font-size: 20px;
+    margin-top: 25px;
 }
 
 .personal-information-address{
@@ -132,7 +137,7 @@
     gap: 30px;
 }
 
-.address-detail .submit-button{
+.address-detail .submit-button, .submit-information{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -146,6 +151,11 @@
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.25s ease;
+}
+
+.submit-information{
+    align-self: center;
+    width: 250px;
 }
 
 .address-detail .submit-button:hover{
@@ -204,6 +214,54 @@
     transition: background-color 0.25s ease;
 }
 
+.personal-information-container .curtain{
+    left: 0;
+}
+
 .submit-password-button:hover{
     background: #007de3;
+}
+
+.data-container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 10px;
+    width: 300px;
+    padding: 20px;
+    z-index: 101;
+
+}
+
+.data{
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    max-height: 300px;
+    margin-top: 10px;
+}
+
+.data-container .close{
+    font-size: 20px;
+    top: 10px;
+    right: 10px;
+}
+
+.data p:hover{
+    color: #007de3;
+}
+
+.password-error{
+    display: none;
+    color: red;
+    font-size: 25px;
+}
+
+.password-error.js{
+    display: block;
 }

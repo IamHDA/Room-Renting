@@ -8,7 +8,7 @@ import * as authService from '../../apiServices/authentication.js';
 import {getImageMime} from '../../utils/format.js';
 
 const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
-    const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -19,7 +19,6 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
     const handleLogout = async () => {
         try{
             const response = await authService.logout();
-            setIsAuthenticated(false);
             localStorage.clear();
             setUser(null);
             setIsOpen(false);
@@ -41,7 +40,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                     <Link to="/chat" className="chat-bounding">
                         <img src="../../../public/header-icon/chatIcon.png"/>
                     </Link>
-                    {!isAuthenticated ? (
+                    {!user ? (
                         <>
                             <p className="login" onClick={handleSignInPopUp}>Đăng nhập</p>
                             <p className="register" onClick={handleRegisterPopUp}>Đăng ký</p>
@@ -56,7 +55,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                 <p className="header-user-name">{user.fullName}</p>
                                 <FontAwesomeIcon icon={faAngleDown} style={{color: "#ffffff",}} className="header-user-angle-down"/>
                                 <div className={`dropdown-container ${isOpen ? "js-dropdown-container" : ""}`}>
-                                    <Link to="/account" className="header-user-profile">
+                                    <Link to={`/account/${user.id}`} className="header-user-profile">
                                         <FontAwesomeIcon icon={faUser} className="icon"/>
                                         <p>Trang cá nhân</p>
                                     </Link>
@@ -64,7 +63,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                         <FontAwesomeIcon icon={faBookmark} className="icon"/>
                                         <p>Bài đăng đã lưu</p>
                                     </Link>
-                                    <Link to="/postManage" state={{ toManage: true }} className="header-posts-manage" >
+                                    <Link to="/postManage" state={{ toManage: true, userId: user.id }} className="header-posts-manage" >
                                         <FontAwesomeIcon icon={faPenToSquare} className="icon"/>
                                         <p>Quản lý bài đăng</p>
                                     </Link>
@@ -81,7 +80,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                         state={{ toManage: false }}
                         className="post"
                         onClick={(e) => {
-                            if(!isAuthenticated){
+                            if(!user){
                                 e.preventDefault();
                                 alert("Đăng nhập để sử dụng chức năng này!")
                             }
