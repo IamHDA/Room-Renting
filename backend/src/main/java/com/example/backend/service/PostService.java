@@ -15,4 +15,7 @@ public interface PostService {
     long createPost(AddressDTO addressDTO, CreatePostDTO createPostDTO);
     List<PostSummaryDTO> getNewPosts();
     PostDTO getPost(long postId);
+    List<PostSummaryDTO> getEnablePostsByUser(long userId);
+    List<PostSummaryDTO> getDisablePostsByUser(long userId);
+    String changePostStatus(long postId, String status);
 }

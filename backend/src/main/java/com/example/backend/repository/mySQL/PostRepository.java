@@ -1,5 +1,6 @@
 package com.example.backend.repository.mySQL;
 
+import com.example.backend.Enum.PostStatus;
 import com.example.backend.entity.mySQL.Post;
 import com.example.backend.entity.mySQL.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +19,7 @@ order by p.createdAt desc
 limit 8
 """)
     List<Post> findNewPosts();
+    List<Post> findByUser_IdAndStatus(long userId, PostStatus status);
     int countByUser(User user);
+    long user(User user);
 }

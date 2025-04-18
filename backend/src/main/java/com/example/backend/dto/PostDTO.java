@@ -18,5 +18,5 @@ public class PostDTO {
     @JsonFormat(pattern = "HH:mm, dd/MM/yyyy")
     private LocalDateTime updatedAt;
     private PostDetailDTO postDetailDTO;
-    private PostCreater postCreater;
+    private PostCreator postCreator;
 }

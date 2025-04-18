@@ -25,8 +25,6 @@ public class AddressServiceImplement implements AddressService {
     private DistrictRepository districtRepo;
     @Autowired
     private CityRepository cityRepo;
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Override
     public List<City> getAllCities() {
@@ -47,10 +45,11 @@ public class AddressServiceImplement implements AddressService {
 
     @Override
     public String getAddress(Address address) {
+        if(address == null) return "";
         String addressDetail = address.getDetail();
         Ward addressWard = address.getWard();
         District addressDistrict = addressWard.getDistrict();
         City addressCity = addressDistrict.getCity();
-        return addressDetail.isBlank() ? "" : (addressDetail + ", ") + addressWard.getName() + ", " + addressDistrict.getName() + ", " + addressCity.getName();
+        return (addressDetail.isBlank() ? "" : (addressDetail + ", ")) + addressWard.getName() + ", " + addressDistrict.getName() + ", " + addressCity.getName();
     }
 }

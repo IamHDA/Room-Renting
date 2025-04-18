@@ -1,6 +1,5 @@
 package com.example.backend.dto;
 
-import com.example.backend.Enum.PostStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -11,7 +10,7 @@ public class PostSummaryDTO {
     private long id;
     private long userId;
     private String title;
-    private String dtoAddress;
+    private String addressDTO;
     private String description;
     private String thumbnailURL;
     @JsonFormat(pattern = "HH:mm, dd/MM/yyyy")

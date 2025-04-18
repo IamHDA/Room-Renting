@@ -8,5 +8,5 @@ public interface FavouritePostService {
     String addToFavourite(long id);
     String deleteFromFavourite(long id);
     List<Long> getFavouritePostsIdByUser();
-    List<PostSummaryDTO> getFavouritePostsByUser();
+    List<PostSummaryDTO> getFavouritePostsByUser(int order);
 }

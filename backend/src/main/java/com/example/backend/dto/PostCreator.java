@@ -1,10 +1,9 @@
 package com.example.backend.dto;
 
-import com.example.backend.Enum.UserStatus;
 import lombok.Data;
 
 @Data
-public class PostCreater {
+public class PostCreator {
     public long id;
     public String fullName;
     public byte[] avatar;

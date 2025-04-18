@@ -2,7 +2,6 @@ package com.example.backend.service.implement;
 
 import com.example.backend.Enum.MediaType;
 import com.example.backend.Enum.PostStatus;
-import com.example.backend.Enum.UserStatus;
 import com.example.backend.dto.*;
 import com.example.backend.entity.mongoDB.PostMedia;
 import com.example.backend.entity.mySQL.*;
@@ -20,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -105,7 +103,7 @@ public class PostServiceImplement implements PostService {
                     postDetailSummaryDTO.setPrice(postDetail.getPrice());
                     postSummaryDTO.setDescription(formatUtil.textFormat(post.getDescription()));
                     postSummaryDTO.setUserId(post.getUser().getId());
-                    postSummaryDTO.setDtoAddress(addressService.getAddress(post.getAddress()));
+                    postSummaryDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
                     postSummaryDTO.setPostDetailSummaryDTO(postDetailSummaryDTO);
                     postSummaryDTO.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());
                     return postSummaryDTO;
@@ -117,19 +115,57 @@ public class PostServiceImplement implements PostService {
         Post post = postRepo.findById(postId).orElse(null);
         User user = post.getUser();
         PostDTO postDTO = modelMapper.map(post, PostDTO.class);
-        PostCreater postCreater = modelMapper.map(user, PostCreater.class);
-        postCreater.setStatus(UserStatus.ONLINE.getDisplayName());
-        postCreater.setJoinTime(formatUtil.getJoinTime(user.getCreateAt()));
-        postCreater.setTotalPosts(postRepo.countByUser(user));
+        PostCreator postCreator = modelMapper.map(user, PostCreator.class);
+        postCreator.setStatus(user.getStatus().getDisplayName());
+        postCreator.setJoinTime(formatUtil.getJoinTime(user.getCreateAt()));
+        postCreator.setTotalPosts(postRepo.countByUser(user));
         List<PostMediaDTO> postMediaDTOList = postMediaRepo.findByPostId(post.getId())
                 .stream()
                 .map(postMedia -> modelMapper.map(postMedia, PostMediaDTO.class))
                 .toList();
         postDTO.setPostMediaDTO(postMediaDTOList);
-        postDTO.setPostCreater(postCreater);
+        postDTO.setPostCreator(postCreator);
         postDTO.setPostDetailDTO(modelMapper.map(post.getPostDetail(), PostDetailDTO.class));
         postDTO.setDtoAddress(addressService.getAddress(post.getAddress()));
         postDTO.setDescription(formatUtil.textFormat(post.getDescription()));
         return postDTO;
+    }
+
+    @Override
+    public List<PostSummaryDTO> getEnablePostsByUser(long userId) {
+        List<Post> posts = postRepo.findByUser_IdAndStatus(userId, PostStatus.ENABLED);
+        return convertPostToPostSummary(posts);
+    }
+
+    @Override
+    public List<PostSummaryDTO> getDisablePostsByUser(long userId) {
+        List<Post> posts = postRepo.findByUser_IdAndStatus(userId, PostStatus.DISABLED);
+        return convertPostToPostSummary(posts);
+    }
+
+    @Override
+    public String changePostStatus(long postId, String status) {
+        Post post = postRepo.findById(postId).orElse(null);
+        post.setStatus(PostStatus.valueOf(status));
+        postRepo.save(post);
+        return "Change Status Successfully!";
+    }
+
+    List<PostSummaryDTO> convertPostToPostSummary(List<Post> posts){
+        return posts.stream()
+                .map(post -> {
+                    PostDetail postDetail = post.getPostDetail();
+                    PostSummaryDTO dto = modelMapper.map(post, PostSummaryDTO.class);
+                    PostDetailSummaryDTO postDetailSummaryDTO = new PostDetailSummaryDTO();
+                    postDetailSummaryDTO.setArea(postDetail.getArea());
+                    postDetailSummaryDTO.setPrice(postDetail.getPrice());
+                    dto.setUserId(post.getUser().getId());
+                    dto.setAddressDTO(addressService.getAddress(post.getAddress()));
+                    dto.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());
+                    dto.setDescription(formatUtil.textFormat(post.getDescription()));
+                    dto.setPostDetailSummaryDTO(postDetailSummaryDTO);
+                    return dto;
+                })
+                .toList();
     }
 }

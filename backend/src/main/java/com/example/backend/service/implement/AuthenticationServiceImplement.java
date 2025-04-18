@@ -76,7 +76,6 @@ public class AuthenticationServiceImplement implements AuthenticationService {
         accountRepo.save(account);
         String accessToken = jwtTokenProvider.generateAccessToken(account);
         String refreshToken = jwtTokenProvider.generateRefreshToken(account);
-
         saveAccountToken(accessToken, refreshToken, account);
         return new AuthenticationResponse(accessToken, refreshToken, "User registration successful");
     }

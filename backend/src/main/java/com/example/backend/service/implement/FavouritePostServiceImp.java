@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -65,10 +66,31 @@ public class FavouritePostServiceImp implements FavouritePostService {
     }
 
     @Override
-    public List<PostSummaryDTO> getFavouritePostsByUser() {
+    public List<PostSummaryDTO> getFavouritePostsByUser(int order) {
         User user = userService.getCurrentUser();
-        return favouritePostRepo.findFavouritePostsByUser(user)
+        List<Post> posts = new ArrayList<>();
+        if(order == 1) posts = favouritePostRepo.findByUserOrderByCreatedAtAsc(user)
                 .stream()
+                .map(FavouritePost::getPost)
+                .toList();
+        else if(order == 2) posts = favouritePostRepo.findByUserOrderByCreatedAtDesc(user)
+                .stream()
+                .map(FavouritePost::getPost)
+                .toList();
+        else if(order == 3) posts = favouritePostRepo.findByUserOrderByPostPostDetailPriceAsc(user)
+                .stream()
+                .map(FavouritePost::getPost)
+                .toList();
+        else if(order == 4) posts = favouritePostRepo.findByUserOrderByPostPostDetailPriceDesc(user)
+                .stream()
+                .map(FavouritePost::getPost)
+                .toList();
+        return mapPostToPostSummaryDTO(posts);
+    }
+
+    List<PostSummaryDTO> mapPostToPostSummaryDTO(List<Post> posts) {
+        return posts.
+                stream()
                 .map(post -> {
                     PostSummaryDTO postSummaryDTO = modelMapper.map(post, PostSummaryDTO.class);
                     PostDetail postDetail = post.getPostDetail();
@@ -77,7 +99,7 @@ public class FavouritePostServiceImp implements FavouritePostService {
                     postDetailSummaryDTO.setPrice(postDetail.getPrice());
                     postSummaryDTO.setDescription(formatUtil.textFormat(post.getDescription()));
                     postSummaryDTO.setUserId(post.getUser().getId());
-                    postSummaryDTO.setDtoAddress(addressService.getAddress(post.getAddress()));
+                    postSummaryDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
                     postSummaryDTO.setPostDetailSummaryDTO(postDetailSummaryDTO);
                     postSummaryDTO.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());
                     return postSummaryDTO;
@@ -85,3 +107,4 @@ public class FavouritePostServiceImp implements FavouritePostService {
                 .toList();
     }
 }
+

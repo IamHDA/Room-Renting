@@ -1,15 +1,16 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.UserHeader;
-import com.example.backend.entity.mySQL.User;
+import com.example.backend.dto.UserPersonalInformation;
+import com.example.backend.dto.UserProfile;
 import com.example.backend.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/user")
@@ -24,5 +25,35 @@ public class UserController {
     public ResponseEntity<UserHeader> getCurrentUser(){
         UserHeader currentUser = modelMapper.map(userService.getCurrentUser(), UserHeader.class);
         return ResponseEntity.ok(currentUser);
+    }
+
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<UserProfile> getUserProfile(@PathVariable long id){
+        return ResponseEntity.ok(userService.getProfile(id));
+    }
+
+    @GetMapping("/personalInformation")
+    public ResponseEntity<UserPersonalInformation> getUserPersonalInformation(){
+        return ResponseEntity.ok(userService.getPersonalInformation());
+    }
+
+    @PutMapping("/changeAvatar")
+    public ResponseEntity<String> changeAvatar(@RequestParam("avatar") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(userService.changeAvatar(file));
+    }
+
+    @PutMapping("/changeBackgroundImage")
+    public ResponseEntity<String> changeBackgroundImage(@RequestParam("backgroundImage") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(userService.changeBackgroundImage(file));
+    }
+
+    @PutMapping("/changeInformation")
+    public ResponseEntity<String> changeUserInformation(@RequestBody UserPersonalInformation information){
+        return ResponseEntity.ok(userService.changePersonalInformation(information));
+    }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestParam String oldPassword, @RequestParam String newPassword){
+        return ResponseEntity.ok(userService.changePassword(oldPassword, newPassword));
     }
 }

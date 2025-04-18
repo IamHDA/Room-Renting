@@ -20,8 +20,8 @@ public class FavouritePostController {
     }
 
     @GetMapping("/getFavPostsByUser")
-    public ResponseEntity<List<PostSummaryDTO>> getFavouritePostsByUser() {
-        return ResponseEntity.ok(favouritePostService.getFavouritePostsByUser());
+    public ResponseEntity<List<PostSummaryDTO>> getFavouritePostsByUser(@RequestParam("order") int order) {
+        return ResponseEntity.ok(favouritePostService.getFavouritePostsByUser(order));
     }
 
     @PostMapping("/create/{id}")

@@ -28,10 +28,25 @@ public class PostController {
         return ResponseEntity.ok(postService.getPost(postId));
     }
 
+    @GetMapping("/userEnablePosts/{userId}")
+    public ResponseEntity<List<PostSummaryDTO>> getEnablePostsByUser(@PathVariable long userId) {
+        return ResponseEntity.ok(postService.getEnablePostsByUser(userId));
+    }
+
+    @GetMapping("/userDisablePosts/{userId}")
+    public ResponseEntity<List<PostSummaryDTO>> getDisablePostsByUser(@PathVariable long userId) {
+        return ResponseEntity.ok(postService.getDisablePostsByUser(userId));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<String> postCreate(@RequestPart(name = "post") PostCreateRequest postCreateRequest, @RequestPart(name = "file") List<MultipartFile> files) throws IOException {
         long postId = postService.createPost(postCreateRequest.getAddressDTO(), postCreateRequest.getCreatePostDTO());
         postService.uploadPostMedia(files, postId);
         return ResponseEntity.ok("Post created");
+    }
+
+    @PutMapping("/changeStatus")
+    public ResponseEntity<String> changeStatus(@RequestParam long postId, @RequestParam String status){
+        return ResponseEntity.ok(postService.changePostStatus(postId, status));
     }
 }
