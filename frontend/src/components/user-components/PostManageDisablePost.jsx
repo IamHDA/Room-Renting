@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
-import {changePostStatus, getDisablePostsByUserId, getEnablePostsByUserId} from "../../apiServices/post.js";
+import {changePostStatus, deletePost, getDisablePostsByUserId, getEnablePostsByUserId} from "../../apiServices/post.js";
 
 const MyComponent = ({toggleEditPost, userId}) => {
     const [posts, setPosts] = useState([]);
@@ -31,6 +31,15 @@ const MyComponent = ({toggleEditPost, userId}) => {
         }
     }
 
+    const handleDeletePost = async (postId) => {
+        try{
+            const response = await deletePost(postId);
+            if(response === "Change Post's Status Successfully!") setUpdatePost(prev => !prev);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     return (
         <div className="invisible-posts-container">
             {posts.length > 0 && posts.map((post, index) => (
@@ -38,7 +47,7 @@ const MyComponent = ({toggleEditPost, userId}) => {
                     <img src={post.thumbnailURL} className="post-img"/>
                     <div className="invisible-posts-post-information">
                         <p className="title">{post.title}</p>
-                        <button className="delete-button">
+                        <button className="delete-button" onClick={() => handleDeletePost(post.id)}>
                             <FontAwesomeIcon icon={faTrashCan} />
                         </button>
                         <button className="edit-button">

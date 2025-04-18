@@ -64,7 +64,7 @@ export const put = async (api, options = {}, config = {}) => {
     return response.data;
 }
 
-export const erase = async (api,  config = {}) => {
+export const remove = async (api, config = {}) => {
     const response = await request.delete(api, config);
     return response.data;
 }

@@ -9,7 +9,7 @@ export const addToFavourite = async (postId) => {
 }
 
 export const removeFromFavourite = async (postId) => {
-    return await request.erase("favouritePost/delete/" + postId, {
+    return await request.remove("favouritePost/delete/" + postId, {
         headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken")
         }

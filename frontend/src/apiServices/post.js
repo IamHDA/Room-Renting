@@ -35,3 +35,7 @@ export const changePostStatus = async (status, postId) => {
         }
     })
 }
+
+export const deletePost = async (postId) => {
+    return await request.remove("post/delete/" + postId);
+}
