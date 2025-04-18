@@ -9,4 +9,5 @@ import java.util.List;
 public interface PostMediaRepository extends MongoRepository<PostMedia, String> {
     PostMedia findFirstByPostId(long postId);
     List<PostMedia> findByPostId(long id);
+    void deleteByPostId(long postId);
 }

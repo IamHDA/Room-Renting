@@ -148,7 +148,17 @@ public class PostServiceImplement implements PostService {
         Post post = postRepo.findById(postId).orElse(null);
         post.setStatus(PostStatus.valueOf(status));
         postRepo.save(post);
-        return "Change Status Successfully!";
+        return "Change Post's Status Successfully!";
+    }
+
+    @Override
+    public String deletePost(long postId) {
+        Post post = postRepo.findById(postId).orElse(null);
+        List<Post> posts = postRepo.findByAddress(post.getAddress());
+        if(posts.size() == 1) addressRepo.delete(post.getAddress());
+        postRepo.deleteById(postId);
+        postMediaRepo.deleteByPostId(postId);
+        return "Post deleted successfully!";
     }
 
     List<PostSummaryDTO> convertPostToPostSummary(List<Post> posts){

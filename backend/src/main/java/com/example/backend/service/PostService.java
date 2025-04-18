@@ -18,4 +18,5 @@ public interface PostService {
     List<PostSummaryDTO> getEnablePostsByUser(long userId);
     List<PostSummaryDTO> getDisablePostsByUser(long userId);
     String changePostStatus(long postId, String status);
+    String deletePost(long postId);
 }
