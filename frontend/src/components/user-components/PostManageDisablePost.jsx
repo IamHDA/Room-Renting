@@ -2,10 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
-import {getDisablePostsByUserId, getEnablePostsByUserId} from "../../apiServices/post.js";
+import {changePostStatus, getDisablePostsByUserId, getEnablePostsByUserId} from "../../apiServices/post.js";
 
 const MyComponent = ({toggleEditPost, userId}) => {
     const [posts, setPosts] = useState([]);
+    const [updatePost, setUpdatePost] = useState(false);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -19,13 +20,22 @@ const MyComponent = ({toggleEditPost, userId}) => {
             }
         }
         fetchPosts();
-    }, [])
+    }, [updatePost])
+
+    const handleChangeStatus = async (status, postId) => {
+        try{
+            const response = await changePostStatus(status, postId);
+            if(response === "Change Post's Status Successfully!") setUpdatePost(prev => !prev);
+        }catch(error){
+            console.log(error);
+        }
+    }
 
     return (
         <div className="invisible-posts-container">
             {posts.length > 0 && posts.map((post, index) => (
                 <div className="invisible-posts-post" key={index}>
-                    <img src="../../../public/saved-posts-icon/home.png" className="post-img"/>
+                    <img src={post.thumbnailURL} className="post-img"/>
                     <div className="invisible-posts-post-information">
                         <p className="title">{post.title}</p>
                         <button className="delete-button">
@@ -51,7 +61,7 @@ const MyComponent = ({toggleEditPost, userId}) => {
                                 <p id="invisible-posts-post-time">{post.updatedAt ? post.updatedAt : post.createdAt}</p>
                             </div>
                         </div>
-                        <button className="invisible-button">Đã ẩn</button>
+                        <button className="invisible-button" onClick={() => handleChangeStatus("ENABLED", post.id)}>Đã ẩn</button>
                     </div>
                 </div>
             ))}

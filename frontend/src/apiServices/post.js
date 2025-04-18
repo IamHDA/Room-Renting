@@ -25,7 +25,7 @@ export const createPost = async (formData) => {
     });
 }
 
-export const changePostStatus = async (postId, status) => {
+export const changePostStatus = async (status, postId) => {
     return await request.put("post/changeStatus", {}, {
         headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),

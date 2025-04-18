@@ -2,10 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
-import {getEnablePostsByUserId} from "../../apiServices/post.js";
+import { getEnablePostsByUserId, changePostStatus } from "../../apiServices/post.js";
 
 const MyComponent = ({ toggleEditPost, userId }) => {
     const [posts, setPosts] = useState([]);
+    const [updatePost, setUpdatePost] = useState(false);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -19,7 +20,16 @@ const MyComponent = ({ toggleEditPost, userId }) => {
             }
         }
         fetchPosts();
-    }, [])
+    }, [updatePost])
+
+    const handleChangeStatus = async (status, postId) => {
+        try{
+            const response = await changePostStatus(status, postId);
+            if(response === "Change Post's Status Successfully!") setUpdatePost(prev => !prev);
+        }catch(error){
+            console.log(error);
+        }
+    }
 
     return (
         <div className="visible-posts-container">
@@ -51,7 +61,7 @@ const MyComponent = ({ toggleEditPost, userId }) => {
                                 <p id="visible-posts-post-time">{post.updatedAt ? post.updatedAt : post.createdAt}</p>
                             </div>
                         </div>
-                        <button className="visible-button">Hiển thị</button>
+                        <button className="visible-button" onClick={() => handleChangeStatus("DISABLED", post.id)}>Hiển thị</button>
                     </div>
                 </div>
             ))}

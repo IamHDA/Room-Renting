@@ -479,7 +479,7 @@ const MyComponent = () => {
                                 </div>
                             </div>
                         }
-                        <div class="post-manage-main-content">
+                        <div className="post-manage-main-content">
                             <div className="switch-posts">
                                 <p className={isVisiblePosts ? "visible-posts show" : "visible-posts"} onClick={() => setIsVisiblePosts(true)}>Bài đăng đang hiển thị (n/n)</p>
                                 <img src="../../../public/post-manage-icon/stand-line.png" className="stand-line" style={{height: "60px"}}/>
