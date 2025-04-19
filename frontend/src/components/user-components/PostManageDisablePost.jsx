@@ -2,19 +2,22 @@ import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
-import {changePostStatus, deletePost, getDisablePostsByUserId, getEnablePostsByUserId} from "../../apiServices/post.js";
+import {changePostStatus, deletePost, getDisablePostsByUserId} from "../../apiServices/post.js";
+import TablePagination from "../TablePagination.jsx";
 
-const MyComponent = ({toggleEditPost, userId}) => {
+const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
     const [posts, setPosts] = useState([]);
     const [updatePost, setUpdatePost] = useState(false);
+    let storedPageIndex = JSON.parse(localStorage.getItem("postManageDisablePostIndex"))
+    let currentPageIndex = storedPageIndex ? storedPageIndex : 0;
+    const [startIndex, setStartIndex] = useState(0);
+    const [endIndex, setEndIndex] = useState(4);
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const response = await getDisablePostsByUserId(userId);
                 setPosts(response);
-                // setEnablePostLength(response.length);
-                // setPostLength(response.length);
             }catch(error) {
                 console.log(error);
             }
@@ -31,6 +34,11 @@ const MyComponent = ({toggleEditPost, userId}) => {
         }
     }
 
+    const handleEditPostButton = async (post) => {
+        setCurrentEditingPost(post);
+        setEditPost(true);
+    }
+
     const handleDeletePost = async (postId) => {
         try{
             const response = await deletePost(postId);
@@ -42,7 +50,7 @@ const MyComponent = ({toggleEditPost, userId}) => {
 
     return (
         <div className="invisible-posts-container">
-            {posts.length > 0 && posts.map((post, index) => (
+            {posts.length > 0 && posts.slice(startIndex, endIndex).map((post, index) => (
                 <div className="invisible-posts-post" key={index}>
                     <img src={post.thumbnailURL} className="post-img"/>
                     <div className="invisible-posts-post-information">
@@ -51,14 +59,14 @@ const MyComponent = ({toggleEditPost, userId}) => {
                             <FontAwesomeIcon icon={faTrashCan} />
                         </button>
                         <button className="edit-button">
-                            <FontAwesomeIcon icon={faPenToSquare} onClick={toggleEditPost}/>
+                            <FontAwesomeIcon icon={faPenToSquare} onClick={() => handleEditPostButton(post)}/>
                         </button>
                         <div className="post-price-area">
                             <p id="invisible-posts-post-price">{post.postDetailSummaryDTO.price} triệu/tháng</p>
                             <p id="invisible-posts-post-area">{post.postDetailSummaryDTO.area}m&sup2;</p>
                         </div>
                         <p className="post-description">
-                            {post.description}
+                            {post.description.replace(/<br\s*\/?>/gi, ' ')}
                         </p>
                         <div className="post-location-time">
                             <div className="post-location-time-sub">
@@ -74,7 +82,7 @@ const MyComponent = ({toggleEditPost, userId}) => {
                     </div>
                 </div>
             ))}
-            {/*<Pagination/>*/}
+            <TablePagination dataLength={posts.length} currentPageIndex={currentPageIndex} setStartIndex={setStartIndex} setEndIndex={setEndIndex} storageName="postManageDisablePostIndex"/>
         </div>
     );
 };

@@ -459,7 +459,7 @@
 
 .visible-posts-post-information .title, .invisible-posts-post-information .title{
     font-size: 22px;
-    width: 820px;
+    width: 810px;
     font-weight: bold;
     margin-top: 10px;
 }
@@ -477,6 +477,11 @@
     cursor: pointer;
     top: 10px;
 }
+
+.edit-pop-up-container .close{
+    right: 15px;
+}
+
 
 .delete-button{
     right: 10px;
@@ -600,7 +605,7 @@
     text-align: center;
     border-radius: 10px;
     background-color: white;
-    padding: 20px;
+    padding: 50px;
 }
 
 .edit-pop-up-container h1{
@@ -615,10 +620,6 @@
 .edit-pop-up-main-content .left, .edit-pop-up-main-content .right{
     display: flex;
     flex-direction: column;
-}
-
-.edit-price-area .price-area h2{
-    margin-left: -245px;
 }
 
 .edit-price-area .post-price-area{
@@ -648,7 +649,7 @@
 }
 
 #post-edit-description{
-    height: 280px;
+    height: 260px;
 }
 
 .edit-pop-up-main-content .right{

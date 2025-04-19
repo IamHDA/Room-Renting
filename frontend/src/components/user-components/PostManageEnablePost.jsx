@@ -3,24 +3,32 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import { getEnablePostsByUserId, changePostStatus } from "../../apiServices/post.js";
+import TablePagination from "../TablePagination.jsx";
 
-const MyComponent = ({ toggleEditPost, userId }) => {
+const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
     const [posts, setPosts] = useState([]);
     const [updatePost, setUpdatePost] = useState(false);
+    let storedPageIndex = JSON.parse(localStorage.getItem("postManageEnablePostIndex"))
+    let currentPageIndex = storedPageIndex ? storedPageIndex : 0;
+    const [startIndex, setStartIndex] = useState(0);
+    const [endIndex, setEndIndex] = useState(4);
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const response = await getEnablePostsByUserId(userId);
                 setPosts(response);
-                // setEnablePostLength(response.length);
-                // setPostLength(response.length);
             }catch(error) {
                 console.log(error);
             }
         }
         fetchPosts();
     }, [updatePost])
+
+    const handleEditPostButton = async (post) => {
+        setCurrentEditingPost(post);
+        setEditPost(true);
+    }
 
     const handleChangeStatus = async (status, postId) => {
         try{
@@ -33,7 +41,7 @@ const MyComponent = ({ toggleEditPost, userId }) => {
 
     return (
         <div className="visible-posts-container">
-            {posts.length > 0 && posts.map((post, index) => (
+            {posts.length > 0 && posts.slice(startIndex, endIndex).map((post, index) => (
                 <div className="visible-posts-post" key={index}>
                     <img src={post.thumbnailURL} className="post-img"/>
                     <div className="visible-posts-post-information">
@@ -42,7 +50,7 @@ const MyComponent = ({ toggleEditPost, userId }) => {
                             <FontAwesomeIcon icon={faTrashCan} />
                         </button>
                         <button className="edit-button">
-                            <FontAwesomeIcon icon={faPenToSquare} onClick={toggleEditPost}/>
+                            <FontAwesomeIcon icon={faPenToSquare} onClick={() => handleEditPostButton(post)}/>
                         </button>
                         <div className="post-price-area">
                             <p id="visible-posts-post-price">{post.postDetailSummaryDTO.price} triệu/tháng</p>
@@ -65,7 +73,7 @@ const MyComponent = ({ toggleEditPost, userId }) => {
                     </div>
                 </div>
             ))}
-            {/*<Pagination/>*/}
+            <TablePagination dataLength={posts.length} storageName={"postManageEnablePostIndex"} currentPageIndex={currentPageIndex} setStartIndex={setStartIndex} setEndIndex={setEndIndex} />
         </div>
     );
 };

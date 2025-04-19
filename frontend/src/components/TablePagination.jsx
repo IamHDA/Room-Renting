@@ -9,8 +9,8 @@ const MyComponent = ({dataLength, setStartIndex, setEndIndex, storageName, curre
 
     useEffect(() => {
         console.log(selectedIndex);
-        setStartIndex(selectedIndex * 5);
-        setEndIndex((selectedIndex + 1) * 5);
+        setStartIndex(selectedIndex * 4);
+        setEndIndex((selectedIndex + 1) * 4);
         localStorage.setItem(storageName, JSON.stringify(selectedIndex));
     }, [selectedIndex]);
 
@@ -22,10 +22,10 @@ const MyComponent = ({dataLength, setStartIndex, setEndIndex, storageName, curre
                     <FontAwesomeIcon icon={faArrowLeft} style={{fontSize: '20px'}} />
                 </button>
             )}
-            {Array.from({length: Math.ceil(dataLength/5)}, (_, i) => (
+            {Array.from({length: Math.ceil(dataLength/4)}, (_, i) => (
                 <button key={i} className={`page-index ${selectedIndex === i ? "active" : "disable"}`} onClick={() => setSelectedIndex(i)}>{i + 1}</button>
             ))}
-            {selectedIndex + 1 < Math.ceil(dataLength/5) && (
+            {selectedIndex + 1 < Math.ceil(dataLength/4) && (
                 <button className="icon-bounding" onClick={() => setSelectedIndex(prev => prev + 1)}>
                     <FontAwesomeIcon icon={faArrowRight} style={{fontSize: '20px'}} />
                 </button>

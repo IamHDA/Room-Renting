@@ -33,7 +33,7 @@ const MyComponent = ({userId, setDisablePostLength}) => {
                             <img src={post.thumbnailURL}/>
                             <div className="disable-post-information">
                                 <h2>{post.title}</h2>
-                                <p>{post.description}</p>
+                                <p>{post.description.replace(/<br\s*\/?>/gi, ' ')}</p>
                                 <div className="post-time">
                                     <img src="../../../public/user-page-icon/clock.png"/>
                                     <p id="user-page-post-time">{post.updatedAt ? post.updatedAt : post.createdAt}</p>

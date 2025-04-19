@@ -29,7 +29,7 @@ const MyComponent = () => {
     const [showFurnitureOption, setShowFurnitureOption] = useState(false);
     const [imageList, setImageList] = useState([]);
     const [videoList, setVideoList] = useState([]);
-    const [currentPostId, setCurrentPostId] = useState(null);
+    const [currentEditingPost, setCurrentEditingPost] = useState(null);
 
     const togglePickAddress = async (num) => {
         if(pickAddress === num) setPickAddress(2);
@@ -40,10 +40,6 @@ const MyComponent = () => {
         setPickAddressPopUp(!pickAddressPopUp);
         setAllWards(null);
         setAllDistricts(null);
-    }
-
-    const toggleEditPost = () => {
-        setEditPost(!editPost);
     }
 
     const handleSubmitAddressButton = () => {
@@ -394,7 +390,7 @@ const MyComponent = () => {
                         {editPost &&
                             <div className="edit-pop-up">
                                 <div className="edit-pop-up-container">
-                                    <div className="close" onClick={toggleEditPost}>
+                                    <div className="close" onClick={() => setEditPost(false)}>
                                         <FontAwesomeIcon icon={faX} />
                                     </div>
                                     <h1>Chỉnh sửa</h1>
@@ -406,11 +402,17 @@ const MyComponent = () => {
                                                     <div className="post-price-area">
                                                         <div className="container">
                                                             <p>Giá thuê</p>
-                                                            <input id="post-edit-price" type="text"/>
+                                                            <input
+                                                                id="post-edit-price"
+                                                                value={currentEditingPost.postDetailSummaryDTO.price}
+                                                                type="text"/>
                                                         </div>
                                                         <div className="container">
                                                             <p>Diện tích</p>
-                                                            <input id="post-edit-area" type="text"/>
+                                                            <input
+                                                                id="post-edit-area"
+                                                                value={currentEditingPost.postDetailSummaryDTO.area}
+                                                                type="text"/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -419,11 +421,17 @@ const MyComponent = () => {
                                                 <h2>Tiêu đề và mô tả</h2>
                                                 <div className="container">
                                                     <p>Tiêu đề</p>
-                                                    <input id="post-edit-title" type="text"/>
+                                                    <input
+                                                        id="post-edit-title"
+                                                        value={currentEditingPost.title}
+                                                        type="text"/>
                                                 </div>
                                                 <div className="container">
                                                     <p>Mô tả</p>
-                                                    <textarea id="post-edit-description" />
+                                                    <textarea
+                                                        id="post-edit-description"
+                                                        value={currentEditingPost.description.replace(/<br\s*\/?>/gi, '\n')}>
+                                                    </textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -433,45 +441,79 @@ const MyComponent = () => {
                                                 <div className="post-bedroom-electric">
                                                     <div className="container">
                                                         <p>Số phòng ngủ</p>
-                                                        <input id="post-edit-bedroom" type="text"/>
+                                                        <input
+                                                            id="post-edit-bedroom"
+                                                            value={currentEditingPost.postDetailSummaryDTO.bedroom}
+                                                            type="text"/>
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá điện</p>
-                                                        <input id="post-edit-electric" type="text"/>
+                                                        <input
+                                                            id="post-edit-electric"
+                                                            value={currentEditingPost.postDetailSummaryDTO.electric}
+                                                            type="text"/>
                                                     </div>
                                                 </div>
                                                 <div className="post-bathroom-water">
                                                     <div className="container">
                                                         <p>Số phòng tắm, vệ sinh</p>
-                                                        <input id="post-edit-bathroom" type="text"/>
+                                                        <input
+                                                            id="post-edit-bathroom"
+                                                            value={currentEditingPost.postDetailSummaryDTO.bathroom}
+                                                            type="text"/>
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá nước</p>
-                                                        <input id="post-edit-water" type="text"/>
+                                                        <input
+                                                            id="post-edit-water"
+                                                            value={currentEditingPost.postDetailSummaryDTO.water}
+                                                            type="text"/>
                                                     </div>
                                                 </div>
-                                                <div className="post-move-internet">
+                                                <div className="post-parking-internet">
                                                     <div className="container">
-                                                        <p>Thời gian chuyển vào</p>
-                                                        <input id="post-edit-move" type="text"/>
+                                                        <p>Chỗ để xe</p>
+                                                        <input
+                                                            id="post-create-parking"
+                                                            value={currentEditingPost.postDetailSummaryDTO.parking}
+                                                            type="text"/>
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá Internet</p>
-                                                        <input id="post-edit-internet" type="text"/>
+                                                        <input
+                                                            id="post-create-internet"
+                                                            value={currentEditingPost.postDetailSummaryDTO.wifi}
+                                                            type="text"/>
                                                     </div>
                                                 </div>
                                                 <div className="post-security-furniture">
                                                     <div className="container">
                                                         <p>An ninh</p>
-                                                        <input id="post-edit-security" type="text"/>
+                                                        <input
+                                                            id="post-edit-security"
+                                                            value={currentEditingPost.security}
+                                                            type="text"/>
                                                     </div>
-                                                    <div className="container">
+                                                    <div className="container" onClick={() => setShowFurnitureOption(prev => !prev)}>
                                                         <p>Nội thất</p>
-                                                        <input id="post-edit-furniture" type="text"/>
+                                                        <input
+                                                            id="post-edit-furniture"
+                                                            type="text"
+                                                            readOnly
+                                                            value={currentEditingPost.furniture}
+                                                            style={{ caretColor: "transparent", cursor: "pointer" }}
+                                                        />
+                                                        {showFurnitureOption && (
+                                                            <div className="option">
+                                                                <p className="options" onClick={handleFurnitureOption}>Cao cấp</p>
+                                                                <p className="options" onClick={handleFurnitureOption}>Đầy đủ</p>
+                                                                <p className="options" onClick={handleFurnitureOption}>Nhà trống</p>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button className="submit-edit-button" onClick={toggleEditPost}>
+                                            <button className="submit-edit-button" onClick={() => setEditPost(false)}>
                                                 Xác nhận
                                             </button>
                                         </div>
@@ -481,14 +523,14 @@ const MyComponent = () => {
                         }
                         <div className="post-manage-main-content">
                             <div className="switch-posts">
-                                <p className={isVisiblePosts ? "visible-posts show" : "visible-posts"} onClick={() => setIsVisiblePosts(true)}>Bài đăng đang hiển thị (n/n)</p>
+                                <p className={isVisiblePosts ? "visible-posts show" : "visible-posts"} onClick={() => setIsVisiblePosts(true)}>Bài đăng đang hiển thị</p>
                                 <img src="../../../public/post-manage-icon/stand-line.png" className="stand-line" style={{height: "60px"}}/>
-                                <p className={!isVisiblePosts ? "invisible-posts show" : "invisible-posts"} onClick={() => setIsVisiblePosts(false)}>Bài đăng đã ẩn(n/n)</p>
+                                <p className={!isVisiblePosts ? "invisible-posts show" : "invisible-posts"} onClick={() => setIsVisiblePosts(false)}>Bài đăng đã ẩn</p>
                             </div>
                             <img src="../../../public/post-manage-icon/line.png" className="line"/>
                             {isVisiblePosts ?
-                                <PostManageEnablePost toggleEditPost={toggleEditPost} setCurrentPostId={setCurrentPostId} userId={userId}/> :
-                                <PostManageDisablePost toggleEditPost={toggleEditPost} setCurrentPostId={setCurrentPostId} userId={userId}/>
+                                <PostManageEnablePost setEditPost={setEditPost} setCurrentEditingPost={setCurrentEditingPost} userId={userId}/> :
+                                <PostManageDisablePost setEditPost={setEditPost} setCurrentEditingPost={setCurrentEditingPost} userId={userId}/>
                             }
                         </div>
                     </>
