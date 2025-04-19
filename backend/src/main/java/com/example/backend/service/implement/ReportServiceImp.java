@@ -1,6 +1,6 @@
 package com.example.backend.service.implement;
 
-import com.example.backend.dto.MakeReport;
+import com.example.backend.dto.report.MakeReport;
 import com.example.backend.entity.mySQL.*;
 import com.example.backend.repository.mySQL.*;
 import com.example.backend.service.ReportService;
@@ -27,6 +27,21 @@ public class ReportServiceImp implements ReportService {
     private ReportRepository reportRepo;
     @Autowired
     private UserService userService;
+
+    @Override
+    public long getTotalReport() {
+        return reportRepo.count();
+    }
+
+    @Override
+    public long getTotalReportThisMonth() {
+        return reportRepo.countByThisMonth(LocalDateTime.now().getMonthValue());
+    }
+
+    @Override
+    public long getTotalReportThisDay() {
+        return reportRepo.countByThisDay(LocalDateTime.now().getDayOfMonth());
+    }
 
     @Override
     public String addPostReport(long postId, MakeReport report) {

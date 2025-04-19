@@ -1,7 +1,7 @@
 package com.example.backend.service.implement;
 
-import com.example.backend.dto.PostDetailSummaryDTO;
-import com.example.backend.dto.PostSummaryDTO;
+import com.example.backend.dto.post.PostDetailSummaryDTO;
+import com.example.backend.dto.post.PostSummaryDTO;
 import com.example.backend.entity.mySQL.FavouritePost;
 import com.example.backend.entity.mySQL.Post;
 import com.example.backend.entity.mySQL.PostDetail;

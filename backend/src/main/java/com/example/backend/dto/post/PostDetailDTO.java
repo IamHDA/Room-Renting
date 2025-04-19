@@ -1,17 +1,17 @@
-package com.example.backend.dto;
+package com.example.backend.dto.post;
 
 import lombok.Data;
 
 @Data
-public class CreatePostDTO {
-    private String title;
-    private String description;
+public class PostDetailDTO {
     private double price;
     private double area;
-    private String bedroom;
     private String bathroom;
+    private String bedroom;
     private String water;
     private String electric;
     private String parking;
     private String wifi;
+    private String security;
+    private String furniture;
 }

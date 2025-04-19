@@ -4,6 +4,7 @@ import com.example.backend.entity.mySQL.Address;
 import com.example.backend.entity.mySQL.City;
 import com.example.backend.entity.mySQL.District;
 import com.example.backend.entity.mySQL.Ward;
+import com.example.backend.repository.mySQL.AddressRepository;
 import com.example.backend.repository.mySQL.CityRepository;
 import com.example.backend.repository.mySQL.DistrictRepository;
 import com.example.backend.repository.mySQL.WardRepository;
@@ -22,6 +23,8 @@ public class AddressServiceImp implements AddressService {
     private DistrictRepository districtRepo;
     @Autowired
     private CityRepository cityRepo;
+    @Autowired
+    private AddressRepository addressRepo;
 
     @Override
     public List<City> getAllCities() {
@@ -48,5 +51,13 @@ public class AddressServiceImp implements AddressService {
         District addressDistrict = addressWard.getDistrict();
         City addressCity = addressDistrict.getCity();
         return (addressDetail.isBlank() ? "" : (addressDetail + ", ")) + addressWard.getName() + ", " + addressDistrict.getName() + ", " + addressCity.getName();
+    }
+
+    @Override
+    public List<String> getAvailableAddress(String keyword) {
+        return addressRepo.searchAddress(keyword)
+                .stream()
+                .map(address -> getAddress(address))
+                .toList();
     }
 }

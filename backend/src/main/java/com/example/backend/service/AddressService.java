@@ -14,4 +14,5 @@ public interface AddressService {
     List<District> getDistrictByCity(int id);
     List<Ward> getWardByDistrict(int id);
     String getAddress(Address address);
+    List<String> getAvailableAddress(String keyword);
 }

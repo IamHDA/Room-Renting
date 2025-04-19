@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.*;
+import com.example.backend.dto.filter.PostFilter;
+import com.example.backend.dto.post.*;
 import com.example.backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,16 @@ import java.util.List;
 public class PostController {
     @Autowired
     private PostService postService;
+
+    @GetMapping("/totalPosts")
+    private ResponseEntity<PostStats> getTotalPosts(){
+        PostStats postStats = PostStats.builder()
+                .totalPosts(postService.getTotalPost())
+                .totalPostsThisMonth(postService.getTotalPostThisMonth())
+                .totalPostsThisDay(postService.getTotalPostThisDay())
+                .build();
+        return ResponseEntity.ok(postStats);
+    }
 
     @GetMapping("/newPosts")
     private ResponseEntity<List<PostSummaryDTO>> getNewPosts(){
@@ -34,6 +45,34 @@ public class PostController {
     @GetMapping("/userDisablePosts/{userId}")
     public ResponseEntity<List<PostSummaryDTO>> getDisablePostsByUser(@PathVariable long userId) {
         return ResponseEntity.ok(postService.getDisablePostsByUser(userId));
+    }
+
+    @GetMapping("/postsByCriteria")
+    public ResponseEntity<List<PostSummaryDTO>> getPostByCriteria(
+            @RequestParam(name = "detail") String detail,
+            @RequestParam(name = "ward") String ward,
+            @RequestParam(name = "district") String district,
+            @RequestParam(name = "city") String city,
+            @RequestParam(name = "minPrice") double minPrice,
+            @RequestParam(name = "maxPrice") double maxPrice,
+            @RequestParam(name = "minArea") double minArea,
+            @RequestParam(name = "maxArea") double maxArea,
+            @RequestParam(name = "furniture") String furniture,
+            @RequestParam(name = "sortCondition") String sortCondition
+    ){
+        PostFilter filter = PostFilter.builder()
+                .addressDetail(detail)
+                .addressWard(ward)
+                .addressDistrict(district)
+                .addressCity(city)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .minArea(minArea)
+                .maxArea(maxArea)
+                .furniture(furniture)
+                .sortCondition(sortCondition)
+                .build();
+        return ResponseEntity.ok(postService.getPostsByCriteria(filter));
     }
 
     @RequestMapping("postDetail/findById/{id}")

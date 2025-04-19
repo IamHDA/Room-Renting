@@ -1,6 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.PostSummaryDTO;
+import com.example.backend.dto.post.PostSummaryDTO;
 
 import java.util.List;
 

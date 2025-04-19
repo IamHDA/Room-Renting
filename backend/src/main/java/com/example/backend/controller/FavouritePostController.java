@@ -1,6 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.PostSummaryDTO;
+import com.example.backend.dto.post.PostSummaryDTO;
 import com.example.backend.service.FavouritePostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

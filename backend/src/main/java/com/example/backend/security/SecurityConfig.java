@@ -54,11 +54,12 @@ public class SecurityConfig {
                                 "/authenticate/**",
                                 "/user/profile/**",
                                 "/userRating/totalRating/**",
+                                "/post/postsByCriteria",
                                 "/post/newPosts",
                                 "/post/specificPost/**",
                                 "/post/userEnablePosts/**",
                                 "/post/userDisablePosts/**",
-                                "/PostMedia/**",
+                                "/address/search",
                                 "/test/**"
                         ).permitAll()
                         .anyRequest().authenticated())

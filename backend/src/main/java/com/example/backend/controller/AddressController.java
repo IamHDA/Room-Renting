@@ -32,4 +32,9 @@ public class AddressController {
     public ResponseEntity<List<City>> getCities(){
         return ResponseEntity.ok(addressService.getAllCities());
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<String>> getAvailableAddress(@RequestParam(name = "keyword") String keyword){
+        return ResponseEntity.ok(addressService.getAvailableAddress(keyword));
+    }
 }

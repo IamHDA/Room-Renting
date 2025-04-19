@@ -1,5 +1,6 @@
-package com.example.backend.dto;
+package com.example.backend.dto.post;
 
+import com.example.backend.dto.AddressDTO;
 import lombok.Data;
 
 @Data

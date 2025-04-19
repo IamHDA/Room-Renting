@@ -25,7 +25,8 @@ public class User {
     @Lob
     @Column(name = "background_image", columnDefinition = "LONGBLOB")
     private byte[] backgroundImage;
-    private LocalDateTime createAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;

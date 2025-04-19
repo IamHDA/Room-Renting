@@ -1,8 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.UserHeader;
-import com.example.backend.dto.UserPersonalInformation;
-import com.example.backend.dto.UserProfile;
+import com.example.backend.dto.user.UserHeader;
+import com.example.backend.dto.user.UserPersonalInformation;
+import com.example.backend.dto.user.UserProfile;
+import com.example.backend.dto.user.UserStats;
 import com.example.backend.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,17 @@ public class UserController {
     private UserService userService;
     @Autowired
     private ModelMapper modelMapper;
+
+    @GetMapping("/totalUsers")
+    public ResponseEntity<UserStats> getTotalUsers(){
+        UserStats userStats = UserStats
+                .builder()
+                .totalUser( userService.getTotalUser())
+                .totalUserThisMonth( userService.getTotalUserThisMonth())
+                .totalUserThisDay( userService.getTotalUserThisDay())
+                .build();
+        return ResponseEntity.ok(userStats);
+    }
 
     @GetMapping("/currentUser")
     public ResponseEntity<UserHeader> getCurrentUser(){

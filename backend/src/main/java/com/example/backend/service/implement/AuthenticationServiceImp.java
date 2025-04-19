@@ -55,7 +55,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
             User user = new User();
             user.setFullName(request.getFullName());
             user.setPhoneNumber(request.getIdentifier());
-            user.setCreateAt(LocalDateTime.now());
+            user.setCreatedAt(LocalDateTime.now());
             user.setRole(Role.USER);
             user.setStatus(UserStatus.ONLINE);
             try {

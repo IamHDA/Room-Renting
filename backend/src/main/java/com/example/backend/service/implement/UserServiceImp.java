@@ -1,8 +1,8 @@
 package com.example.backend.service.implement;
 
 import com.example.backend.Enum.UserStatus;
-import com.example.backend.dto.UserPersonalInformation;
-import com.example.backend.dto.UserProfile;
+import com.example.backend.dto.user.UserPersonalInformation;
+import com.example.backend.dto.user.UserProfile;
 import com.example.backend.entity.mySQL.Account;
 import com.example.backend.entity.mySQL.Address;
 import com.example.backend.entity.mySQL.User;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -62,7 +63,7 @@ public class UserServiceImp implements UserService {
         User user = userRepo.findById(userId).orElse(null);
         UserProfile userProfile = modelMapper.map(user, UserProfile.class);
         userProfile.setStatus(user.getStatus().getDisplayName());
-        userProfile.setJoinTime(formatUtil.getJoinTime(user.getCreateAt()));
+        userProfile.setJoinTime(formatUtil.getJoinTime(user.getCreatedAt()));
         userProfile.setDtoAddress(addressService.getAddress(user.getAddress()));
         return userProfile;
     }
@@ -73,6 +74,21 @@ public class UserServiceImp implements UserService {
         UserPersonalInformation information = modelMapper.map(getCurrentUser(), UserPersonalInformation.class);
         information.setAddressText(addressService.getAddress(user.getAddress()));
         return information;
+    }
+
+    @Override
+    public long getTotalUser() {
+        return userRepo.count();
+    }
+
+    @Override
+    public long getTotalUserThisMonth(){
+        return userRepo.countByThisMonth(LocalDateTime.now().getMonthValue());
+    }
+
+    @Override
+    public long getTotalUserThisDay(){
+        return userRepo.countByThisDay(LocalDateTime.now().getDayOfMonth());
     }
 
     @Override

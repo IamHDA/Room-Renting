@@ -1,4 +1,4 @@
-package com.example.backend.dto;
+package com.example.backend.dto.post;
 
 import com.example.backend.Enum.MediaType;
 import lombok.Data;

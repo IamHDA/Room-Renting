@@ -29,7 +29,7 @@ public class Post {
     private String description;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PostStatus status = PostStatus.ENABLED;
+    private PostStatus status;
     @Column(nullable = false)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

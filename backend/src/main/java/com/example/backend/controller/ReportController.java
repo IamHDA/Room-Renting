@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.MakeReport;
+import com.example.backend.dto.report.MakeReport;
+import com.example.backend.dto.report.ReportStats;
 import com.example.backend.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,16 @@ public class ReportController {
 
     @Autowired
     private ReportService reportService;
+
+    @GetMapping("/totalReports")
+    private ResponseEntity<ReportStats> getTotalReports(){
+        ReportStats reportStats = ReportStats.builder()
+                .totalReports(reportService.getTotalReport())
+                .totalReportsThisMonth(reportService.getTotalReportThisMonth())
+                .totalReportsThisDay(reportService.getTotalReportThisDay())
+                .build();
+        return ResponseEntity.ok(reportStats);
+    }
 
     @PostMapping("/reportUser/{userId}")
     public ResponseEntity<String> reportUser(@PathVariable long userId, @RequestBody MakeReport report){
