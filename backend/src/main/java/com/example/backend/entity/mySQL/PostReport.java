@@ -3,10 +3,18 @@ package com.example.backend.entity.mySQL;
 import com.example.backend.entity.id.PostReportId;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class PostReport {
+    public PostReport(Post post, Report report){
+        this.post = post;
+        this.report = report;
+        this.id = new PostReportId(post.getId(), report.getId());
+    }
+
     @EmbeddedId
     private PostReportId id;
 

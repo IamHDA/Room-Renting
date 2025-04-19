@@ -11,7 +11,7 @@ public class PostDTO {
     private long id;
     private String title;
     private String description;
-    private String dtoAddress;
+    private String addressDTO;
     private List<PostMediaDTO> postMediaDTO;
     @JsonFormat(pattern = "HH:mm, dd/MM/yyyy")
     private LocalDateTime createdAt;

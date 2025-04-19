@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/authenticate/**",
                                 "/user/profile/**",
+                                "/userRating/totalRating/**",
                                 "/post/newPosts",
                                 "/post/specificPost/**",
                                 "/post/userEnablePosts/**",

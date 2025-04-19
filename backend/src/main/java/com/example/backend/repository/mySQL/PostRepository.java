@@ -1,12 +1,14 @@
 package com.example.backend.repository.mySQL;
 
 import com.example.backend.Enum.PostStatus;
+import com.example.backend.dto.ChangePostInformation;
 import com.example.backend.entity.mySQL.Address;
 import com.example.backend.entity.mySQL.Post;
 import com.example.backend.entity.mySQL.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,14 +17,13 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
 select p from Post p
-where p.status != "DISABLED"
+where p.status = :status
 order by p.createdAt desc
 limit 8
 """)
-    List<Post> findNewPosts();
+    List<Post> findNewPosts(@Param("status") PostStatus status);
     List<Post> findByUser_IdAndStatus(long userId, PostStatus status);
     List<Post> findByAddress(Address address);
     int countByUser(User user);
     long user(User user);
-
 }

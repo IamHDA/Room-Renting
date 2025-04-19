@@ -1,9 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.AddressDTO;
-import com.example.backend.dto.CreatePostDTO;
-import com.example.backend.dto.PostDTO;
-import com.example.backend.dto.PostSummaryDTO;
+import com.example.backend.dto.*;
 import com.example.backend.entity.mySQL.Post;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +14,8 @@ public interface PostService {
     PostDTO getPost(long postId);
     List<PostSummaryDTO> getEnablePostsByUser(long userId);
     List<PostSummaryDTO> getDisablePostsByUser(long userId);
+    PostDetailDTO getPostDetail(long postId);
     String changePostStatus(long postId, String status);
     String deletePost(long postId);
+    String changePostInformation(ChangePostInformation changePostInformation);
 }

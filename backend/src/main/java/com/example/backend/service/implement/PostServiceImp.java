@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class PostServiceImplement implements PostService {
+public class PostServiceImp implements PostService {
 
     @Autowired
     private PostMediaRepository postMediaRepo;
@@ -93,7 +93,7 @@ public class PostServiceImplement implements PostService {
 
     @Override
     public List<PostSummaryDTO> getNewPosts() {
-        List<Post> posts = postRepo.findNewPosts();
+        List<Post> posts = postRepo.findNewPosts(PostStatus.ENABLED);
         return posts.stream()
                 .map(post -> {
                     PostSummaryDTO postSummaryDTO = modelMapper.map(post, PostSummaryDTO.class);
@@ -126,7 +126,7 @@ public class PostServiceImplement implements PostService {
         postDTO.setPostMediaDTO(postMediaDTOList);
         postDTO.setPostCreator(postCreator);
         postDTO.setPostDetailDTO(modelMapper.map(post.getPostDetail(), PostDetailDTO.class));
-        postDTO.setDtoAddress(addressService.getAddress(post.getAddress()));
+        postDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
         postDTO.setDescription(formatUtil.textFormat(post.getDescription()));
         return postDTO;
     }
@@ -141,6 +141,11 @@ public class PostServiceImplement implements PostService {
     public List<PostSummaryDTO> getDisablePostsByUser(long userId) {
         List<Post> posts = postRepo.findByUser_IdAndStatus(userId, PostStatus.DISABLED);
         return convertPostToPostSummary(posts);
+    }
+
+    @Override
+    public PostDetailDTO getPostDetail(long id) {
+        return modelMapper.map(postDetailRepo.findById(id).orElse(null), PostDetailDTO.class);
     }
 
     @Override
@@ -161,14 +166,36 @@ public class PostServiceImplement implements PostService {
         return "Post deleted successfully!";
     }
 
+    @Override
+    public String changePostInformation(ChangePostInformation changePostInformation) {
+        Post post = postRepo.findById(changePostInformation.getId()).orElse(null);
+        PostDetail postDetail = PostDetail.builder()
+                        .id(post.getPostDetail().getId())
+                        .price(changePostInformation.getPostDetailDTO().getPrice())
+                        .area(changePostInformation.getPostDetailDTO().getArea())
+                        .bathroom(changePostInformation.getPostDetailDTO().getBathroom())
+                        .bedroom(changePostInformation.getPostDetailDTO().getBedroom())
+                        .electric(changePostInformation.getPostDetailDTO().getElectric())
+                        .parking(changePostInformation.getPostDetailDTO().getParking())
+                        .water(changePostInformation.getPostDetailDTO().getWater())
+                        .wifi(changePostInformation.getPostDetailDTO().getWifi())
+                        .security(changePostInformation.getPostDetailDTO().getSecurity())
+                        .furniture(changePostInformation.getPostDetailDTO().getFurniture())
+                        .build();
+        post.setPostDetail(postDetail);
+        post.setTitle(changePostInformation.getTitle());
+        post.setDescription(changePostInformation.getDescription());
+        post.setUpdatedAt(LocalDateTime.now());
+        postRepo.save(post);
+        return "Post updated successfully!";
+    }
+
     List<PostSummaryDTO> convertPostToPostSummary(List<Post> posts){
         return posts.stream()
                 .map(post -> {
                     PostDetail postDetail = post.getPostDetail();
                     PostSummaryDTO dto = modelMapper.map(post, PostSummaryDTO.class);
-                    PostDetailSummaryDTO postDetailSummaryDTO = new PostDetailSummaryDTO();
-                    postDetailSummaryDTO.setArea(postDetail.getArea());
-                    postDetailSummaryDTO.setPrice(postDetail.getPrice());
+                    PostDetailSummaryDTO postDetailSummaryDTO = modelMapper.map(postDetail, PostDetailSummaryDTO.class);
                     dto.setUserId(post.getUser().getId());
                     dto.setAddressDTO(addressService.getAddress(post.getAddress()));
                     dto.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());

@@ -33,7 +33,7 @@ import java.util.List;
 
 
 @Service
-public class AuthenticationServiceImplement implements AuthenticationService {
+public class AuthenticationServiceImp implements AuthenticationService {
 
     @Autowired
     private TokenRepository tokenRepo;

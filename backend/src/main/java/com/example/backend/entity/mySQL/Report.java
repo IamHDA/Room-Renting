@@ -15,12 +15,10 @@ public class Report {
     private Long id;
     @Column(nullable = false)
     private String name;
-    private LocalDateTime createAt;
+    private String description;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "reporter_id")
     private User reporter;
-
-    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReportReason> reportReasons;
 }

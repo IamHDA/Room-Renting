@@ -1,8 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.PostCreateRequest;
-import com.example.backend.dto.PostDTO;
-import com.example.backend.dto.PostSummaryDTO;
+import com.example.backend.dto.*;
 import com.example.backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +36,11 @@ public class PostController {
         return ResponseEntity.ok(postService.getDisablePostsByUser(userId));
     }
 
+    @RequestMapping("postDetail/findById/{id}")
+    public ResponseEntity<PostDetailDTO> getPostDetailById(@PathVariable long id){
+        return ResponseEntity.ok(postService.getPostDetail(id));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<String> postCreate(@RequestPart(name = "post") PostCreateRequest postCreateRequest, @RequestPart(name = "file") List<MultipartFile> files) throws IOException {
         long postId = postService.createPost(postCreateRequest.getAddressDTO(), postCreateRequest.getCreatePostDTO());
@@ -48,6 +51,11 @@ public class PostController {
     @PutMapping("/changeStatus")
     public ResponseEntity<String> changeStatus(@RequestParam long postId, @RequestParam String status){
         return ResponseEntity.ok(postService.changePostStatus(postId, status));
+    }
+
+    @PutMapping("/changeInformation")
+    public ResponseEntity<String> changePostInformation(@RequestBody ChangePostInformation changePostInformation){
+        return ResponseEntity.ok(postService.changePostInformation(changePostInformation));
     }
 
     @DeleteMapping("/delete/{postId}")

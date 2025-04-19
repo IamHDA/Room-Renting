@@ -8,7 +8,6 @@ import com.example.backend.entity.mySQL.Address;
 import com.example.backend.entity.mySQL.User;
 import com.example.backend.entity.mySQL.Ward;
 import com.example.backend.repository.mySQL.AccountRepository;
-import com.example.backend.repository.mySQL.AddressRepository;
 import com.example.backend.repository.mySQL.UserRepository;
 import com.example.backend.repository.mySQL.WardRepository;
 import com.example.backend.service.AddressService;
@@ -28,7 +27,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class UserServiceImplement implements UserService {
+public class UserServiceImp implements UserService {
 
     @Autowired
     private UserRepository userRepo;
