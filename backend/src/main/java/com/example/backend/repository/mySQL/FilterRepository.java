@@ -2,6 +2,7 @@ package com.example.backend.repository.mySQL;
 
 import com.example.backend.Enum.PostStatus;
 import com.example.backend.dto.filter.AdminPostFilter;
+import com.example.backend.dto.filter.AdminUserFilter;
 import com.example.backend.dto.filter.PostFilter;
 import com.example.backend.entity.mySQL.*;
 import jakarta.persistence.EntityManager;
@@ -77,6 +78,33 @@ public class FilterRepository {
 
         cq.where(predicates.toArray(new Predicate[0]));
         TypedQuery<Post> query = entityManager.createQuery(cq);
+        return query.getResultList();
+    }
+
+    public List<User> adminFilterUser(AdminUserFilter filter) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        Root<User> user = cq.from(User.class);
+        Subquery<Long> reportCountSubquery = cq.subquery(Long.class);
+        Root<UserReport> reportRoot = reportCountSubquery.from(UserReport.class);
+        reportCountSubquery.select(cb.count(reportRoot))
+                .where(cb.equal(reportRoot.get("user"), user));
+
+        if(!filter.getFullName().isBlank()) predicates.add(cb.like(cb.lower(user.get("fullName")), "%" + filter.getFullName().toLowerCase() + "%"));
+        if(!filter.getPhoneNumber().isBlank()) predicates.add(cb.like(user.get("phoneNumber"), "%" + filter.getPhoneNumber() + "%"));
+
+        String[] sort = filter.getSortCondition().split(" ");
+
+        if("id".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(user.get("id")) : cb.desc(user.get("id")) );
+        if("fullName".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(user.get("fullName")) : cb.desc(user.get("fullName")));
+        if("reportCount".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(reportCountSubquery.getSelection()) : cb.desc(reportCountSubquery.getSelection()));
+        if("createdAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(user.get("createdAt")) : cb.desc(user.get("createdAt")));
+
+
+        cq.where(predicates.toArray(new Predicate[0]));
+        TypedQuery<User> query = entityManager.createQuery(cq);
         return query.getResultList();
     }
 }

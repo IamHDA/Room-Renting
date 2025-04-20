@@ -25,9 +25,7 @@ public interface PostReportRepository extends JpaRepository<PostReport, PostRepo
             @Param("reporter") User reporter
     );
     long countByPost(Post post);
-    @Query("""
-    select pr from PostReport pr
-    where pr.post.id = :postId
-""")
-    List<PostReport> findByPostId(@Param("postId") long postId);
+    List<PostReport> findByPost_Id(long postId);
+
+    void deleteByReport_Id(Long reportId);
 }

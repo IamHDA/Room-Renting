@@ -1,12 +1,16 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.UserPostReportDTO;
+import com.example.backend.dto.AdminPostRow;
+import com.example.backend.dto.AdminUserRow;
+import com.example.backend.dto.UserReportDTO;
 import com.example.backend.dto.filter.AdminPostFilter;
 import com.example.backend.dto.PostReportDTO;
+import com.example.backend.dto.filter.AdminUserFilter;
 import com.example.backend.dto.post.PostStats;
 import com.example.backend.dto.report.ReportStats;
 import com.example.backend.dto.user.UserStats;
 import com.example.backend.service.AdminService;
+import com.example.backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +22,8 @@ import java.util.List;
 public class AdminController {
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private PostService postService;
 
     @GetMapping("/totalPosts")
     public ResponseEntity<PostStats> getTotalPosts(){
@@ -50,10 +56,19 @@ public class AdminController {
         return ResponseEntity.ok(userStats);
     }
 
-    @GetMapping("/postsTable")
-    public ResponseEntity<List<UserPostReportDTO>> getPostTable(@RequestParam String authorName, String sortCondition){
+    @GetMapping("/postTable")
+    public ResponseEntity<List<AdminPostRow>> getPostTable(@RequestParam String authorName, String sortCondition){
         return ResponseEntity.ok(adminService.getPostManageList(AdminPostFilter.builder()
                 .authorName(authorName)
+                .sortCondition(sortCondition)
+                .build()));
+    }
+
+    @GetMapping("/userTable")
+    public ResponseEntity<List<AdminUserRow>> getUserTable(@RequestParam String fullName, @RequestParam String phoneNumber, @RequestParam String sortCondition){
+        return ResponseEntity.ok(adminService.getUserManageList(AdminUserFilter.builder()
+                .fullName(fullName)
+                .phoneNumber(phoneNumber)
                 .sortCondition(sortCondition)
                 .build()));
     }
@@ -61,5 +76,25 @@ public class AdminController {
     @GetMapping("/post/{postId}")
     public ResponseEntity<PostReportDTO> getPostReport(@PathVariable long postId){
         return ResponseEntity.ok(adminService.getPostReport(postId));
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserReportDTO> getUserReport(@PathVariable long userId){
+        return ResponseEntity.ok(adminService.getUserReport(userId));
+    }
+
+    @DeleteMapping("/post/delete/{postId}")
+    public ResponseEntity<String> deletePost(@PathVariable long postId){
+        return ResponseEntity.ok(postService.deletePost(postId));
+    }
+
+    @DeleteMapping("/user/delete/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable long userId){
+        return ResponseEntity.ok(adminService.deleteUser(userId));
+    }
+
+    @DeleteMapping("/report/delete/{reportId}")
+    public ResponseEntity<String> deleteReport(@PathVariable long reportId){
+        return ResponseEntity.ok(adminService.deleteReport(reportId));
     }
 }

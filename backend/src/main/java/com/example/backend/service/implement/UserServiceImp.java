@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -64,7 +63,7 @@ public class UserServiceImp implements UserService {
         UserProfile userProfile = modelMapper.map(user, UserProfile.class);
         userProfile.setStatus(user.getStatus().getDisplayName());
         userProfile.setJoinTime(formatUtil.getJoinTime(user.getCreatedAt()));
-        userProfile.setDtoAddress(addressService.getAddress(user.getAddress()));
+        userProfile.setAddressDTO(addressService.getAddress(user.getAddress()));
         return userProfile;
     }
 
