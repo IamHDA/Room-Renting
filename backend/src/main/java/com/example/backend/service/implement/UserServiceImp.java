@@ -77,21 +77,6 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public long getTotalUser() {
-        return userRepo.count();
-    }
-
-    @Override
-    public long getTotalUserThisMonth(){
-        return userRepo.countByThisMonth(LocalDateTime.now().getMonthValue());
-    }
-
-    @Override
-    public long getTotalUserThisDay(){
-        return userRepo.countByThisDay(LocalDateTime.now().getDayOfMonth());
-    }
-
-    @Override
     public String changeAvatar (MultipartFile file) throws IOException {
         User user = getCurrentUser();
         user.setAvatar(file.getBytes());

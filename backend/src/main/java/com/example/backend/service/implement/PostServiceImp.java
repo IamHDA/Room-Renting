@@ -3,6 +3,7 @@ package com.example.backend.service.implement;
 import com.example.backend.Enum.MediaType;
 import com.example.backend.Enum.PostStatus;
 import com.example.backend.dto.*;
+import com.example.backend.dto.filter.AdminPostFilter;
 import com.example.backend.dto.filter.PostFilter;
 import com.example.backend.dto.post.*;
 import com.example.backend.entity.mongoDB.PostMedia;
@@ -29,15 +30,11 @@ public class PostServiceImp implements PostService {
     @Autowired
     private PostMediaRepository postMediaRepo;
     @Autowired
-    private FilterRepository filterRepo;
-    @Autowired
     private PostRepository postRepo;
     @Autowired
     private PostDetailRepository postDetailRepo;
     @Autowired
     private AddressRepository addressRepo;
-    @Autowired
-    private ModelMapper modelMapper;
     @Autowired
     private UserService userService;
     @Autowired
@@ -45,9 +42,11 @@ public class PostServiceImp implements PostService {
     @Autowired
     private WardRepository wardRepo;
     @Autowired
+    private FilterRepository filterRepo;
+    @Autowired
     private FormatUtil formatUtil;
-
-
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public List<PostSummaryDTO> getNewPosts() {
@@ -70,23 +69,7 @@ public class PostServiceImp implements PostService {
 
     @Override
     public PostDTO getPost(long postId) {
-        Post post = postRepo.findById(postId).orElse(null);
-        User user = post.getUser();
-        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
-        PostCreator postCreator = modelMapper.map(user, PostCreator.class);
-        postCreator.setStatus(user.getStatus().getDisplayName());
-        postCreator.setJoinTime(formatUtil.getJoinTime(user.getCreatedAt()));
-        postCreator.setTotalPosts(postRepo.countByUser(user));
-        List<PostMediaDTO> postMediaDTOList = postMediaRepo.findByPostId(post.getId())
-                .stream()
-                .map(postMedia -> modelMapper.map(postMedia, PostMediaDTO.class))
-                .toList();
-        postDTO.setPostMediaDTO(postMediaDTOList);
-        postDTO.setPostCreator(postCreator);
-        postDTO.setPostDetailDTO(modelMapper.map(post.getPostDetail(), PostDetailDTO.class));
-        postDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
-        postDTO.setDescription(formatUtil.textFormat(post.getDescription()));
-        return postDTO;
+        return formatUtil.convertPostToPostDTO(postId);
     }
 
     @Override
@@ -109,21 +92,6 @@ public class PostServiceImp implements PostService {
     @Override
     public List<PostSummaryDTO> getPostsByCriteria(PostFilter filter) {
         return convertPostToPostSummary(filterRepo.filterPost(filter));
-    }
-
-    @Override
-    public long getTotalPost() {
-        return postRepo.count();
-    }
-
-    @Override
-    public long getTotalPostThisMonth() {
-        return postRepo.countByThisMonth(LocalDateTime.now().getMonthValue());
-    }
-
-    @Override
-    public long getTotalPostThisDay() {
-        return postRepo.countByThisDay(LocalDateTime.now().getDayOfMonth());
     }
 
     @Override

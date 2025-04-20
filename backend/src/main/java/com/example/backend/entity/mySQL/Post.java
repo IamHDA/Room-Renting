@@ -3,6 +3,7 @@ package com.example.backend.entity.mySQL;
 import com.example.backend.Enum.PostStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,10 +35,6 @@ public class Post {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "detail_id", nullable = false)
     private PostDetail postDetail;
@@ -46,7 +43,15 @@ public class Post {
     @JsonIgnore
     private List<FavouritePost> favouritePosts;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<PostReport> postReports;
+
     @ManyToOne
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

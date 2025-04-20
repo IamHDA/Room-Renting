@@ -1,6 +1,7 @@
 package com.example.backend.repository.mySQL;
 
 import com.example.backend.Enum.PostStatus;
+import com.example.backend.dto.filter.AdminPostFilter;
 import com.example.backend.dto.filter.PostFilter;
 import com.example.backend.entity.mySQL.*;
 import jakarta.persistence.EntityManager;
@@ -47,6 +48,32 @@ public class FilterRepository {
         if("price".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(postDetail.get("price")) : cb.desc(postDetail.get("price")) );
         else if ("area".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(postDetail.get("area")) : cb.desc(postDetail.get("area")) );
         else if ("createdAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("createdAt")) : cb.desc(post.get("createdAt")) );
+
+        cq.where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Post> query = entityManager.createQuery(cq);
+        return query.getResultList();
+    }
+
+    public List<Post> adminFilterPost(AdminPostFilter filter) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Post> cq = cb.createQuery(Post.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        Root<Post> post = cq.from(Post.class);
+        Join<Post, User> user = post.join("user");
+        Subquery<Long> reportCountSubquery = cq.subquery(Long.class);
+        Root<PostReport> reportRoot = reportCountSubquery.from(PostReport.class);
+        reportCountSubquery.select(cb.count(reportRoot))
+                .where(cb.equal(reportRoot.get("post"), post));
+
+        if(!filter.getAuthorName().isBlank()) predicates.add(cb.like(cb.lower(user.get("fullName")), "%" + filter.getAuthorName().toLowerCase() + "%"));
+
+        String[] sort = filter.getSortCondition().split(" ");
+
+        if("id".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("id")) : cb.desc(post.get("id")) );
+        if("reportCount".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(reportCountSubquery.getSelection()) : cb.desc(reportCountSubquery.getSelection()));
+        if("createdAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("createdAt")) : cb.desc(post.get("createdAt")));
+        if("updatedAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("updatedAt")) : cb.desc(post.get("updatedAt")));
 
         cq.where(predicates.toArray(new Predicate[0]));
         TypedQuery<Post> query = entityManager.createQuery(cq);

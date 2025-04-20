@@ -11,9 +11,6 @@ public interface UserService {
     User getCurrentUser();
     UserProfile getProfile(long userId);
     UserPersonalInformation getPersonalInformation();
-    long getTotalUser();
-    long getTotalUserThisMonth();
-    long getTotalUserThisDay();
     String changeAvatar(MultipartFile file) throws IOException;
     String changeBackgroundImage(MultipartFile file) throws IOException;
     String changePersonalInformation(UserPersonalInformation information);

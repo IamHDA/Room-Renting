@@ -29,21 +29,6 @@ public class ReportServiceImp implements ReportService {
     private UserService userService;
 
     @Override
-    public long getTotalReport() {
-        return reportRepo.count();
-    }
-
-    @Override
-    public long getTotalReportThisMonth() {
-        return reportRepo.countByThisMonth(LocalDateTime.now().getMonthValue());
-    }
-
-    @Override
-    public long getTotalReportThisDay() {
-        return reportRepo.countByThisDay(LocalDateTime.now().getDayOfMonth());
-    }
-
-    @Override
     public String addPostReport(long postId, MakeReport report) {
         Post post = postRepo.findById(postId).orElse(null);
         User reporter = userService.getCurrentUser();

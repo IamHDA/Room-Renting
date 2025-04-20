@@ -14,16 +14,6 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("/totalReports")
-    private ResponseEntity<ReportStats> getTotalReports(){
-        ReportStats reportStats = ReportStats.builder()
-                .totalReports(reportService.getTotalReport())
-                .totalReportsThisMonth(reportService.getTotalReportThisMonth())
-                .totalReportsThisDay(reportService.getTotalReportThisDay())
-                .build();
-        return ResponseEntity.ok(reportStats);
-    }
-
     @PostMapping("/reportUser/{userId}")
     public ResponseEntity<String> reportUser(@PathVariable long userId, @RequestBody MakeReport report){
         return ResponseEntity.ok(reportService.addUserReport(userId, report));

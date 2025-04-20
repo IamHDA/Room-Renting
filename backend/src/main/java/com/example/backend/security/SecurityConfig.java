@@ -1,6 +1,8 @@
 package com.example.backend.security;
 
+import com.example.backend.Enum.Role;
 import com.example.backend.config.handler.CustomLogoutHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +19,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,32 +49,46 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AccessDeniedHandler accessDeniedHandler) throws Exception {
         return http
                 .cors(customizer -> customizer.configurationSource(customCorsConfiguration()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
-                                "/authenticate/**",
-                                "/user/profile/**",
-                                "/userRating/totalRating/**",
-                                "/post/postsByCriteria",
-                                "/post/newPosts",
-                                "/post/specificPost/**",
-                                "/post/userEnablePosts/**",
-                                "/post/userDisablePosts/**",
-                                "/address/search",
+                                "authenticate/**",
+                                "user/profile/**",
+                                "userRating/totalRating/**",
+                                "post/postsByCriteria",
+                                "post/newPosts",
+                                "post/specificPost/**",
+                                "post/userEnablePosts/**",
+                                "post/userDisablePosts/**",
+                                "address/search",
+                                "PostMedia/**",
                                 "/test/**"
                         ).permitAll()
+                        .requestMatchers(
+                                "admin/**"
+                        ).hasAuthority(Role.ADMIN.name())
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(accessDeniedHandler))
                 .logout(customizer -> customizer
                         .logoutUrl("/logout")
                         .addLogoutHandler(customLogoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()))
                 .build();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Access Denied\"}");
+        };
     }
 
     @Bean

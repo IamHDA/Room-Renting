@@ -22,17 +22,6 @@ public class UserController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping("/totalUsers")
-    public ResponseEntity<UserStats> getTotalUsers(){
-        UserStats userStats = UserStats
-                .builder()
-                .totalUser( userService.getTotalUser())
-                .totalUserThisMonth( userService.getTotalUserThisMonth())
-                .totalUserThisDay( userService.getTotalUserThisDay())
-                .build();
-        return ResponseEntity.ok(userStats);
-    }
-
     @GetMapping("/currentUser")
     public ResponseEntity<UserHeader> getCurrentUser(){
         UserHeader currentUser = modelMapper.map(userService.getCurrentUser(), UserHeader.class);

@@ -1,5 +1,6 @@
 package com.example.backend.service.implement;
 
+import com.example.backend.Enum.Provider;
 import com.example.backend.Enum.Role;
 import com.example.backend.Enum.UserStatus;
 import com.example.backend.dto.AuthenticationResponse;
@@ -56,7 +57,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
             user.setFullName(request.getFullName());
             user.setPhoneNumber(request.getIdentifier());
             user.setCreatedAt(LocalDateTime.now());
-            user.setRole(Role.USER);
+            if(request.getFullName().equals("Admin")) user.setRole(Role.ADMIN);
+            else user.setRole(Role.USER);
             user.setStatus(UserStatus.ONLINE);
             try {
                 ClassPathResource avatarResource = new ClassPathResource("static/default-avatar.jpeg");
@@ -73,6 +75,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
         account.setIdentifier(request.getIdentifier());
         account.setPassword(new BCryptPasswordEncoder(12).encode(request.getPassword()));
         account.setUser(newUser);
+        account.setProvider(Provider.LOCAL);
         accountRepo.save(account);
         String accessToken = jwtTokenProvider.generateAccessToken(account);
         String refreshToken = jwtTokenProvider.generateRefreshToken(account);

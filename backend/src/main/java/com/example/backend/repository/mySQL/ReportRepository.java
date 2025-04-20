@@ -12,12 +12,12 @@ import java.util.Optional;
 public interface ReportRepository extends JpaRepository<Report, Long> {
     long count();
     @Query("""
-    select r from Report r
+    select count(r) from Report r
     where month(r.createdAt) = :month
 """)
     long countByThisMonth(@Param("month") int month);
     @Query("""
-    select r from Report r
+    select count(r) from Report r
     where day(r.createdAt) = :day
 """)
     long countByThisDay(@Param("day") int day);

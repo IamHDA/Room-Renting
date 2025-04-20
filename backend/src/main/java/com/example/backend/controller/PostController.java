@@ -17,23 +17,13 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping("/totalPosts")
-    private ResponseEntity<PostStats> getTotalPosts(){
-        PostStats postStats = PostStats.builder()
-                .totalPosts(postService.getTotalPost())
-                .totalPostsThisMonth(postService.getTotalPostThisMonth())
-                .totalPostsThisDay(postService.getTotalPostThisDay())
-                .build();
-        return ResponseEntity.ok(postStats);
-    }
-
     @GetMapping("/newPosts")
-    private ResponseEntity<List<PostSummaryDTO>> getNewPosts(){
+    public ResponseEntity<List<PostSummaryDTO>> getNewPosts(){
         return ResponseEntity.ok(postService.getNewPosts());
     }
 
     @GetMapping("/specificPost/{id}")
-    private ResponseEntity<PostDTO> getPost(@PathVariable("id") long postId){
+    public ResponseEntity<PostDTO> getPost(@PathVariable("id") long postId){
         return ResponseEntity.ok(postService.getPost(postId));
     }
 
