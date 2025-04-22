@@ -1,7 +1,7 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.AdminPostRow;
-import com.example.backend.dto.AdminUserRow;
+import com.example.backend.dto.post.AdminPostRow;
+import com.example.backend.dto.user.AdminUserRow;
 import com.example.backend.dto.UserReportDTO;
 import com.example.backend.dto.filter.AdminPostFilter;
 import com.example.backend.dto.PostReportDTO;

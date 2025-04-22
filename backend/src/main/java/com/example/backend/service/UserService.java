@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.user.UserHeader;
 import com.example.backend.dto.user.UserPersonalInformation;
 import com.example.backend.dto.user.UserProfile;
 import com.example.backend.entity.mySQL.User;
@@ -11,6 +12,7 @@ public interface UserService {
     User getCurrentUser();
     UserProfile getProfile(long userId);
     UserPersonalInformation getPersonalInformation();
+    UserHeader getUserHeader(long userId);
     String changeAvatar(MultipartFile file) throws IOException;
     String changeBackgroundImage(MultipartFile file) throws IOException;
     String changePersonalInformation(UserPersonalInformation information);

@@ -4,6 +4,7 @@ import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import {changePostStatus, deletePost, getDisablePostsByUserId} from "../../apiServices/post.js";
 import TablePagination from "../TablePagination.jsx";
+import {getPostDetail} from "../../apiServices/post.js";
 
 const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
     const [posts, setPosts] = useState([]);
@@ -35,8 +36,13 @@ const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
     }
 
     const handleEditPostButton = async (post) => {
-        setCurrentEditingPost(post);
-        setEditPost(true);
+        try{
+            const postDetail = await getPostDetail(post.postDetailSummaryDTO.id);
+            setCurrentEditingPost({post, postDetail});
+            setEditPost(true);
+        }catch(error) {
+            console.log(error);
+        }
     }
 
     const handleDeletePost = async (postId) => {
@@ -52,6 +58,7 @@ const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
         <div className="invisible-posts-container">
             {posts.length > 0 && posts.slice(startIndex, endIndex).map((post, index) => (
                 <div className="invisible-posts-post" key={index}>
+                    {console.log(post)}
                     <img src={post.thumbnailURL} className="post-img"/>
                     <div className="invisible-posts-post-information">
                         <p className="title">{post.title}</p>

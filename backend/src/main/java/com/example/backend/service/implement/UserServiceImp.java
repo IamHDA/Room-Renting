@@ -1,6 +1,7 @@
 package com.example.backend.service.implement;
 
 import com.example.backend.Enum.UserStatus;
+import com.example.backend.dto.user.UserHeader;
 import com.example.backend.dto.user.UserPersonalInformation;
 import com.example.backend.dto.user.UserProfile;
 import com.example.backend.entity.mySQL.Account;
@@ -51,15 +52,13 @@ public class UserServiceImp implements UserService {
             currentIdentifier = authentication.getName().trim();
             System.out.println("Current User: " + currentIdentifier);
         }
-        User currentUser = userRepo.findByPhoneNumberOrEmail(currentIdentifier, currentIdentifier).orElseThrow(() -> new UsernameNotFoundException("Người dùng không tồn tại"));
-        currentUser.setStatus(UserStatus.ONLINE);
-        userRepo.save(currentUser);
-        return currentUser;
+        return userRepo.findByPhoneNumberOrEmail(currentIdentifier, currentIdentifier)
+                .orElseThrow(() -> new UsernameNotFoundException("Người dùng không tồn tại"));
     }
 
     @Override
     public UserProfile getProfile(long userId) {
-        User user = userRepo.findById(userId).orElse(null);
+        User user = userRepo.findById(userId);
         UserProfile userProfile = modelMapper.map(user, UserProfile.class);
         userProfile.setStatus(user.getStatus().getDisplayName());
         userProfile.setJoinTime(formatUtil.getJoinTime(user.getCreatedAt()));
@@ -73,6 +72,11 @@ public class UserServiceImp implements UserService {
         UserPersonalInformation information = modelMapper.map(getCurrentUser(), UserPersonalInformation.class);
         information.setAddressText(addressService.getAddress(user.getAddress()));
         return information;
+    }
+
+    @Override
+    public UserHeader getUserHeader(long userId) {
+        return modelMapper.map(userRepo.findById(userId), UserHeader.class);
     }
 
     @Override

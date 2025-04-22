@@ -32,7 +32,7 @@ public class UserRatingServiceImp implements UserRatingService {
     @Override
     public String rateUser(long reviewedId, int rate) {
         User reviewer = userService.getCurrentUser();
-        User reviewed = userRepo.findById(reviewedId).orElse(null);
+        User reviewed = userRepo.findById(reviewedId);
         AtomicBoolean hasRated = new AtomicBoolean(true);
         UserRating userRating = userRatingRepo.findByReviewedAndReviewer(reviewed, reviewer).orElseGet(() -> {
             UserRating tmp = new UserRating();

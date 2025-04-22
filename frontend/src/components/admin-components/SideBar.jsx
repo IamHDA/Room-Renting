@@ -22,7 +22,7 @@ const MyComponent = () => {
                 </Link>
                 <Link to="/admin/accountManage" id="function-3" className="side-bar-function">
                     <FontAwesomeIcon icon={faUser} />
-                    <p>Quản lý tài khoản</p>
+                    <p>Quản lý người dùng</p>
                 </Link>
                 <Link to="/" id="function-4" className="side-bar-function">
                     <FontAwesomeIcon icon={faRightFromBracket}  flip="horizontal"/>

@@ -29,7 +29,7 @@ const MyComponent = () => {
                     <PostManage />
                 </AddressProvider>
             } />
-            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat/:chatId?" element={<Chat />} />
         </Routes>
     );
 };

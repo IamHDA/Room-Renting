@@ -96,6 +96,9 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
         String accessToken = jwtTokenProvider.generateAccessToken(account);
         String refreshToken = jwtTokenProvider.generateRefreshToken(account);
+        User user = account.getUser();
+        user.setStatus(UserStatus.ONLINE);
+        userRepo.save(user);
         List<Token> validTokenByUser = tokenRepo.findByAccountIdAndLoggedOutFalse(account.getId());
         if(!validTokenByUser.isEmpty()){
             validTokenByUser.forEach((token) -> {

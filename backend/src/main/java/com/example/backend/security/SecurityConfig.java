@@ -65,6 +65,7 @@ public class SecurityConfig {
                                 "post/userDisablePosts/**",
                                 "address/search",
                                 "PostMedia/**",
+                                "ws/**",
                                 "/test/**"
                         ).permitAll()
                         .requestMatchers(
@@ -99,9 +100,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource customCorsConfiguration() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://100.64.40.44:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -2,7 +2,7 @@ export { default as Chat } from './Chat';
 export { default as Footer } from './Footer';
 export { default as Header } from './Header';
 export { default as HomePage } from './HomePage';
-export { default as List } from './List';
+export { default as List } from './PostList.jsx';
 export { default as PostDetail } from './PostDetail';
 export { default as PostManage } from './PostManage';
 export { default as Register } from './Register';

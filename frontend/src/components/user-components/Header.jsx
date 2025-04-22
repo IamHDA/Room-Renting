@@ -1,9 +1,9 @@
 import React, {useContext, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faAngleDown, faBookmark, faPenToSquare, faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import '../../css/user-css/Header.css';
-import { AuthContext } from "../../contexts/AuthContext.jsx";
+import AuthContext  from "../../contexts/AuthContext.jsx";
 import * as authService from '../../apiServices/authentication.js';
 import {getImageMime} from '../../utils/format.js';
 
@@ -37,7 +37,15 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                     <p>URPLACE</p>
                 </Link>
                 <div className="function">
-                    <Link to="/chat" className="chat-bounding">
+                    <Link to="/chat"
+                          state={{fromHeader: true}}
+                          className="chat-bounding"
+                          onClick={(e) => {
+                              if(!user){
+                                  e.preventDefault();
+                                  alert("Đăng nhập để sử dụng chức năng này");
+                              }
+                          }}>
                         <img src="../../../public/header-icon/chatIcon.png"/>
                     </Link>
                     {!user ? (

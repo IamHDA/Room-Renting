@@ -54,14 +54,6 @@ public class User {
     @JsonIgnore
     private List<UserRating> reviewedRatings;
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<ChatRoom> sendChatRooms;
-
-    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<ChatRoom> receivedChatRooms;
-
     @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Report> reports;

@@ -1,8 +1,7 @@
-package com.example.backend.dto;
+package com.example.backend.dto.user;
 
 import com.example.backend.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;

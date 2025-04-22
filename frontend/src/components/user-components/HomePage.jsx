@@ -28,7 +28,7 @@ const MyComponent = () => {
                     localStorage.setItem("posts", JSON.stringify(response));
                     setNewPosts(response);
                 }catch(e){
-                    console.log(e.response.data);
+                    console.log(e);
                 }
             }
 
@@ -41,7 +41,7 @@ const MyComponent = () => {
                         localStorage.setItem("favouritePostsId", JSON.stringify(response));
                         setFavouritePostIds(response);
                     }catch(e){
-                        console.log(e.response.data);
+                        console.log(e);
                         setFavouritePostIds([]);
                     }
                 }

@@ -27,6 +27,7 @@ const MyComponent = () => {
                         <th className="author">Tên người đăng</th>
                         <th className="post-title">Tiêu đề tin</th>
                         <th className="report-number">Số lượt báo cáo <FontAwesomeIcon icon={faSort} className="sort-icon"/></th>
+                        <th>Trạng thái</th>
                         <th className="post-time">Thời gian đăng <FontAwesomeIcon icon={faSort} className="sort-icon"/></th>
                         <th className="update-time">Thời gian chỉnh sửa <FontAwesomeIcon icon={faSort} className="sort-icon"/></th>
                         <th></th>
@@ -40,6 +41,7 @@ const MyComponent = () => {
                         <td>Hứa Duy Anh</td>
                         <td className="post-title">Phòng trọ siêu cấp vippro dddddddddddddddddddddddddddddddddddddddddd</td>
                         <td>4 lượt</td>
+                        <td>Đã ẩn</td>
                         <td>13:02, 15/03/2025</td>
                         <td>18:02, 16/03/2025</td>
                         <td className="delete" onClick={(e) => {
@@ -48,7 +50,6 @@ const MyComponent = () => {
                     </tr>
                 </tbody>
             </table>
-            <Pagination/>
             {isSelected && (
                 <div className="pop-up">
                     <div className="content-container">
@@ -269,7 +270,6 @@ const MyComponent = () => {
                                     </div>
                                 </div>
                             </div>
-                            <Pagination/>
                         </div>
                     </div>
                 </div>

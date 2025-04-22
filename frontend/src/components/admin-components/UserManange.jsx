@@ -59,7 +59,7 @@ const MyComponent = () => {
                 </tr>
                 </tbody>
             </table>
-            <Pagination/>
+            {/*<Pagination/>*/}
             {isSelected && (
                 <div className="pop-up">
                     <div className="content-container">
@@ -151,7 +151,7 @@ const MyComponent = () => {
                                     </div>
                                 </div>
                             </div>
-                            <Pagination/>
+                            {/*<Pagination/>*/}
                         </div>
                     </div>
                 </div>

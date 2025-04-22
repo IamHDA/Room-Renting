@@ -42,7 +42,7 @@ public class ReportServiceImp implements ReportService {
 
     @Override
     public String addUserReport(long reportedId, MakeReport report) {
-        User reported = userRepo.findById(reportedId).orElse(null);
+        User reported = userRepo.findById(reportedId);
         User reporter = userService.getCurrentUser();
         if(userReportRepo.findSameUserReport(reported, report.getName(), reporter).isPresent()){
             return "You have already reported this user with the same reason!";

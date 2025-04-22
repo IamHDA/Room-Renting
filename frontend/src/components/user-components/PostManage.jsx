@@ -404,14 +404,14 @@ const MyComponent = () => {
                                                             <p>Giá thuê</p>
                                                             <input
                                                                 id="post-edit-price"
-                                                                value={currentEditingPost.postDetailSummaryDTO.price}
+                                                                value={currentEditingPost.postDetail.price}
                                                                 type="text"/>
                                                         </div>
                                                         <div className="container">
                                                             <p>Diện tích</p>
                                                             <input
                                                                 id="post-edit-area"
-                                                                value={currentEditingPost.postDetailSummaryDTO.area}
+                                                                value={currentEditingPost.postDetail.area}
                                                                 type="text"/>
                                                         </div>
                                                     </div>
@@ -423,14 +423,14 @@ const MyComponent = () => {
                                                     <p>Tiêu đề</p>
                                                     <input
                                                         id="post-edit-title"
-                                                        value={currentEditingPost.title}
+                                                        value={currentEditingPost.post.title}
                                                         type="text"/>
                                                 </div>
                                                 <div className="container">
                                                     <p>Mô tả</p>
                                                     <textarea
                                                         id="post-edit-description"
-                                                        value={currentEditingPost.description.replace(/<br\s*\/?>/gi, '\n')}>
+                                                        value={currentEditingPost.post.description.replace(/<br\s*\/?>/gi, '\n')}>
                                                     </textarea>
                                                 </div>
                                             </div>
@@ -443,14 +443,14 @@ const MyComponent = () => {
                                                         <p>Số phòng ngủ</p>
                                                         <input
                                                             id="post-edit-bedroom"
-                                                            value={currentEditingPost.postDetailSummaryDTO.bedroom}
+                                                            value={currentEditingPost.postDetail.bedroom}
                                                             type="text"/>
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá điện</p>
                                                         <input
                                                             id="post-edit-electric"
-                                                            value={currentEditingPost.postDetailSummaryDTO.electric}
+                                                            value={currentEditingPost.postDetail.electric}
                                                             type="text"/>
                                                     </div>
                                                 </div>
@@ -459,14 +459,14 @@ const MyComponent = () => {
                                                         <p>Số phòng tắm, vệ sinh</p>
                                                         <input
                                                             id="post-edit-bathroom"
-                                                            value={currentEditingPost.postDetailSummaryDTO.bathroom}
+                                                            value={currentEditingPost.postDetail.bathroom}
                                                             type="text"/>
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá nước</p>
                                                         <input
                                                             id="post-edit-water"
-                                                            value={currentEditingPost.postDetailSummaryDTO.water}
+                                                            value={currentEditingPost.postDetail.water}
                                                             type="text"/>
                                                     </div>
                                                 </div>
@@ -475,14 +475,14 @@ const MyComponent = () => {
                                                         <p>Chỗ để xe</p>
                                                         <input
                                                             id="post-create-parking"
-                                                            value={currentEditingPost.postDetailSummaryDTO.parking}
+                                                            value={currentEditingPost.postDetail.parking}
                                                             type="text"/>
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá Internet</p>
                                                         <input
                                                             id="post-create-internet"
-                                                            value={currentEditingPost.postDetailSummaryDTO.wifi}
+                                                            value={currentEditingPost.postDetail.wifi}
                                                             type="text"/>
                                                     </div>
                                                 </div>
@@ -500,7 +500,7 @@ const MyComponent = () => {
                                                             id="post-edit-furniture"
                                                             type="text"
                                                             readOnly
-                                                            value={currentEditingPost.furniture}
+                                                            value={currentEditingPost.postDetail.furniture}
                                                             style={{ caretColor: "transparent", cursor: "pointer" }}
                                                         />
                                                         {showFurnitureOption && (

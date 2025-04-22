@@ -28,6 +28,7 @@ th{
     color: white;
     text-align: center;
     font-weight: bold;
+    font-size: 17px;
 }
 
 th:first-child {
@@ -82,7 +83,6 @@ tr .report-number{
     border-radius: 15px;
     overflow: auto;
     padding: 30px;
-    display: flex;
 }
 
 .report-container{

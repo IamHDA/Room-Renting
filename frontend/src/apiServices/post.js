@@ -16,6 +16,14 @@ export const getDisablePostsByUserId = async (userId) => {
     return await request.get("post/userDisablePosts/" + userId);
 }
 
+export const getPostDetail = async (id) => {
+    return await request.get(`post/postDetail/findById/${id}`,{
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken")
+        }
+    });
+}
+
 export const createPost = async (formData) => {
     return await request.post("post/create", formData, {
         headers: {

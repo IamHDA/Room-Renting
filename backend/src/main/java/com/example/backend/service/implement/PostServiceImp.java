@@ -111,6 +111,18 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
+    public String createPostWithRollBack(AddressDTO addressDTO, CreatePostDTO createPostDTO, List<MultipartFile> files) {
+        long postId = createPost(addressDTO, createPostDTO);
+        try{
+            uploadPostMedia(files, postId);
+        }catch (Exception e){
+            deletePost(postId);
+            throw new RuntimeException();
+        }
+        return "Post created successfully";
+    }
+
+    @Override
     public long createPost(AddressDTO addressDTO, CreatePostDTO createPostDTO){
         Address address = addressRepo.findByDetailAndWard_Id(addressDTO.getDetail(), addressDTO.getWardId()).orElse(null);
         if(address == null){

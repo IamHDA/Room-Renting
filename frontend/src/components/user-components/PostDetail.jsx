@@ -415,10 +415,21 @@ const MyComponent = () => {
                                 <img src="../../../public/detail-icon/phone-ring.png"/>
                                 <p id="post-user-number">{post.postCreator.phoneNumber}</p>
                             </div>
-                            <div className="post-user-chatting-bounding">
-                                <img src="../../../public/detail-icon/chat-icon.png"/>
-                                <p id="post-user-chatting">Nhắn tin ngay</p>
-                            </div>
+                            {user.id !== post.postCreator.id && (
+                                <Link
+                                    to="/chat"
+                                    state={{ userId: post.postCreator.id}}
+                                    onClick={(e) => {
+                                        if(!user) {
+                                            e.preventDefault();
+                                            alert("Đăng nhập để sử dụng chức năng này");
+                                        }
+                                    }}
+                                    className="post-user-chatting-bounding">
+                                    <img src="../../../public/detail-icon/chat-icon.png"/>
+                                    <p id="post-user-chatting">Nhắn tin ngay</p>
+                                </Link>
+                            )}
                         </div>
                     </>
                 )}

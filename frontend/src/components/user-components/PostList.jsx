@@ -20,7 +20,7 @@ const MyComponent = () => {
                                onChange={(e) => setSearch(e.target.value)}
                                placeholder="Nhập địa chỉ. Ví dụ: Ngách 16, 278 Kim Giang, Hoàng Mai"
                         />
-                        <select class="list-search-city-bounding">
+                        <select className="list-search-city-bounding">
                             <option value="Hà Nội">Hà Nội</option>
                             <option value="Hồ Chí Minh">Hồ Chí Minh</option>
                         </select>
@@ -30,12 +30,6 @@ const MyComponent = () => {
                         <div className="filter">
                             <img src="../../../public/list-icon/filter.png"/>
                             <p>Lọc</p>
-                        </div>
-                        <div className="criteria">
-                            <p id="criteria-type">
-                                Thể loại
-                            </p>
-                            <FontAwesomeIcon icon={faAngleDown}/>
                         </div>
                         <div className="criteria">
                             <p id="criteria-price">
@@ -59,9 +53,10 @@ const MyComponent = () => {
                 </div>
                 <select className="select">
                     <option disabled selected hidden>Sắp xếp</option>
-                    <option value="rating">Đánh giá tốt</option>
                     <option value="price asc">Giá tăng dần</option>
                     <option value="price desc">Giá giảm dần</option>
+                    <option value="area asc">Diện tích tăng dần</option>
+                    <option value="area desc">Diện tích giảm dần</option>
                     <option value="time">Mới đăng</option>
                 </select>
                 <div className="list-posts-container">
@@ -170,7 +165,6 @@ const MyComponent = () => {
                         </div>
                     </Link>
                 </div>
-                <Pagination/>
             </div>
             <div className="list-container-right">
                 <div className="side-criteria">
@@ -197,7 +191,7 @@ const MyComponent = () => {
                     <h2>Lọc theo tình trạng nội thất</h2>
                     <p>Nội thất cao cấp</p>
                     <p>Nội thất đầy đủ</p>
-                    <p>Nhà trông</p>
+                    <p>Không có</p>
                 </div>
             </div>
         </div>

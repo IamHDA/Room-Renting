@@ -83,7 +83,7 @@
     border-color: #bdbdbd;
 }
 
-.chat-room-bounding.isSelected{
+.chat-room-bounding.is-selected{
     background-color: #8ac4ff;
     border-color: #8ac4ff;
 }
@@ -284,14 +284,16 @@
 }
 
 .sender-message, .recipient-message{
-    border-radius: 25px;
+    border-radius: 20px;
     font-size: 20px;
     padding: 10px;
+    max-width: 600px;
 }
 
 .recipient-message{
     background-color: #6c6c6c;
     color: white;
+    align-self: flex-start;
 }
 
 .sender-message{

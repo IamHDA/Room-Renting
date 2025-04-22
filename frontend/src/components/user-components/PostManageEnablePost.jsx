@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import { getEnablePostsByUserId, changePostStatus } from "../../apiServices/post.js";
+import { getPostDetail } from "../../apiServices/post.js";
 import TablePagination from "../TablePagination.jsx";
 
 const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
@@ -26,8 +27,13 @@ const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
     }, [updatePost])
 
     const handleEditPostButton = async (post) => {
-        setCurrentEditingPost(post);
-        setEditPost(true);
+        try{
+            const postDetail = await getPostDetail(post.postDetailSummaryDTO.id);
+            setCurrentEditingPost({post, postDetail});
+            setEditPost(true);
+        }catch(error) {
+            console.log(error);
+        }
     }
 
     const handleChangeStatus = async (status, postId) => {

@@ -72,9 +72,7 @@ public class PostController {
 
     @PostMapping("/create")
     public ResponseEntity<String> postCreate(@RequestPart(name = "post") PostCreateRequest postCreateRequest, @RequestPart(name = "file") List<MultipartFile> files) throws IOException {
-        long postId = postService.createPost(postCreateRequest.getAddressDTO(), postCreateRequest.getCreatePostDTO());
-        postService.uploadPostMedia(files, postId);
-        return ResponseEntity.ok("Post created");
+        return ResponseEntity.ok(postService.createPostWithRollBack(postCreateRequest.getAddressDTO(), postCreateRequest.getCreatePostDTO(), files));
     }
 
     @PutMapping("/changeStatus")
