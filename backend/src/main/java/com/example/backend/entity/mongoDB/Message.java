@@ -1,5 +1,6 @@
 package com.example.backend.entity.mongoDB;
 
+import com.example.backend.Enum.ChatStatus;
 import lombok.Builder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -18,6 +19,7 @@ public class Message {
     private long recipientId;
     private String chatId;
     private String content;
+    private ChatStatus status;
     @CreatedDate
     private Instant created_at;
 }

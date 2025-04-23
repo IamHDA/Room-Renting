@@ -1,5 +1,7 @@
 package com.example.backend.service.implement;
 
+import com.example.backend.Enum.ChatStatus;
+import com.example.backend.dto.chat.LastMessage;
 import com.example.backend.dto.chat.MessageDTO;
 import com.example.backend.dto.chat.SendMessage;
 import com.example.backend.entity.mongoDB.ChatRoom;
@@ -48,16 +50,19 @@ public class MessageServiceImp implements MessageService {
                 .getChatRoomId(messageDTO.getSenderId(), messageDTO.getRecipientId(), true)
                 .orElse(null);
         Message message = messageRepo.save(Message.builder()
-                .chatId(chatId)
-                .senderId(messageDTO.getSenderId())
-                .recipientId(messageDTO.getRecipientId())
-                .content(messageDTO.getContent())
-                .created_at(Instant.now())
+                        .chatId(chatId)
+                        .senderId(messageDTO.getSenderId())
+                        .recipientId(messageDTO.getRecipientId())
+                        .content(messageDTO.getContent())
+                        .created_at(Instant.now())
+                        .status(ChatStatus.UNSEEN)
                 .build());
         List<ChatRoom> chatRooms = chatRoomRepo.findByChatId(chatId);
-        chatRooms.forEach(chatRoom -> {
-            chatRoom.setLastMessageId(message.getId());
-        });
+        chatRooms.forEach(chatRoom -> chatRoom.setLastMessage(LastMessage.builder()
+                            .content(message.getContent())
+                            .senderId(message.getSenderId())
+                            .createdAt(message.getCreated_at())
+                    .build()));
         chatRoomRepo.saveAll(chatRooms);
 //        try {
 //            uploadMessageImage(messageDTO.getBase64Files(), message.getId());

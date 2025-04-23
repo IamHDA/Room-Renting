@@ -1,14 +1,16 @@
 import React, {useContext, useState} from 'react';
-import {Link, useLocation, useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faAngleDown, faBookmark, faPenToSquare, faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import '../../css/user-css/Header.css';
 import AuthContext  from "../../contexts/AuthContext.jsx";
 import * as authService from '../../apiServices/authentication.js';
 import {getImageMime} from '../../utils/format.js';
+import SockJSContext from "../../contexts/SockJSContext.jsx";
 
 const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
     const { user, setUser } = useContext(AuthContext);
+    const { disconnectStomp, stompClientRef, setUpStompClient }  = useContext(SockJSContext);
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -20,6 +22,12 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
         try{
             const response = await authService.logout();
             localStorage.clear();
+            await setUpStompClient();
+            stompClientRef.current.publish({
+                destination: "/app/user.disconnect",
+                body: JSON.stringify(user.id)
+            })
+            disconnectStomp();
             setUser(null);
             setIsOpen(false);
             navigate("/")

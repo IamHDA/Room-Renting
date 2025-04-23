@@ -1,5 +1,8 @@
 package com.example.backend.entity.mongoDB;
 
+import com.example.backend.Enum.ChatStatus;
+import com.example.backend.dto.chat.ChatRoomPost;
+import com.example.backend.dto.chat.LastMessage;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -12,7 +15,8 @@ public class ChatRoom {
     @Id
     private String id;
     private String chatId;
-    private String lastMessageId;
+    private LastMessage lastMessage;
+    private ChatRoomPost post;
     private long senderId;
     private long recipientId;
 }

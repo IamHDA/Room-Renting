@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PostChat {
+public class ChatRoomPost {
     private long id;
     private String title;
-    private String thumbnailURL;
+    private String thumbnailUrl;
     private double price;
     private double area;
 }

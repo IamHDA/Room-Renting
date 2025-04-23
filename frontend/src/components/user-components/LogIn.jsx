@@ -1,34 +1,47 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext, useEffect, useRef} from 'react';
 import '../../css/user-css/SignIn.css';
 import * as authService from '../../apiServices/authentication.js';
 import * as userService from '../../apiServices/user.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {AuthContext} from '../../contexts/AuthContext.jsx';
+import SockJSContext from "../../contexts/SockJSContext.jsx";
 
 const MyComponent = ({handleSignInPopUp}) => {
-
-    const [legitAccount, setLegitAccount] = useState(1);
-    const [legitPassword, setLegitPassword] = useState(1);
+    const {setUpStompClient, stompClientRef} = useContext(SockJSContext);
+    const legitAccountRef = useRef(1);
+    const legitPasswordRef = useRef(1);
+    const [legitAccount, setLegitAccount] = useState(null);
+    const [legitPassword, setLegitPassword] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const {setUser} = useContext(AuthContext);
-4
+
     const handleLogin = async () =>{
+        legitAccountRef.current = 1;
+        legitPasswordRef.current = 1;
         const identifier = document.querySelector('.account-input').value;
         const password = document.querySelector('.password-input').value;
-        if(identifier === "") setLegitAccount(0);
-        if(password === "") setLegitPassword(0);
-        else if (legitAccount === 1 && legitPassword === 1){
+        if(identifier === "") legitAccount.current = 0;
+        if(password === "") legitPassword.current = 0;
+        else if (legitAccountRef.current === 1 && legitPasswordRef.current === 1){
             try{
                 const response = await authService.login(identifier, password);
+                console.log(response);
                 if(response.message === "Account not found!"){
-                    setLegitAccount(-1)
+                    legitAccountRef.current = -1;
+                    setLegitAccount(-1);
                 }else if(response.message === "Password is incorrect!"){
+                    legitPasswordRef.current = -1;
                     setLegitPassword(-1);
                 }else{
                     localStorage.setItem('accessToken', response.accessToken);
                     localStorage.setItem('refreshToken', response.refreshToken);
                     const user = await userService.currentUser();
+                    await setUpStompClient();
+                    stompClientRef.current.publish({
+                        destination: "/app/user.connect",
+                        body: JSON.stringify(user.id)
+                    })
                     localStorage.setItem('user', JSON.stringify(user));
                     setUser(user);
                     handleSignInPopUp();

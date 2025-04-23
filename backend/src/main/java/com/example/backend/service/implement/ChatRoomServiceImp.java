@@ -1,10 +1,9 @@
 package com.example.backend.service.implement;
 
 import com.example.backend.dto.chat.ChatRoomDTO;
-import com.example.backend.dto.chat.PostChat;
+import com.example.backend.dto.chat.ChatRoomPost;
 import com.example.backend.dto.user.UserHeader;
 import com.example.backend.entity.mongoDB.ChatRoom;
-import com.example.backend.entity.mySQL.Post;
 import com.example.backend.entity.mySQL.User;
 import com.example.backend.repository.mongoDB.ChatRoomRepository;
 import com.example.backend.repository.mongoDB.PostMediaRepository;
@@ -14,6 +13,7 @@ import com.example.backend.service.ChatRoomService;
 import com.example.backend.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,15 +67,25 @@ public class ChatRoomServiceImp implements ChatRoomService {
     @Override
     public List<ChatRoomDTO> findBySender() {
         User currentUser = userService.getCurrentUser();
-        return chatRoomRepo.findBySenderId(currentUser.getId())
+        Sort sort = Sort.by(Sort.Order.desc("lastMessage.createdAt"));
+        return chatRoomRepo.findBySenderId(currentUser.getId(), sort)
                 .stream()
                 .map(chatRoom -> {
                     UserHeader recipient = modelMapper.map(userRepo.findById(chatRoom.getRecipientId()), UserHeader.class);
                     return ChatRoomDTO.builder()
-                            .postChat(null)
+                            .chatRoomPost(chatRoom.getPost())
+                            .lastMessage(chatRoom.getLastMessage())
                             .recipient(recipient)
                             .chatId(chatRoom.getChatId())
                             .build() ;
                 }).toList();
+    }
+
+    @Override
+    public String updateChatRoomPost(ChatRoomPost chatRoomPost, String chatId) {
+        List<ChatRoom> chatRooms = chatRoomRepo.findByChatId(chatId);
+        chatRooms.forEach(chatRoom -> chatRoom.setPost(chatRoomPost));
+        chatRoomRepo.saveAll(chatRooms);
+        return "Update chat room post successfully";
     }
 }

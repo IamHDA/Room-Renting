@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import '../../css/user-css/Chat.css';
 import {faCamera, faEllipsisVertical, faMagnifyingGlass, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -8,9 +8,11 @@ import AuthContext from "../../contexts/AuthContext.jsx";
 import {getChatRooms, getMessages, getRecipient, updateChatRoomPost} from "../../apiServices/chat.js";
 import SockJS from "sockjs-client";
 import {Client} from '@stomp/stompjs';
+import SockJSContext from "../../contexts/SockJSContext.jsx";
 
 const MyComponent = () => {
     const { user } = useContext(AuthContext);
+    const { setUpStompClient, disconnectStomp, stompClientRef } = useContext(SockJSContext);
     const {chatId} = useParams();
     const location = useLocation();
     const navigate = useNavigate();
@@ -18,9 +20,9 @@ const MyComponent = () => {
     const [chatRoomPost, setChatRoomPost] = useState({});
     const fileInputRef = useRef(null);
     const messageEndRef = useRef(null);
-    let recipientRef = useRef(null);
-    let chatIdRef = useRef(chatId);
-    let stompClientRef = useRef(null);
+    const chatRoomsRef = useRef(null);
+    const recipientRef = useRef(null);
+    const chatIdRef = useRef(chatId);
     const [messages, setMessages] = useState([]);
     const [chatRooms, setChatRooms] = useState([]);
     const [pendingMessage, setPendingMessage] = useState("");
@@ -38,6 +40,9 @@ const MyComponent = () => {
         chatIdRef.current = chatId;
     }, [chatId]);
 
+    useEffect(() => {
+        chatRoomsRef.current = chatRooms;
+    }, [chatRooms])
 
     useEffect(() => {
         fetchChatRoomMessage(chatId);
@@ -51,11 +56,11 @@ const MyComponent = () => {
     }, [messages]);
 
     useEffect(() => {
-        if(user) stompClientRef.current = setUpStompClient();
-        const chatRoomPostTmp = JSON.parse(localStorage.getItem("chatRoomPost"));
-        if (chatRoomPostTmp) setChatRoomPost(chatRoomPostTmp);
         const fetchData = async () => {
             try {
+                if(user) await setUpStompClient(user.id, onMessageReceived, onPublicChannel);
+                const chatRoomPostTmp = JSON.parse(localStorage.getItem("chatRoomPost"));
+                if (chatRoomPostTmp) setChatRoomPost(chatRoomPostTmp);
                 const tmpChatRooms = await fetchChatRooms();
                 const savedRecipientId = localStorage.getItem("recipientId");
                 setChatRooms(tmpChatRooms);
@@ -74,43 +79,42 @@ const MyComponent = () => {
         fetchData();
     }, [user]);
 
-    const setUpStompClient = (userId) => {
-        const socket = new SockJS("http://localhost:8080/ws");
-        const stompClient = new Client({
-            webSocketFactory: () => socket,
-            reconnectDelay: 5000,
-            onConnect: () => {
-                stompClient.subscribe(`/user/${user.id}/queue/messages`, onMessageReceived);
-                stompClientRef.current = stompClient;
-                console.log("connected");
-            },
-            onStompError: (frame) => {
-                console.error('Broker reported error: ' + frame.headers['message']);
-                console.error('Additional details: ' + frame.body);
-            }
-        });
-        stompClient.activate();
-        return stompClient;
-    }
-
-    const disconnectStomp = () => {
-        if (stompClientRef.current) {
-            stompClientRef.current.deactivate().then(() => {
-                console.log('STOMP Client deactivated');
-            });
-        }
-    };
-
     const handleCameraClick = () => {
         fileInputRef.current.click();
     };
 
-    const onMessageReceived = async (payload) => {
-        const message = JSON.parse(payload.body);
-        if(message.chatId === chatIdRef.current) setMessages((prev) => [...prev, message]);
+    const updateRecipientStatus = (announcedStatus, recipient) => {
+        if(announcedStatus === "connect") recipient.status = "ONLINE";
+        else if(announcedStatus === "disconnect") recipient.status = "OFFLINE";
+    }
+
+    const onPublicChannel = useCallback( (payload) => {
+        const tmp = payload.body;
+        const message = tmp.split(" ");
+        const announcedUserId = Number(message[1]);
+        const announcedStatus = message[0];
+        let check = false;
+        const updatedChatRooms = chatRoomsRef.current.map(chatRoom => {
+            if (chatRoom.recipient.id === announcedUserId) {
+                updateRecipientStatus(announcedStatus, chatRoom.recipient);
+                check = true;
+            }
+            return chatRoom;
+        });
+        if(recipientRef.current && (recipientRef.current.id === announcedUserId)) updateRecipientStatus(announcedStatus, recipientRef.current);
+        if(check) {
+            setChatRooms(updatedChatRooms);
+        }
+    }, []);
+
+    const onMessageReceived = useCallback(async (payload) => {
+        setTimeout(() => {
+            const message = JSON.parse(payload.body);
+            if(message.chatId === chatIdRef.current) setMessages((prev) => [...prev, message]);
+        }, 100);
         const tmpChatRooms = await fetchChatRooms();
         setChatRooms(tmpChatRooms);
-    }
+    }, []);
 
     const sendMessage = async (e) => {
         if(pendingMessage.length === 0) e.preventDefault();
@@ -124,17 +128,19 @@ const MyComponent = () => {
             destination: "/app/chat",
             body: JSON.stringify(payload)
         })
+        let check = false;
         if(virtualChatRoom){
             await updateChatRoomPost(chatRoomPost, `${user.id}_${recipientRef.current.id}`);
             const tmpChatRooms = await fetchChatRooms();
             setChatRooms(tmpChatRooms);
             setVirtualChatRoom(false);
             navigate(`/chat/${chatIdRef.current}`);
+            check = true;
         }
         const tmpChatRooms = await fetchChatRooms();
         setChatRooms(tmpChatRooms);
-        setMessages((prevMessages) => [...prevMessages, payload]);
         setPendingMessage("");
+        if(!check) setMessages((prevMessages) => [...prevMessages, payload]);
     }
 
     const checkExistChatRooms = (tmpChatRooms) => {
@@ -194,6 +200,7 @@ const MyComponent = () => {
                         {chatRooms.length > 0 && chatRooms.map((chatRoom, index) => (
                             <div className={`chat-room-bounding ${chatRoom.chatId === chatId ? "is-selected" : ""}`} key={index} onClick={() => {
                                 localStorage.setItem("chatRoomPost", JSON.stringify(chatRoom.chatRoomPost));
+                                setChatRoomPost(chatRoom.chatRoomPost);
                                 recipientRef.current = chatRoom.recipient;
                                 localStorage.setItem("recipientId", chatRoom.recipient.id);
                                 navigate(`/chat/${chatRoom.chatId}`);
@@ -259,7 +266,7 @@ const MyComponent = () => {
                                         <div className="recipient-message-div" key={index}>
                                             <img
                                                 src={`data:${getImageMime(recipientRef.current.avatar)};base64,${recipientRef.current.avatar}`}
-                                                style={{ height: "50px", width: "50px", borderRadius: "50%" }}
+                                                style={{ height: "45px", width: "45px", borderRadius: "50%" }}
                                             />
                                             <p className="recipient-message">{message.content}</p>
                                         </div>

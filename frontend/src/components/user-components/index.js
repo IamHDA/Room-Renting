@@ -7,6 +7,6 @@ export { default as PostDetail } from './PostDetail';
 export { default as PostManage } from './PostManage';
 export { default as Register } from './Register';
 export { default as SavedPosts } from './SavedPosts';
-export { default as SignIn } from './SignIn';
+export { default as SignIn } from './LogIn.jsx';
 export { default as UserPage } from './UserPage';
 export { default as UserPersonalInformation } from './UserPersonalInformation';
