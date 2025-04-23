@@ -137,7 +137,10 @@
 }
 
 .opponent-name-message p{
+    margin-top: -10px;
     width: 200px;
+    color: #5c5c5c;
+    font-size: 20px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -241,15 +244,25 @@
     border-radius: 5px;
 }
 
-.post-title-price h3{
-    margin: 0;
-    margin-bottom: 5px;
+.post-title-price-area h3{
+    margin: 0 0 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
 }
 
-.post-title-price p{
+.post-title-price-area p{
     font-size: 18px;
     font-weight: bold;
     color: red;
+}
+
+.post-title-price-area .post-price-area{
+    display: flex;
+    align-items: center;
+    gap: 50px;
 }
 
 .message-container{
@@ -276,6 +289,10 @@
     align-self: flex-start;
 }
 
+.sender-message-div{
+    align-self: flex-end;
+}
+
 .sender-img{
     width: 50px;
     height: 50px;
@@ -286,21 +303,18 @@
 .sender-message, .recipient-message{
     border-radius: 20px;
     font-size: 20px;
-    padding: 10px;
+    padding: 7px 10px 7px 10px;
     max-width: 600px;
 }
 
 .recipient-message{
     background-color: #6c6c6c;
     color: white;
-    align-self: flex-start;
 }
 
 .sender-message{
     background-color: #008CFF;
     color: white;
-    align-self: flex-end;
-    max-width: 400px;
 }
 
 .send-message-bounding{

@@ -5,9 +5,10 @@
 .post-detail-container{
     display: flex;
     width: 1440px;
-    min-height: 1850px;
+    min-height: 1550px;
     margin: 0 auto;
     padding-top: 60px;
+    padding-bottom: 60px;
     gap: 60px;
 }
 
@@ -211,17 +212,8 @@
 }
 
 .properties{
-    display: flex;
-    gap: 20px;
-}
-
-.left, .right{
-    display: flex;
-    flex-direction: column;
-}
-
-.left .line, .right .line{
-    width: 420px;
+    display: grid;
+    grid-template-columns: 453px 453px;
 }
 
 .sub{
@@ -230,7 +222,11 @@
     justify-content: space-between;
     margin-top: 15px;
     margin-bottom: 15px;
-    width: 420px;
+    width: 410px;
+}
+
+.sub p{
+    font-size: 20px;
 }
 
 .sub .title{

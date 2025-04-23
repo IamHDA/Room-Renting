@@ -19,28 +19,12 @@ const MyComponent = () => {
     const [totalLength, setTotalLength] = useState(null);
     const [fullImage, setFullImage] = useState(false);
     const swiperRef = useRef(null);
-    let bedroom = "";
-    let bathroom = "";
-    let water = "";
-    let electric = "";
-    let parking = "";
-    let wifi = "";
-    let security = "";
-    let furniture = "";
 
     useEffect(() => {
         const fetchPost = async () => {
             try{
                 const response = await getPost(postId);
                 setPost(response);
-                bedroom = response.postDetailDTO.bedroom;
-                bathroom = response.postDetailDTO.bathroom;
-                water = response.postDetailDTO.water;
-                electric = response.postDetailDTO.electric;
-                parking = response.postDetailDTO.parking;
-                wifi = response.postDetailDTO.wifi;
-                security = response.postDetailDTO.security;
-                furniture = response.postDetailDTO.furniture;
                 setTotalLength(response.postMediaDTO.length);
                 setPostImages(response.postMediaDTO.filter(media => media.type === "IMAGE"));
                 setPostVideos(response.postMediaDTO.filter(media => media.type === "VIDEO"));
@@ -232,10 +216,10 @@ const MyComponent = () => {
                                     {(user === null || post.postCreator.id !== user.id) && (
                                         <div className="post-detail-function">
                                             <img src="../../../public/detail-icon/share.png" className="share"/>
-                                            <img src="../../../public/detail-icon/alert.png" className="report" onClick={(e) => {
+                                            <img src="../../../public/detail-icon/alert.png" className="report" onClick={() => {
                                                 if(!user) alert("Đăng nhập để sử dụng chức năng này!")
                                             }}/>
-                                            <img src="../../../public/detail-icon/heart.png" className="save" onClick={(e) => {
+                                            <img src="../../../public/detail-icon/heart.png" className="save" onClick={() => {
                                                 if(!user) alert("Đăng nhập để sử dụng chức năng này!")
                                             }}/>
                                         </div>
@@ -263,124 +247,92 @@ const MyComponent = () => {
                             <div className="post-property">
                                 <h2>Đặc điểm phòng trọ</h2>
                                 <div className="properties">
-                                    <div className="left">
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    <div className="sub">
+                                        <div className="title">
+                                            <img src="../../../public/detail-icon/dong.png"/>
+                                            <p>Mức giá</p>
+                                        </div>
+                                        <p>{priceFormat(post.postDetailDTO.price)} triệu/tháng</p>
+                                    </div>
+                                    <div className="sub">
+                                        <div className="title">
+                                            <img src="../../../public/detail-icon/area.png"/>
+                                            <p>Diện tích</p>
+                                        </div>
+                                        <p>{post.postDetailDTO.area}m&sup2;</p>
+                                    </div>
+                                    {post.postDetailDTO.bedroom !== "" && (
                                         <div className="sub">
                                             <div className="title">
-                                                <img src="../../../public/detail-icon/dong.png"/>
-                                                <p>Mức giá</p>
+                                                <img src="../../../public/detail-icon/bedroom.png"/>
+                                                <p>Phòng ngủ</p>
                                             </div>
-                                            <p>{priceFormat(post.postDetailDTO.price)} triệu/tháng</p>
+                                            <p>{post.postDetailDTO.bedroom} phòng</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    )}
+                                    {post.postDetailDTO.bathroom !== "" && (
                                         <div className="sub">
                                             <div className="title">
-                                                <img src="../../../public/detail-icon/area.png"/>
-                                                <p>Diện tích</p>
+                                                <img src="../../../public/detail-icon/bathroom.png"/>
+                                                <p>Phòng tắm, vệ sinh</p>
                                             </div>
-                                            <p>{post.postDetailDTO.area}m&sup2;</p>
+                                            <p>{post.postDetailDTO.bathroom} phòng</p>
                                         </div>
-                                        {bedroom !== "" && (
-                                            <>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                                <div className="sub">
-                                                    <div className="title">
-                                                        <img src="../../../public/detail-icon/bedroom.png"/>
-                                                        <p>Phòng ngủ</p>
-                                                    </div>
-                                                    <p>{bedroom}</p>
-                                                </div>
-                                            </>
-                                        )}
-                                        {bathroom !== "" && (
-                                            <>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                                <div className="sub">
-                                                    <div className="title">
-                                                        <img src="../../../public/detail-icon/bathroom.png"/>
-                                                        <p>Phòng tắm, vệ sinh</p>
-                                                    </div>
-                                                    <p>{bathroom}</p>
-                                                </div>
-                                            </>
-                                        )}
-                                        {parking !== "" &&(
-                                            <>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                                <div className="sub">
-                                                    <div className="title">
-                                                        <img src="../../../public/detail-icon/clock.png"/>
-                                                        <p>Chỗ để xe</p>
-                                                    </div>
-                                                    <p>{parking}</p>
-                                                </div>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                            </>
-                                        )}
-                                    </div>
-                                    <div className="right">
-                                        {electric !== "" && (
-                                            <>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                                <div className="sub">
-                                                    <div className="title">
-                                                        <img src="../../../public/detail-icon/electric.png"/>
-                                                        <p>Giá điện</p>
-                                                    </div>
-                                                    <p>{electric}</p>
-                                                </div>
-                                            </>
-                                        )}
-                                        {water !== "" && (
-                                            <>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                                <div className="sub">
-                                                    <div className="title">
-                                                        <img src="../../../public/detail-icon/water.png"/>
-                                                        <p>Giá nước</p>
-                                                    </div>
-                                                    <p>{water}</p>
-                                                </div>
-                                            </>
-                                        )}
-                                        {wifi !== "" && (
-                                            <>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                                <div className="sub">
-                                                    <div className="title">
-                                                        <img src="../../../public/detail-icon/wifi.png"/>
-                                                        <p>Giá Internet</p>
-                                                    </div>
-                                                    <p>{wifi}</p>
-                                                </div>
-                                            </>
-                                        )}
-                                        {security !== "" && (
-                                            <>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                                <div className="sub">
-                                                    <div className="title">
-                                                        <img src="../../../public/detail-icon/security.png"/>
-                                                        <p>An ninh</p>
-                                                    </div>
-                                                    <p>{security}</p>
-                                                </div>
-                                            </>
-                                        )}
-                                        {furniture !== "" && (
-                                            <>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                                <div className="sub">
-                                                    <div className="title">
-                                                        <img src="../../../public/detail-icon/furniture.png"/>
-                                                        <p>Nội thất</p>
-                                                    </div>
-                                                    <p>{furniture}</p>
-                                                </div>
-                                                <img src="../../../public/detail-icon/line.png" className="line"/>
-                                            </>
-                                        )}
-                                    </div>
+                                    )}
+                                    {post.postDetailDTO.parking !== "" &&(
+                                        <div className="sub">
+                                            <div className="title">
+                                                <img src="../../../public/detail-icon/clock.png"/>
+                                                <p>Chỗ để xe</p>
+                                            </div>
+                                            <p>{post.postDetailDTO.parking} xe</p>
+                                        </div>
+                                    )}
+                                    {post.postDetailDTO.electric !== "" && (
+                                        <div className="sub">
+                                            <div className="title">
+                                                <img src="../../../public/detail-icon/electric.png"/>
+                                                <p>Giá điện</p>
+                                            </div>
+                                            <p>{post.postDetailDTO.electric}</p>
+                                        </div>
+                                    )}
+                                    {post.postDetailDTO.water !== "" && (
+                                        <div className="sub">
+                                            <div className="title">
+                                                <img src="../../../public/detail-icon/water.png"/>
+                                                <p>Giá nước</p>
+                                            </div>
+                                            <p>{post.postDetailDTO.water}</p>
+                                        </div>
+                                    )}
+                                    {post.postDetailDTO.wifi !== "" && (
+                                        <div className="sub">
+                                            <div className="title">
+                                                <img src="../../../public/detail-icon/wifi.png"/>
+                                                <p>Giá Internet</p>
+                                            </div>
+                                            <p>{post.postDetailDTO.wifi}</p>
+                                        </div>
+                                    )}
+                                    {post.postDetailDTO.security && (
+                                        <div className="sub">
+                                            <div className="title">
+                                                <img src="../../../public/detail-icon/security.png"/>
+                                                <p>An ninh</p>
+                                            </div>
+                                            <p>{post.postDetailDTO.security}</p>
+                                        </div>
+                                    )}
+                                    {post.postDetailDTO.furniture && (
+                                        <div className="sub">
+                                            <div className="title">
+                                                <img src="../../../public/detail-icon/furniture.png"/>
+                                                <p>Nội thất</p>
+                                            </div>
+                                            <p>{post.postDetailDTO.furniture}</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -415,30 +367,31 @@ const MyComponent = () => {
                                 <img src="../../../public/detail-icon/phone-ring.png"/>
                                 <p id="post-user-number">{post.postCreator.phoneNumber}</p>
                             </div>
-                            {user.id !== post.postCreator.id && (
-                                <Link
-                                    to="/chat"
-                                    state={{
-                                        userId: post.postCreator.id,
-                                        post: {
+                            <Link
+                                to={`/chat/${user?.id}_${post.postCreator.id}`}
+                                state={{userId: post.postCreator.id}}
+                                onClick={(e) => {
+                                    if(!user) {
+                                        e.preventDefault();
+                                        alert("Đăng nhập để sử dụng chức năng này");
+                                    }else if(user.id === post.postCreator.id){
+                                        e.preventDefault();
+                                        alert("Không thể tự chat với chính mình");
+                                    }else{
+                                        const chatRoomPost = {
                                             id: post.id,
                                             title: post.title,
                                             thumbnailUrl: postImages[0].url,
                                             price: post.postDetailDTO.area,
                                             area: post.postDetailDTO.area
                                         }
-                                    }}
-                                    onClick={(e) => {
-                                        if(!user) {
-                                            e.preventDefault();
-                                            alert("Đăng nhập để sử dụng chức năng này");
-                                        }
-                                    }}
-                                    className="post-user-chatting-bounding">
-                                    <img src="../../../public/detail-icon/chat-icon.png"/>
-                                    <p id="post-user-chatting">Nhắn tin ngay</p>
-                                </Link>
-                            )}
+                                        localStorage.setItem("chatRoomPost", JSON.stringify(chatRoomPost));
+                                    }
+                                }}
+                                className="post-user-chatting-bounding">
+                                <img src="../../../public/detail-icon/chat-icon.png"/>
+                                <p id="post-user-chatting">Nhắn tin ngay</p>
+                            </Link>
                         </div>
                     </>
                 )}

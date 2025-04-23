@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {getImageMime} from "../../utils/format.js";
 import AuthContext from "../../contexts/AuthContext.jsx";
-import {getChatRooms, getMessages, getRecipient} from "../../apiServices/chat.js";
+import {getChatRooms, getMessages, getRecipient, updateChatRoomPost} from "../../apiServices/chat.js";
 import SockJS from "sockjs-client";
 import {Client} from '@stomp/stompjs';
 
@@ -15,7 +15,7 @@ const MyComponent = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const postCreatorId = location.state?.userId;
-    const post = location.state?.post;
+    const [chatRoomPost, setChatRoomPost] = useState({});
     const fileInputRef = useRef(null);
     const messageEndRef = useRef(null);
     let recipientRef = useRef(null);
@@ -41,6 +41,7 @@ const MyComponent = () => {
 
     useEffect(() => {
         fetchChatRoomMessage(chatId);
+        if(location.pathname === "/chat") recipientRef.current = null;
     }, [location]);
 
     useEffect(() => {
@@ -51,11 +52,13 @@ const MyComponent = () => {
 
     useEffect(() => {
         if(user) stompClientRef.current = setUpStompClient();
+        const chatRoomPostTmp = JSON.parse(localStorage.getItem("chatRoomPost"));
+        if (chatRoomPostTmp) setChatRoomPost(chatRoomPostTmp);
         const fetchData = async () => {
             try {
                 const tmpChatRooms = await fetchChatRooms();
-                setChatRooms(tmpChatRooms);
                 const savedRecipientId = localStorage.getItem("recipientId");
+                setChatRooms(tmpChatRooms);
                 if(savedRecipientId) {
                     await fetchChatRoomRecipient(savedRecipientId);
                     await fetchChatRoomMessage(chatId);
@@ -71,7 +74,7 @@ const MyComponent = () => {
         fetchData();
     }, [user]);
 
-    const setUpStompClient = () => {
+    const setUpStompClient = (userId) => {
         const socket = new SockJS("http://localhost:8080/ws");
         const stompClient = new Client({
             webSocketFactory: () => socket,
@@ -79,6 +82,7 @@ const MyComponent = () => {
             onConnect: () => {
                 stompClient.subscribe(`/user/${user.id}/queue/messages`, onMessageReceived);
                 stompClientRef.current = stompClient;
+                console.log("connected");
             },
             onStompError: (frame) => {
                 console.error('Broker reported error: ' + frame.headers['message']);
@@ -121,20 +125,30 @@ const MyComponent = () => {
             body: JSON.stringify(payload)
         })
         if(virtualChatRoom){
-            setVirtualChatRoom(false);
+            await updateChatRoomPost(chatRoomPost, `${user.id}_${recipientRef.current.id}`);
             const tmpChatRooms = await fetchChatRooms();
-            navigate(`/chat/${user.id}_${recipientRef.current.id}`);
             setChatRooms(tmpChatRooms);
+            setVirtualChatRoom(false);
+            navigate(`/chat/${chatIdRef.current}`);
         }
+        const tmpChatRooms = await fetchChatRooms();
+        setChatRooms(tmpChatRooms);
         setMessages((prevMessages) => [...prevMessages, payload]);
         setPendingMessage("");
     }
 
     const checkExistChatRooms = (tmpChatRooms) => {
         const existChatRoom = tmpChatRooms.find(chatRoom => chatRoom.recipient.id === recipientRef.current.id);
+        const newChatRoomPost = JSON.parse(localStorage.getItem("chatRoomPost"));
         if(existChatRoom){
-            setVirtualChatRoom(false);
-            navigate(`/chat/${existChatRoom.chatId}`);
+            if(existChatRoom.chatRoomPost.id !== chatRoomPost.id) updateChatRoomPost(newChatRoomPost, chatId).then(() => {
+                setChatRooms([...tmpChatRooms.map(chatRoom => chatRoom.chatId === existChatRoom.chatId
+                    ? {...chatRoom, chatRoomPost: newChatRoomPost}
+                    : chatRoom
+                )])
+                setVirtualChatRoom(false);
+                navigate(`/chat/${existChatRoom.chatId}`);
+            })
         }else{
             setVirtualChatRoom(true);
         }
@@ -174,14 +188,14 @@ const MyComponent = () => {
                                 <div className="opponent-name-message">
                                     <h2>{recipientRef.current.fullName}</h2>
                                 </div>
-                                <img src={`data:${getImageMime(recipientRef.current.avatar)};base64,${recipientRef.current.avatar}`} className="chat-post-img"/>
+                                <img src={`${chatRoomPost.thumbnailUrl}`} className="chat-post-img"/>
                             </div>
                         )}
                         {chatRooms.length > 0 && chatRooms.map((chatRoom, index) => (
                             <div className={`chat-room-bounding ${chatRoom.chatId === chatId ? "is-selected" : ""}`} key={index} onClick={() => {
+                                localStorage.setItem("chatRoomPost", JSON.stringify(chatRoom.chatRoomPost));
                                 recipientRef.current = chatRoom.recipient;
-                                console.log(chatRoom.recipient.id);
-                                localStorage.setItem("recipientId", String(chatRoom.recipient.id));
+                                localStorage.setItem("recipientId", chatRoom.recipient.id);
                                 navigate(`/chat/${chatRoom.chatId}`);
                             }}>
                                 <div className="img-container">
@@ -190,8 +204,9 @@ const MyComponent = () => {
                                 </div>
                                 <div className="opponent-name-message">
                                     <h2>{chatRoom.recipient.fullName}</h2>
+                                    <p>{chatRoom.lastMessage.senderId === user.id ? "Bạn: " : ""} {chatRoom.lastMessage.content}</p>
                                 </div>
-                                {/*<img src={`data:${getImageMime(chatRoom.recipientRef.avatar)};base64,${chatRoom.recipientRef.avatar}`} className="chat-post-img"/>*/}
+                                <img src={chatRoom.chatRoomPost.thumbnailUrl} className="chat-post-img"/>
                             </div>
                         ))}
                     </div>
@@ -220,23 +235,37 @@ const MyComponent = () => {
                             <FontAwesomeIcon icon={faEllipsisVertical} className="additional-icon"/>
                         </div>
                         <img src="../../../public/chat-icon/line.png" className="line"/>
-                        <Link to="/detail" className="chat-post-container">
-                            <img src="../../../public/list-icon/home.png" className="chat-post-img"/>
-                            <div className="post-title-price">
-                                <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
-                                <p>8 triệu/tháng</p>
+                        <Link to={`/detail/${chatRoomPost.id}`} className="chat-post-container">
+                            <img src={chatRoomPost.thumbnailUrl} className="chat-post-img"/>
+                            <div className="post-title-price-area">
+                                <h3 >{chatRoomPost.title}</h3>
+                                <div className="post-price-area">
+                                    <p>{chatRoomPost.price} triệu/tháng</p>
+                                    <p>{chatRoomPost.area}m&sup2;</p>
+                                </div>
                             </div>
                         </Link>
                         <img src="../../../public/chat-icon/line.png" className="line"/>
                         <div className="message-container">
-                            {messages.map((message, index) => (
-                                <div
-                                    key={index}
-                                    className={message.senderId === user.id ? "sender-message" : "recipient-message"}
-                                >
-                                    {message.content}
-                                </div>
-                            ))}
+                            {messages.map((message, index) => {
+                                if (message.senderId === user.id) {
+                                    return (
+                                        <div key={index} className="sender-message-div">
+                                            <p className="sender-message">{message.content}</p>
+                                        </div>
+                                    );
+                                } else {
+                                    return (
+                                        <div className="recipient-message-div" key={index}>
+                                            <img
+                                                src={`data:${getImageMime(recipientRef.current.avatar)};base64,${recipientRef.current.avatar}`}
+                                                style={{ height: "50px", width: "50px", borderRadius: "50%" }}
+                                            />
+                                            <p className="recipient-message">{message.content}</p>
+                                        </div>
+                                    );
+                                }
+                            })}
                             <div ref={messageEndRef} />
                         </div>
 

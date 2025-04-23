@@ -1,5 +1,13 @@
 import * as request from '../utils/request.js';
 
+export const updateChatRoomPost = (post, chatId) => {
+    return request.put("chat/updateChatRoomPost/" + chatId, post, {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+        }
+    })
+}
+
 export const getChatRooms = () => {
     return request.get("chat/chatRooms", {
         headers: {
