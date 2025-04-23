@@ -15,6 +15,7 @@ const MyComponent = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const postCreatorId = location.state?.userId;
+    const post = location.state?.post;
     const fileInputRef = useRef(null);
     const messageEndRef = useRef(null);
     let recipientRef = useRef(null);
@@ -52,7 +53,6 @@ const MyComponent = () => {
         if(user) stompClientRef.current = setUpStompClient();
         const fetchData = async () => {
             try {
-                console.log(chatId);
                 const tmpChatRooms = await fetchChatRooms();
                 setChatRooms(tmpChatRooms);
                 const savedRecipientId = localStorage.getItem("recipientId");
@@ -103,18 +103,13 @@ const MyComponent = () => {
 
     const onMessageReceived = async (payload) => {
         const message = JSON.parse(payload.body);
-        if(message.chatId === chatIdRef.current) {
-            console.log(true);
-            setMessages((prev) => [...prev, message]);
-        }
+        if(message.chatId === chatIdRef.current) setMessages((prev) => [...prev, message]);
         const tmpChatRooms = await fetchChatRooms();
         setChatRooms(tmpChatRooms);
     }
 
     const sendMessage = async (e) => {
-        if(pendingMessage.length === 0) {
-            e.preventDefault();
-        }
+        if(pendingMessage.length === 0) e.preventDefault();
         const payload = {
             content: pendingMessage.trim(),
             recipientId: recipientRef.current.id,
@@ -128,7 +123,6 @@ const MyComponent = () => {
         if(virtualChatRoom){
             setVirtualChatRoom(false);
             const tmpChatRooms = await fetchChatRooms();
-            console.log(tmpChatRooms);
             navigate(`/chat/${user.id}_${recipientRef.current.id}`);
             setChatRooms(tmpChatRooms);
         }
@@ -148,7 +142,6 @@ const MyComponent = () => {
 
     const fetchChatRoomRecipient = async (recipientId) => {
         recipientRef.current = await getRecipient(recipientId);
-        console.log(recipientRef.current);
     }
 
     const fetchChatRooms = async () => {
@@ -189,7 +182,6 @@ const MyComponent = () => {
                                 recipientRef.current = chatRoom.recipient;
                                 console.log(chatRoom.recipient.id);
                                 localStorage.setItem("recipientId", String(chatRoom.recipient.id));
-                                setVirtualChatRoom(false);
                                 navigate(`/chat/${chatRoom.chatId}`);
                             }}>
                                 <div className="img-container">

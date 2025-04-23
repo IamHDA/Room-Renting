@@ -418,7 +418,16 @@ const MyComponent = () => {
                             {user.id !== post.postCreator.id && (
                                 <Link
                                     to="/chat"
-                                    state={{ userId: post.postCreator.id}}
+                                    state={{
+                                        userId: post.postCreator.id,
+                                        post: {
+                                            id: post.id,
+                                            title: post.title,
+                                            thumbnailUrl: postImages[0].url,
+                                            price: post.postDetailDTO.area,
+                                            area: post.postDetailDTO.area
+                                        }
+                                    }}
                                     onClick={(e) => {
                                         if(!user) {
                                             e.preventDefault();
