@@ -23,3 +23,14 @@ export const updateLastMessageStatus = (chatRoomId) => {
         }
     })
 }
+
+export const searchChatRooms = (keyword) => {
+    return request.get("chatRoom/searchChatRooms", {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken")
+        },
+        params: {
+            keyword
+        }
+    })
+}

@@ -9,4 +9,6 @@ import java.util.List;
 public interface MessageService {
     List<MessageDTO> getMessagesByChatId(String chatId);
     MessageDTO sendMessage(SendMessage messageDTO);
+
+    String deleteMessage(String messageId);
 }

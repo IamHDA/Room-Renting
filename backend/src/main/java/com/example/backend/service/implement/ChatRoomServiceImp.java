@@ -29,10 +29,6 @@ public class ChatRoomServiceImp implements ChatRoomService {
     @Autowired
     private UserRepository userRepo;
     @Autowired
-    private PostRepository postRepo;
-    @Autowired
-    private PostMediaRepository postMediaRepo;
-    @Autowired
     private ModelMapper modelMapper;
 
     @Override
@@ -50,14 +46,18 @@ public class ChatRoomServiceImp implements ChatRoomService {
 
     private String createChatId(long senderId, long recipientId){
         String chatId = String.format("%d_%d", senderId, recipientId);
+        User sender = userRepo.findById(senderId);
+        User recipient = userRepo.findById(recipientId);
         ChatRoom senderRecipient = ChatRoom.builder()
                 .senderId(senderId)
                 .recipientId(recipientId)
+                .recipientName(recipient.getFullName())
                 .chatId(chatId)
                 .build();
         ChatRoom recipientSender = ChatRoom.builder()
                 .senderId(recipientId)
                 .recipientId(senderId)
+                .recipientName(sender.getFullName())
                 .chatId(chatId)
                 .build();
         chatRoomRepo.save(recipientSender);
@@ -71,12 +71,17 @@ public class ChatRoomServiceImp implements ChatRoomService {
         Sort sort = Sort.by(Sort.Order.desc("lastMessage.createdAt"));
         return chatRoomRepo.findBySenderId(currentUser.getId(), sort)
                 .stream()
-                .map(chatRoom -> {
-                    UserHeader recipient = modelMapper.map(userRepo.findById(chatRoom.getRecipientId()), UserHeader.class);
-                    ChatRoomDTO dto = modelMapper.map(chatRoom, ChatRoomDTO.class);
-                    dto.setRecipient(recipient);
-                    return dto;
-                }).toList();
+                .map(this::convertToChatRoomDTO).toList();
+    }
+
+    @Override
+    public List<ChatRoomDTO> searchChatRoomBySender(String keyword) {
+        User currentUser = userService.getCurrentUser();
+        System.out.println(keyword);
+        Sort sort = Sort.by(Sort.Order.desc("lastMessage.createdAt"));
+        return chatRoomRepo.findByRecipientNameContainingAndSenderId(keyword, currentUser.getId(), sort)
+                .stream()
+                .map(this::convertToChatRoomDTO).toList();
     }
 
     @Override
@@ -84,16 +89,27 @@ public class ChatRoomServiceImp implements ChatRoomService {
         ChatRoom chatRoom = chatRoomRepo.findById(id).orElse(null);
         chatRoom.getLastMessage().setStatus(ChatStatus.SEEN);
         chatRoomRepo.save(chatRoom);
-        System.out.println(chatRoom);
         return "Update last message status successfully";
     }
 
     @Override
     public String updateChatRoomPost(ChatRoomPost chatRoomPost, String chatId) {
         List<ChatRoom> chatRooms = chatRoomRepo.findByChatId(chatId);
-        System.out.println(chatRooms);
         chatRooms.forEach(chatRoom -> chatRoom.setChatRoomPost(chatRoomPost));
         chatRoomRepo.saveAll(chatRooms);
-        return "Update chat room post successfully";
+        return "Update chat room post successfully!";
+    }
+
+    @Override
+    public String deleteChatRooms(List<String> idList) {
+        chatRoomRepo.deleteAllById(idList);
+        return "ChatRoom deleted successfully!";
+    }
+
+    public ChatRoomDTO convertToChatRoomDTO(ChatRoom chatRoom){
+        UserHeader recipient = modelMapper.map(userRepo.findById(chatRoom.getRecipientId()), UserHeader.class);
+        ChatRoomDTO dto = modelMapper.map(chatRoom, ChatRoomDTO.class);
+        dto.setRecipient(recipient);
+        return dto;
     }
 }

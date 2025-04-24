@@ -4,6 +4,7 @@ import com.example.backend.dto.chat.MessageDTO;
 import com.example.backend.dto.chat.MessageMediaDTO;
 import com.example.backend.service.MessageMediaService;
 import com.example.backend.service.MessageService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,5 +28,10 @@ public class MessageController {
     @PostMapping("/uploadMessageMedia")
     public ResponseEntity<List<MessageMediaDTO>> uploadMessageMedia(@RequestPart(name = "file") List<MultipartFile> files){
         return ResponseEntity.ok(messageMediaService.uploadMessageMedia(files));
+    }
+
+    @DeleteMapping("/delete/{messageId}")
+    public ResponseEntity<String> deleteMessage(@PathVariable String messageId){
+        return ResponseEntity.ok(messageService.deleteMessage(messageId));
     }
 }

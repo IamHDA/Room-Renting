@@ -8,12 +8,14 @@ import com.example.backend.entity.mongoDB.MessageMedia;
 import com.example.backend.repository.mongoDB.ChatRoomRepository;
 import com.example.backend.repository.mongoDB.MessageRepository;
 import com.example.backend.service.ChatRoomService;
+import com.example.backend.service.MessageMediaService;
 import com.example.backend.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -23,6 +25,8 @@ public class MessageServiceImp implements MessageService {
     private ChatRoomService chatRoomService;
     @Autowired
     private MessageRepository messageRepo;
+    @Autowired
+    private MessageMediaService messageMediaService;
     @Autowired
     private ChatRoomRepository chatRoomRepo;
     @Autowired
@@ -62,6 +66,16 @@ public class MessageServiceImp implements MessageService {
         });
         chatRoomRepo.saveAll(chatRooms);
         return modelMapper.map(message, MessageDTO.class);
+    }
+
+    @Override
+    public String deleteMessage(String messageId) {
+        List<MessageMedia> messageMediaList = messageRepo.findById(messageId)
+                .map(Message::getMediaList)
+                .orElse(null);
+        messageMediaService.deleteMessageMedias(messageMediaList);
+        messageRepo.deleteById(messageId);
+        return "";
     }
 
 

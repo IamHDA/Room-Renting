@@ -12,17 +12,17 @@ import com.example.backend.service.AddressService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLOutput;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
-public class FormatUtil {
+public class Util {
     @Autowired
     private PostRepository postRepo;
     @Autowired
@@ -65,5 +65,13 @@ public class FormatUtil {
         postDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
         postDTO.setDescription(textFormat(post.getDescription()));
         return postDTO;
+    }
+
+    public void deleteFile(String filePath) throws IOException {
+        File file = new File(filePath);
+        if(file.exists()){
+            if(file.delete()) System.out.println("File have been deleted!");
+            else throw new IOException("Fail to delete file" + filePath);
+        }
     }
 }

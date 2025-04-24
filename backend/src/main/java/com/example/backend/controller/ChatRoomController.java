@@ -21,6 +21,11 @@ public class ChatRoomController {
         return ResponseEntity.ok(chatRoomService.findBySender());
     }
 
+    @GetMapping("/searchChatRooms")
+    public ResponseEntity<List<ChatRoomDTO>> searchChatRoom(@RequestParam(name = "keyword") String keyword){
+        return ResponseEntity.ok(chatRoomService.searchChatRoomBySender(keyword));
+    }
+
     @PutMapping("/updateChatRoomPost/{chatId}")
     public ResponseEntity<String> updateChatRoomPost(@RequestBody ChatRoomPost chatRoomPost, @PathVariable String chatId){
         return ResponseEntity.ok(chatRoomService.updateChatRoomPost(chatRoomPost, chatId));
@@ -29,5 +34,10 @@ public class ChatRoomController {
     @PutMapping("/updateLastMessageStatus/{chatRoomId}")
     public ResponseEntity<String> updateLastMessageStatus(@PathVariable String chatRoomId){
         return ResponseEntity.ok(chatRoomService.updateLastMessageStatus(chatRoomId));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteChatRoom(@RequestBody List<String> idList){
+        return ResponseEntity.ok(chatRoomService.deleteChatRooms(idList));
     }
 }

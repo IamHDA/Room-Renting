@@ -12,7 +12,7 @@ import com.example.backend.repository.mySQL.PostRepository;
 import com.example.backend.service.AddressService;
 import com.example.backend.service.FavouritePostService;
 import com.example.backend.service.UserService;
-import com.example.backend.utils.FormatUtil;
+import com.example.backend.utils.Util;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class FavouritePostServiceImp implements FavouritePostService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private FormatUtil formatUtil;
+    private Util util;
     @Autowired
     private AddressService addressService;
     @Autowired
@@ -97,7 +97,7 @@ public class FavouritePostServiceImp implements FavouritePostService {
                     PostDetailSummaryDTO postDetailSummaryDTO = new PostDetailSummaryDTO();
                     postDetailSummaryDTO.setArea(postDetail.getArea());
                     postDetailSummaryDTO.setPrice(postDetail.getPrice());
-                    postSummaryDTO.setDescription(formatUtil.textFormat(post.getDescription()));
+                    postSummaryDTO.setDescription(util.textFormat(post.getDescription()));
                     postSummaryDTO.setUserId(post.getUser().getId());
                     postSummaryDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
                     postSummaryDTO.setPostDetailSummaryDTO(postDetailSummaryDTO);

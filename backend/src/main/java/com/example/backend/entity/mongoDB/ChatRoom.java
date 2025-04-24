@@ -14,6 +14,7 @@ public class ChatRoom {
     @Id
     private String id;
     private String chatId;
+    private String recipientName;
     private LastMessage lastMessage;
     private ChatRoomPost chatRoomPost;
     private long senderId;

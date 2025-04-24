@@ -13,9 +13,10 @@ import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {getImageMime} from "../../utils/format.js";
 import AuthContext from "../../contexts/AuthContext.jsx";
 import { getRecipient } from "../../apiServices/chat.js";
-import { updateChatRoomPost, updateLastMessageStatus, getChatRooms} from "../../apiServices/chatRoom.js";
+import { updateChatRoomPost, updateLastMessageStatus, getChatRooms, searchChatRooms} from "../../apiServices/chatRoom.js";
 import { getMessages, uploadMessageMedia } from "../../apiServices/message.js";
 import SockJSContext from "../../contexts/SockJSContext.jsx";
+import {useDebounce} from "../../hooks/useDebounce.js";
 
 const MyComponent = () => {
     const { user } = useContext(AuthContext);
@@ -34,6 +35,9 @@ const MyComponent = () => {
     const [pendingMessage, setPendingMessage] = useState("");
     const [virtualChatRoom, setVirtualChatRoom] = useState(false);
     const [mediaListState, setMediaListState] = useState([]);
+    const [searchText, setSearchText] = useState("");
+    const debounceSearch = useDebounce(searchText, 500);
+    const [chatRoomsFromSearch, setChatRoomsFromSearch] = useState([]);
     const [currentChatMediaList, setCurrentChatMediaList] = useState([]);
     // const [deleteConversation, setDeleteConversation] = useState(false);
 
@@ -47,6 +51,18 @@ const MyComponent = () => {
     useEffect(() => {
         chatIdRef.current = chatId;
     }, [chatId]);
+
+    useEffect(() => {
+        if(debounceSearch === "") setChatRoomsFromSearch([]);
+        else{
+            const searchChatRoom = async () => {
+                const response = await searchChatRooms(debounceSearch);
+                setChatRoomsFromSearch(response);
+                console.log(response);
+            }
+            searchChatRoom();
+        }
+    }, [debounceSearch]);
 
     useEffect(() => {
         chatRoomsRef.current = chatRooms;
@@ -67,7 +83,7 @@ const MyComponent = () => {
         if (messageEndRef.current) {
             messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-        setCurrentChatMediaList([...messages.mediaList])
+        if(messages.mediaList) setCurrentChatMediaList([...messages.mediaList]);
     }, [messages]);
 
     useEffect(() => {
@@ -93,6 +109,29 @@ const MyComponent = () => {
         }
         fetchData();
     }, [user]);
+
+    const handleClickChatRoom = (chatRoom) => {
+        localStorage.setItem("chatRoomPost", JSON.stringify(chatRoom.chatRoomPost));
+        localStorage.setItem("recipientId", chatRoom.recipient.id);
+        localStorage.setItem("chatRoomId", chatRoom.id);
+        if(chatId === chatRoom.chatId) localStorage.setItem("chatRoomId", chatRoom.id);
+        setChatRoomPost(chatRoom.chatRoomPost);
+        if(chatRoom.lastMessage.status === "UNSEEN") updateLastMessageStatus(chatRoom.id);
+        setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+                room.chatId === chatRoom.chatId ?
+                    {
+                        ...room,
+                        lastMessage: {
+                            ...room.lastMessage,
+                            status: "SEEN"
+                        }
+                    } : room
+            )
+        );
+        recipientRef.current = chatRoom.recipient;
+        navigate(`/chat/${chatRoom.chatId}`);
+    }
 
     const updateRecipientStatus = (announcedStatus, recipient) => {
         if(announcedStatus === "connect") recipient.status = "ONLINE";
@@ -206,7 +245,7 @@ const MyComponent = () => {
     }
 
     const displayMessageMedia = (messageMediaList) => {
-        if (messageMediaList.length > 0) return(
+        return(
             <div className={`media-grid media-count-${messageMediaList.length}`}>
                 {messageMediaList.map((media, index) => {
                     if(media.type === "IMAGE") return <img src={media.url} key={index}></img>
@@ -222,61 +261,69 @@ const MyComponent = () => {
                 <div className="left">
                     <div className="search-chat-room">
                         <FontAwesomeIcon icon={faMagnifyingGlass} />
-                        <input type="text" placeholder="Tìm kiếm người dùng"/>
+                        <input
+                            type="text"
+                            value={searchText}
+                            placeholder="Tìm kiếm người dùng"
+                            onChange={(e) => setSearchText(e.target.value)}
+                        />
                     </div>
-                    <img src="/chat-icon/line.png" className="line"/>
-                    <div className="chat-room-container">
-                        {virtualChatRoom && recipientRef.current && (
-                            <div className="chat-room-bounding" onClick={(e) => {
-                                e.currentTarget.classList.add("isSelected");
-                            }}>
-                                <div className="img-container">
-                                    <img src={`data:${getImageMime(recipientRef.current.avatar)};base64,${recipientRef.current.avatar}`} className="opponent-img"/>
-                                    <div className={`status-dot ${recipientRef.current.status === "ONLINE" ? "online" : "offline"}`}></div>
+                    <img src="/chat-icon/line.png" className="line" style={{width: "110%"}}/>
+                    {!searchText ? (
+                        <div className="chat-room-container">
+                            {virtualChatRoom && recipientRef.current && (
+                                <div className="chat-room-bounding" onClick={(e) => {
+                                    e.currentTarget.classList.add("isSelected");
+                                }}>
+                                    <div className="img-container">
+                                        <img src={`data:${getImageMime(recipientRef.current.avatar)};base64,${recipientRef.current.avatar}`} className="opponent-img"/>
+                                        <div className={`status-dot ${recipientRef.current.status === "ONLINE" ? "online" : "offline"}`}></div>
+                                    </div>
+                                    <div className="opponent-name-message">
+                                        <h2>{recipientRef.current.fullName}</h2>
+                                    </div>
+                                    <img src={`${chatRoomPost.thumbnailUrl}`} className="chat-post-img"/>
                                 </div>
-                                <div className="opponent-name-message">
-                                    <h2>{recipientRef.current.fullName}</h2>
+                            )}
+                            {chatRooms.length > 0 && chatRooms.map((chatRoom, index) => (
+                                <div className={`chat-room-bounding ${chatRoom.lastMessage.status === "UNSEEN" ? "unSeen" : ""} ${chatRoom.chatId === chatId ? "is-selected" : ""}`} key={index} onClick={() => handleClickChatRoom(chatRoom)}>
+                                    <div className="img-container">
+                                        <img src={`data:${getImageMime(chatRoom.recipient.avatar)};base64,${chatRoom.recipient.avatar}`} className="opponent-img"/>
+                                        <div className={`status-dot ${chatRoom.recipient.status === "ONLINE" ? "online" : "offline"}`}></div>
+                                    </div>
+                                    <div className="opponent-name-message">
+                                        <p className="opponent-name">{chatRoom.recipient.fullName}</p>
+                                        <p className="opponent-last-message">{chatRoom.lastMessage.senderId === user.id ? "Bạn: " : ""} {chatRoom.lastMessage.content}</p>
+                                    </div>
+                                    <img src={chatRoom.chatRoomPost.thumbnailUrl} className="chat-post-img"/>
                                 </div>
-                                <img src={`${chatRoomPost.thumbnailUrl}`} className="chat-post-img"/>
-                            </div>
-                        )}
-                        {chatRooms.length > 0 && chatRooms.map((chatRoom, index) => (
-                            <div className={`chat-room-bounding ${chatRoom.lastMessage.status === "UNSEEN" ? "unSeen" : ""} ${chatRoom.chatId === chatId ? "is-selected" : ""}`} key={index} onClick={(e) => {
-                                localStorage.setItem("chatRoomPost", JSON.stringify(chatRoom.chatRoomPost));
-                                localStorage.setItem("recipientId", chatRoom.recipient.id);
-                                localStorage.setItem("chatRoomId", chatRoom.id);
-                                if(chatId === chatRoom.chatId) {
-                                    localStorage.setItem("chatRoomId", chatRoom.id);
-                                }
-                                setChatRoomPost(chatRoom.chatRoomPost);
-                                if(chatRoom.lastMessage.status === "UNSEEN") updateLastMessageStatus(chatRoom.id);
-                                setChatRooms(prevRooms =>
-                                    prevRooms.map(room =>
-                                        room.chatId === chatRoom.chatId ?
-                                            {
-                                                ...room,
-                                                lastMessage: {
-                                                    ...room.lastMessage,
-                                                    status: "SEEN"
-                                                }
-                                            } : room
-                                    )
-                                );
-                                recipientRef.current = chatRoom.recipient;
-                                navigate(`/chat/${chatRoom.chatId}`);
-                            }}>
-                                <div className="img-container">
+                            ))}
+                        </div>
+                    ) : (
+                        <div
+                            className="chat-room-container"
+                            style={{
+                                alignItems: "flex-start",
+                                gap: "10px",
+                                overflowY: "auto"
+                            }}
+                        >
+                            {chatRoomsFromSearch.map((chatRoom, index) => (
+                                <div className="chat-room-bounding"
+                                     key={index}
+                                     style={{
+                                         gap: "10px",
+                                     }}
+                                     onClick={() => {
+                                        setChatRoomsFromSearch([]);
+                                        handleClickChatRoom(chatRoom);
+                                }}>
                                     <img src={`data:${getImageMime(chatRoom.recipient.avatar)};base64,${chatRoom.recipient.avatar}`} className="opponent-img"/>
-                                    <div className={`status-dot ${chatRoom.recipient.status === "ONLINE" ? "online" : "offline"}`}></div>
-                                </div>
-                                <div className="opponent-name-message">
                                     <p className="opponent-name">{chatRoom.recipient.fullName}</p>
-                                    <p className="opponent-last-message">{chatRoom.lastMessage.senderId === user.id ? "Bạn: " : ""} {chatRoom.lastMessage.content}</p>
                                 </div>
-                                <img src={chatRoom.chatRoomPost.thumbnailUrl} className="chat-post-img"/>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
                     <img src="/chat-icon/line.png" className="line"/>
                     <div className="delete-conversation">
                         <FontAwesomeIcon icon={faTrash} />
@@ -319,7 +366,7 @@ const MyComponent = () => {
                                     return (
                                         <div key={index} className="sender-message-div">
                                             {message.content !== "" && <p className="sender-message">{message.content}</p>}
-                                            {displayMessageMedia(message.mediaList)}
+                                            {message.mediaList && displayMessageMedia(message.mediaList)}
                                         </div>
                                     );
                                 } else {
@@ -335,7 +382,7 @@ const MyComponent = () => {
                                                 gap: "5px"
                                             }}>
                                                 {message.content !== "" && <p className="recipient-message">{message.content}</p>}
-                                                {displayMessageMedia(message.mediaList)}
+                                                {message.mediaList && displayMessageMedia(message.mediaList)}
                                             </div>
                                         </div>
                                     );

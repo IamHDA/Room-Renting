@@ -15,7 +15,7 @@ import com.example.backend.entity.mySQL.User;
 import com.example.backend.repository.mySQL.*;
 import com.example.backend.service.AddressService;
 import com.example.backend.service.AdminService;
-import com.example.backend.utils.FormatUtil;
+import com.example.backend.utils.Util;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class AdminServiceImp implements AdminService {
     @Autowired
     private AddressService addressService;
     @Autowired
-    private FormatUtil formatUtil;
+    private Util util;
     @Autowired
     private FilterRepository filterRepo;
     @Autowired
@@ -89,7 +89,7 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     public PostReportDTO getPostReport(long postId) {
-        PostDTO post = formatUtil.convertPostToPostDTO(postId);
+        PostDTO post = util.convertPostToPostDTO(postId);
         AdminPostDTO adminPostDTO = modelMapper.map(post, AdminPostDTO.class);
         List<ReportDTO> reports = postReportRepo.findByPost_Id(postId)
                 .stream()

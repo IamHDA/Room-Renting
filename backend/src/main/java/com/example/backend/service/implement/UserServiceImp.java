@@ -12,7 +12,7 @@ import com.example.backend.repository.mySQL.UserRepository;
 import com.example.backend.repository.mySQL.WardRepository;
 import com.example.backend.service.AddressService;
 import com.example.backend.service.UserService;
-import com.example.backend.utils.FormatUtil;
+import com.example.backend.utils.Util;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -34,7 +34,7 @@ public class UserServiceImp implements UserService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private FormatUtil formatUtil;
+    private Util util;
     @Autowired
     private AddressService addressService;
     @Autowired
@@ -60,7 +60,7 @@ public class UserServiceImp implements UserService {
         User user = userRepo.findById(userId);
         UserProfile userProfile = modelMapper.map(user, UserProfile.class);
         userProfile.setStatus(user.getStatus().getDisplayName());
-        userProfile.setJoinTime(formatUtil.getJoinTime(user.getCreatedAt()));
+        userProfile.setJoinTime(util.getJoinTime(user.getCreatedAt()));
         userProfile.setAddressDTO(addressService.getAddress(user.getAddress()));
         return userProfile;
     }

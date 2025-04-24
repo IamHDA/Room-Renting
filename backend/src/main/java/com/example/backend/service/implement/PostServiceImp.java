@@ -3,7 +3,6 @@ package com.example.backend.service.implement;
 import com.example.backend.Enum.MediaType;
 import com.example.backend.Enum.PostStatus;
 import com.example.backend.dto.*;
-import com.example.backend.dto.filter.AdminPostFilter;
 import com.example.backend.dto.filter.PostFilter;
 import com.example.backend.dto.post.*;
 import com.example.backend.entity.mongoDB.PostMedia;
@@ -13,14 +12,13 @@ import com.example.backend.repository.mySQL.*;
 import com.example.backend.service.AddressService;
 import com.example.backend.service.PostService;
 import com.example.backend.service.UserService;
-import com.example.backend.utils.FormatUtil;
+import com.example.backend.utils.Util;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,7 @@ public class PostServiceImp implements PostService {
     @Autowired
     private FilterRepository filterRepo;
     @Autowired
-    private FormatUtil formatUtil;
+    private Util util;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -59,7 +57,7 @@ public class PostServiceImp implements PostService {
                     PostDetailSummaryDTO postDetailSummaryDTO = new PostDetailSummaryDTO();
                     postDetailSummaryDTO.setArea(postDetail.getArea());
                     postDetailSummaryDTO.setPrice(postDetail.getPrice());
-                    postSummaryDTO.setDescription(formatUtil.textFormat(post.getDescription()));
+                    postSummaryDTO.setDescription(util.textFormat(post.getDescription()));
                     postSummaryDTO.setUserId(post.getUser().getId());
                     postSummaryDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
                     postSummaryDTO.setPostDetailSummaryDTO(postDetailSummaryDTO);
@@ -70,7 +68,7 @@ public class PostServiceImp implements PostService {
 
     @Override
     public PostDTO getPost(long postId) {
-        return formatUtil.convertPostToPostDTO(postId);
+        return util.convertPostToPostDTO(postId);
     }
 
     @Override
@@ -104,12 +102,14 @@ public class PostServiceImp implements PostService {
                 String mediaUrl = url + file.getOriginalFilename();
                 String tmp = file.getContentType().split("/")[0];
                 MediaType type = MediaType.valueOf(tmp.toUpperCase());
+                String filePath = "/home/iamhda/ETC/Room-Renting/backend/src/main/resources/static/PostMedia/" + file.getOriginalFilename();
                 postMediaList.add(PostMedia.builder()
-                        .type(type)
-                        .url(mediaUrl)
-                        .postId(postId)
+                            .type(type)
+                            .url(mediaUrl)
+                            .postId(postId)
+                            .filePath(filePath)
                         .build());
-                file.transferTo(new File("/home/iamhda/ETC/Room-Renting/backend/src/main/resources/static/PostMedia/" + file.getOriginalFilename()));
+                file.transferTo(new File(filePath));
             }
             postMediaRepo.saveAll(postMediaList);
         }catch (Exception e){
@@ -211,7 +211,7 @@ public class PostServiceImp implements PostService {
                     dto.setUserId(post.getUser().getId());
                     dto.setAddressDTO(addressService.getAddress(post.getAddress()));
                     dto.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());
-                    dto.setDescription(formatUtil.textFormat(post.getDescription()));
+                    dto.setDescription(util.textFormat(post.getDescription()));
                     dto.setPostDetailSummaryDTO(postDetailSummaryDTO);
                     return dto;
                 })
