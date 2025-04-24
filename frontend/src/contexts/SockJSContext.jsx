@@ -26,6 +26,9 @@ export const SockJSProvider = ({children}) => {
                 onStompError: (frame) => {
                     console.error('Broker reported error: ' + frame.headers['message']);
                     console.error('Additional details: ' + frame.body);
+                },
+                onWebSocketClose: (event) => {
+                    console.log("Websocket closed", event);
                 }
             });
             stompClient.activate();

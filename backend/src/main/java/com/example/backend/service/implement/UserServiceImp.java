@@ -1,6 +1,5 @@
 package com.example.backend.service.implement;
 
-import com.example.backend.Enum.UserStatus;
 import com.example.backend.dto.user.UserHeader;
 import com.example.backend.dto.user.UserPersonalInformation;
 import com.example.backend.dto.user.UserProfile;

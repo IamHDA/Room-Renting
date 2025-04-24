@@ -65,8 +65,8 @@ public class SecurityConfig {
                                 "post/userDisablePosts/**",
                                 "address/search",
                                 "PostMedia/**",
-                                "ws/**",
-                                "/test/**"
+                                "MessageMedia/**",
+                                "ws/**"
                         ).permitAll()
                         .requestMatchers(
                                 "admin/**"

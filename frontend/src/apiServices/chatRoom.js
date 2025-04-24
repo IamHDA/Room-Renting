@@ -1,0 +1,25 @@
+import * as request from "../utils/request.js";
+
+export const getChatRooms = () => {
+    return request.get("chatRoom/chatRooms", {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken")
+        }
+    });
+}
+
+export const updateChatRoomPost = (post, chatId) => {
+    return request.put("chatRoom/updateChatRoomPost/" + chatId, post, {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken")
+        },
+    })
+}
+
+export const updateLastMessageStatus = (chatRoomId) => {
+    return request.put("chatRoom/updateLastMessageStatus/" + chatRoomId,{}, {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken")
+        }
+    })
+}

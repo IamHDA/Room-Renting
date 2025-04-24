@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @Builder
@@ -18,6 +19,7 @@ public class MessageDTO {
     private long senderId;
     private long recipientId;
     private String content;
+    private List<MessageMediaDTO> mediaList;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Instant createdAt;
 }

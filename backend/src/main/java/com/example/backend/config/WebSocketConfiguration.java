@@ -11,6 +11,7 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 import java.util.List;
 
@@ -29,7 +30,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
-                .withSockJS();
+                .withSockJS()
+                .setStreamBytesLimit(5 * 1024 * 1024);
     }
 
     @Override
@@ -41,6 +43,11 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         converter.setContentTypeResolver(resolver);
         messageConverters.add(converter);
         return false;
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
+        registry.setMessageSizeLimit(5 * 1024 * 1024);
     }
 }
 

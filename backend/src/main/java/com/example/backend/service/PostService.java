@@ -16,7 +16,7 @@ public interface PostService {
     List<PostSummaryDTO> getDisablePostsByUser(long userId);
     PostDetailDTO getPostDetail(long postId);
     List<PostSummaryDTO> getPostsByCriteria(PostFilter filter);
-    void uploadPostMedia(List<MultipartFile> images, long postId) throws IOException;
+    String uploadPostMedia(List<MultipartFile> images, long postId);
     String createPostWithRollBack(AddressDTO addressDTO, CreatePostDTO createPostDTO, List<MultipartFile> files);
     long createPost(AddressDTO addressDTO, CreatePostDTO createPostDTO);
     String changePostStatus(long postId, String status);

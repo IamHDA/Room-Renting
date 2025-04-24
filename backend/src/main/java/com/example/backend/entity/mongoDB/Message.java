@@ -1,13 +1,12 @@
 package com.example.backend.entity.mongoDB;
 
-import com.example.backend.Enum.ChatStatus;
 import lombok.Builder;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.List;
 
 @Document(collection = "message")
 @Data
@@ -15,10 +14,10 @@ import java.time.Instant;
 public class Message {
     @Id
     private String id;
+    private String chatId;
     private long senderId;
     private long recipientId;
-    private String chatId;
     private String content;
-    private ChatStatus status;
     private Instant createdAt;
+    private List<MessageMedia> mediaList;
 }

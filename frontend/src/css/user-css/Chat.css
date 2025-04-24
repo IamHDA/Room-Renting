@@ -299,7 +299,11 @@
 
 .sender-message-div{
     align-self: flex-end;
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
 }
+
 
 .sender-img{
     width: 50px;
@@ -313,16 +317,20 @@
     font-size: 20px;
     padding: 7px 10px 7px 10px;
     max-width: 600px;
+    word-break: break-word;
+    white-space: pre-wrap;
 }
 
 .recipient-message{
     background-color: #6c6c6c;
     color: white;
+    align-self: flex-start;
 }
 
 .sender-message{
     background-color: #008CFF;
     color: white;
+    align-self: flex-end;
 }
 
 .send-message-bounding{
@@ -400,33 +408,41 @@
     opacity: 0.7;
 }
 
-.image-grid{
+.media-grid{
     display: grid;
     gap: 5px;
 }
 
-.image-count-1 {
+.media-grid img{
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.media-count-1 {
     grid-template-columns: 1fr;
 }
 
-.image-count-2 {
+.media-count-2 {
     grid-template-columns: repeat(2, 1fr);
 }
 
-.image-count-3 {
+.media-count-3 {
     grid-template-columns: repeat(3, 1fr);
 }
 
-.image-count-4 {
+.media-count-4 {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, auto);
 }
 
-.image-count-5,
-.image-count-6 {
+.media-count-5,
+.media-count-6 {
     grid-template-columns: repeat(3, 1fr);
 }
 
-.sender-message:has(img){
-    background-color: white;
-}
+/*.sender-message-div:has(img){*/
+/*    gap: 20px;*/
+/*}*/

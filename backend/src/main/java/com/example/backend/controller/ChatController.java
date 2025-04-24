@@ -1,11 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.chat.ChatRoomDTO;
-import com.example.backend.dto.chat.MessageDTO;
-import com.example.backend.dto.chat.ChatRoomPost;
-import com.example.backend.dto.chat.SendMessage;
+import com.example.backend.dto.chat.*;
 import com.example.backend.dto.user.UserHeader;
 import com.example.backend.service.ChatRoomService;
+import com.example.backend.service.MessageMediaService;
 import com.example.backend.service.MessageService;
 import com.example.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,8 +22,6 @@ import java.util.List;
 public class ChatController {
     @Autowired
     private MessageService messageService;
-    @Autowired
-    private ChatRoomService chatRoomService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
     @Autowired
@@ -48,28 +45,8 @@ public class ChatController {
         return "disconnect " + disconnectedUserId;
     }
 
-    @GetMapping("/messages/{chatId}")
-    public ResponseEntity<List<MessageDTO>> getChatMessages(@PathVariable String chatId){
-        return ResponseEntity.ok(messageService.getMessagesByChatId(chatId));
-    }
-
-    @GetMapping("/chatRooms")
-    public ResponseEntity<List<ChatRoomDTO>> getChatRooms(){
-        return ResponseEntity.ok(chatRoomService.findBySender());
-    }
-
     @GetMapping("/recipient/{userId}")
     public ResponseEntity<UserHeader> getRecipient(@PathVariable long userId){
         return ResponseEntity.ok(userService.getUserHeader(userId));
-    }
-
-    @PutMapping("/updateChatRoomPost/{chatId}")
-    public ResponseEntity<String> updateChatRoomPost(@RequestBody ChatRoomPost chatRoomPost, @PathVariable String chatId){
-        return ResponseEntity.ok(chatRoomService.updateChatRoomPost(chatRoomPost, chatId));
-    }
-
-    @PutMapping("/updateLastMessageStatus/{chatRoomId}")
-    public ResponseEntity<String> updateLastMessageStatus(@PathVariable String chatRoomId){
-        return ResponseEntity.ok(chatRoomService.updateLastMessageStatus(chatRoomId));
     }
 }

@@ -12,15 +12,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {getImageMime} from "../../utils/format.js";
 import AuthContext from "../../contexts/AuthContext.jsx";
-import {
-    getChatRooms,
-    getMessages,
-    getRecipient,
-    updateChatRoomPost,
-    updateLastMessageStatus
-} from "../../apiServices/chat.js";
-import SockJS from "sockjs-client";
-import {Client} from '@stomp/stompjs';
+import { getRecipient } from "../../apiServices/chat.js";
+import { updateChatRoomPost, updateLastMessageStatus, getChatRooms} from "../../apiServices/chatRoom.js";
+import { getMessages, uploadMessageMedia } from "../../apiServices/message.js";
 import SockJSContext from "../../contexts/SockJSContext.jsx";
 
 const MyComponent = () => {
@@ -39,7 +33,8 @@ const MyComponent = () => {
     const [chatRooms, setChatRooms] = useState([]);
     const [pendingMessage, setPendingMessage] = useState("");
     const [virtualChatRoom, setVirtualChatRoom] = useState(false);
-    const [mediaList, setMediaList] = useState([]);
+    const [mediaListState, setMediaListState] = useState([]);
+    const [currentChatMediaList, setCurrentChatMediaList] = useState([]);
     // const [deleteConversation, setDeleteConversation] = useState(false);
 
     useEffect(() => {
@@ -72,6 +67,7 @@ const MyComponent = () => {
         if (messageEndRef.current) {
             messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
+        setCurrentChatMediaList([...messages.mediaList])
     }, [messages]);
 
     useEffect(() => {
@@ -117,9 +113,7 @@ const MyComponent = () => {
             return chatRoom;
         });
         if(recipientRef.current && (recipientRef.current.id === announcedUserId)) updateRecipientStatus(announcedStatus, recipientRef.current);
-        if(check) {
-            setChatRooms(updatedChatRooms);
-        }
+        if(check) setChatRooms(updatedChatRooms);
     }, []);
 
     const onMessageReceived = useCallback(async (payload) => {
@@ -129,16 +123,32 @@ const MyComponent = () => {
             if(message.chatId === chatIdRef.current) setMessages((prev) => [...prev, message]);
             const tmpChatRooms = await fetchChatRooms();
             setChatRooms(tmpChatRooms);
-        }, 100);
+        }, 150);
     }, []);
 
+    const extractMediaType = (mediaType) => {
+        return mediaType.split("/")[0].toUpperCase();
+    }
+
     const sendMessage = async (e) => {
-        if(pendingMessage.length === 0) e.preventDefault();
+        if(pendingMessage.length === 0 && mediaListState.length === 0){
+            e.preventDefault();
+            return;
+        }
+        let response = [];
+        if(mediaListState.length > 0){
+            const formData = new FormData();
+            for(const file of mediaListState) {
+                formData.append("file", file);
+            }
+            response = await uploadMessageMedia(chatId, formData);
+        }
         const payload = {
             content: pendingMessage.trim(),
             recipientId: recipientRef.current.id,
             senderId: user.id,
-            chatId: chatId
+            chatId: chatId,
+            mediaList: response
         }
         stompClientRef.current.publish({
             destination: "/app/chat",
@@ -156,6 +166,12 @@ const MyComponent = () => {
         const tmpChatRooms = await fetchChatRooms();
         setChatRooms(tmpChatRooms);
         setPendingMessage("");
+        setMediaListState([]);
+        let mediaList = mediaListState.map(media => ({
+            url: URL.createObjectURL(media),
+            type: extractMediaType(media.type)
+        }));
+        payload.mediaList = mediaList;
         if(!check) setMessages((prevMessages) => [...prevMessages, payload]);
     }
 
@@ -189,6 +205,17 @@ const MyComponent = () => {
         setMessages(response);
     }
 
+    const displayMessageMedia = (messageMediaList) => {
+        if (messageMediaList.length > 0) return(
+            <div className={`media-grid media-count-${messageMediaList.length}`}>
+                {messageMediaList.map((media, index) => {
+                    if(media.type === "IMAGE") return <img src={media.url} key={index}></img>
+                    else return <img src="/chat-icon/play-video.png" alt="" style={{backgroundColor: "lightgray"}}/>
+                })}
+            </div>
+        )
+    }
+
     return (
         <div className="chat-body">
             <div className="chat-container">
@@ -197,7 +224,7 @@ const MyComponent = () => {
                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                         <input type="text" placeholder="Tìm kiếm người dùng"/>
                     </div>
-                    <img src="../../../public/chat-icon/line.png" className="line"/>
+                    <img src="/chat-icon/line.png" className="line"/>
                     <div className="chat-room-container">
                         {virtualChatRoom && recipientRef.current && (
                             <div className="chat-room-bounding" onClick={(e) => {
@@ -250,13 +277,13 @@ const MyComponent = () => {
                             </div>
                         ))}
                     </div>
-                    <img src="../../../public/chat-icon/line.png" className="line"/>
+                    <img src="/chat-icon/line.png" className="line"/>
                     <div className="delete-conversation">
                         <FontAwesomeIcon icon={faTrash} />
                         <p>Xóa hội thoại</p>
                     </div>
                 </div>
-                <img src="../../../public/chat-icon/stand-line.png"/>
+                <img src="/chat-icon/stand-line.png"/>
                 {recipientRef.current && (
                     <div className="right">
                         <div className="chat-header">
@@ -274,7 +301,7 @@ const MyComponent = () => {
                             </Link>
                             <FontAwesomeIcon icon={faEllipsisVertical} className="additional-icon"/>
                         </div>
-                        <img src="../../../public/chat-icon/line.png" className="line"/>
+                        <img src="/chat-icon/line.png" className="line"/>
                         <Link to={`/detail/${chatRoomPost.id}`} className="chat-post-container">
                             <img src={chatRoomPost.thumbnailUrl} className="chat-post-img"/>
                             <div className="post-title-price-area">
@@ -285,13 +312,14 @@ const MyComponent = () => {
                                 </div>
                             </div>
                         </Link>
-                        <img src="../../../public/chat-icon/line.png" className="line"/>
+                        <img src="/chat-icon/line.png" className="line"/>
                         <div className="message-container">
                             {messages.map((message, index) => {
                                 if (message.senderId === user.id) {
                                     return (
                                         <div key={index} className="sender-message-div">
-                                            <p className="sender-message">{message.content}</p>
+                                            {message.content !== "" && <p className="sender-message">{message.content}</p>}
+                                            {displayMessageMedia(message.mediaList)}
                                         </div>
                                     );
                                 } else {
@@ -299,9 +327,16 @@ const MyComponent = () => {
                                         <div className="recipient-message-div" key={index}>
                                             <img
                                                 src={`data:${getImageMime(recipientRef.current.avatar)};base64,${recipientRef.current.avatar}`}
-                                                style={{ height: "45px", width: "45px", borderRadius: "50%" }}
+                                                style={{ height: "45px", width: "45px", borderRadius: "50%", alignSelf: "flex-end" }}
                                             />
-                                            <p className="recipient-message">{message.content}</p>
+                                            <div style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                gap: "5px"
+                                            }}>
+                                                {message.content !== "" && <p className="recipient-message">{message.content}</p>}
+                                                {displayMessageMedia(message.mediaList)}
+                                            </div>
                                         </div>
                                     );
                                 }
@@ -318,11 +353,11 @@ const MyComponent = () => {
                                     multiple
                                     accept="image/*, video/*"
                                     hidden
-                                    onChange={(e) => setMediaList([...e.target.files])}
+                                    onChange={(e) => setMediaListState([...e.target.files])}
                                 />
                             </label>
                             <div className="message-input-bounding">
-                                {mediaList.length > 0 && (
+                                {mediaListState.length > 0 && (
                                     <div
                                         style={{
                                             backgroundColor: "inherit",
@@ -341,13 +376,10 @@ const MyComponent = () => {
                                                 accept="image/*, video/*"
                                                 multiple
                                                 hidden
-                                                onChange={(e) => {
-                                                    console.log(mediaList);
-                                                    setMediaList(prev => [...prev, ...e.target.files])
-                                                }}
+                                                onChange={(e) => {setMediaListState(prev => [...prev, ...e.target.files])}}
                                             />
                                         </label>
-                                        {mediaList.map((file, index) => (
+                                        {mediaListState.map((file, index) => (
                                             <div key={index} style={{position: "relative"}}>
                                                 <img src={URL.createObjectURL(file)}
                                                      style={{width: "92px", height: "92px", borderRadius: "10px", objectFit:"cover"}} alt=""
@@ -366,7 +398,7 @@ const MyComponent = () => {
                                                         alignItems: "center",
                                                         cursor: "pointer"
                                                     }}
-                                                    onClick={() => {setMediaList(prev => prev.filter((_, i) => i !== index))}}>
+                                                    onClick={() => {setMediaListState(prev => prev.filter((_, i) => i !== index))}}>
                                                     <FontAwesomeIcon icon={faXmark} style={{fontSize: "15px", color: "black"}}/>
                                                 </div>
                                             </div>

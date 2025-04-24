@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -95,29 +96,35 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public void uploadPostMedia(List<MultipartFile> media, long postId) throws IOException {
-        for(MultipartFile file : media){
-            String url = "http://localhost:8080/PostMedia/";
-            String mediaUrl = url + file.getOriginalFilename();
-            String tmp = file.getContentType().split("/")[0];
-            MediaType type = MediaType.valueOf(tmp.toUpperCase());
-            postMediaRepo.save(PostMedia.builder()
-                    .type(type)
-                    .url(mediaUrl)
-                    .postId(postId)
-                    .build());
-            file.transferTo(new File("/home/iamhda/ETC/Room-Renting/backend/src/main/resources/static/PostMedia/" + file.getOriginalFilename()));
+    public String uploadPostMedia(List<MultipartFile> media, long postId) {
+        try{
+            List<PostMedia> postMediaList = new ArrayList<>();
+            for(MultipartFile file : media){
+                String url = "http://localhost:8080/PostMedia/";
+                String mediaUrl = url + file.getOriginalFilename();
+                String tmp = file.getContentType().split("/")[0];
+                MediaType type = MediaType.valueOf(tmp.toUpperCase());
+                postMediaList.add(PostMedia.builder()
+                        .type(type)
+                        .url(mediaUrl)
+                        .postId(postId)
+                        .build());
+                file.transferTo(new File("/home/iamhda/ETC/Room-Renting/backend/src/main/resources/static/PostMedia/" + file.getOriginalFilename()));
+            }
+            postMediaRepo.saveAll(postMediaList);
+        }catch (Exception e){
+            return "Upload images failed!";
         }
+        return "Upload images successfully!";
     }
 
     @Override
     public String createPostWithRollBack(AddressDTO addressDTO, CreatePostDTO createPostDTO, List<MultipartFile> files) {
         long postId = createPost(addressDTO, createPostDTO);
-        try{
-            uploadPostMedia(files, postId);
-        }catch (Exception e){
-            deletePost(postId);
-            throw new RuntimeException();
+        String response = uploadPostMedia(files, postId);
+        if(response.equals("Upload images failed!")){
+            postRepo.deleteById(postId);
+            return "Error with uploading images";
         }
         return "Post created successfully";
     }
