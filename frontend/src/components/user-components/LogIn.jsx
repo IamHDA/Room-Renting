@@ -26,7 +26,6 @@ const MyComponent = ({handleSignInPopUp}) => {
         else if (legitAccountRef.current === 1 && legitPasswordRef.current === 1){
             try{
                 const response = await authService.login(identifier, password);
-                console.log(response);
                 if(response.message === "Account not found!"){
                     legitAccountRef.current = -1;
                     setLegitAccount(-1);

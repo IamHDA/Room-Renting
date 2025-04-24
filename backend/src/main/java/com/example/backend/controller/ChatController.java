@@ -37,13 +37,13 @@ public class ChatController {
     }
 
     @MessageMapping("/user.connect")
-    @SendTo("/user/public")
+    @SendTo("/topic/public")
     public String connect(@Payload long connectedUserId){
         return "connect " + connectedUserId;
     }
 
     @MessageMapping("/user.disconnect")
-    @SendTo("/user/public")
+    @SendTo("/topic/public")
     public String disconnect(@Payload long disconnectedUserId){
         return "disconnect " + disconnectedUserId;
     }
@@ -66,5 +66,10 @@ public class ChatController {
     @PutMapping("/updateChatRoomPost/{chatId}")
     public ResponseEntity<String> updateChatRoomPost(@RequestBody ChatRoomPost chatRoomPost, @PathVariable String chatId){
         return ResponseEntity.ok(chatRoomService.updateChatRoomPost(chatRoomPost, chatId));
+    }
+
+    @PutMapping("/updateLastMessageStatus/{chatRoomId}")
+    public ResponseEntity<String> updateLastMessageStatus(@PathVariable String chatRoomId){
+        return ResponseEntity.ok(chatRoomService.updateLastMessageStatus(chatRoomId));
     }
 }

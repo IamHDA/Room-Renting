@@ -69,7 +69,6 @@
     overflow: hidden;
     padding-left: 10px;
     padding-right: 10px;
-    justify-content: space-between;
     cursor: pointer;
     transition: background-color 0.1s ease, border-color 0.1s ease;
 }
@@ -126,21 +125,30 @@
     background-color: grey;
 }
 
-.chat-post-img{
+.chat-room-bounding .chat-post-img{
     width: 70px;
     height: 70px;
     border-radius: 5px;
+    margin-left: auto;
 }
 
-.opponent-name-message h2{
-    margin: 0px 0px 10px 0px;
+.opponent-name-message{
+    margin-left: 15px;
 }
 
-.opponent-name-message p{
-    margin-top: -10px;
+.opponent-name{
+    font-size: 25px;
+    color: black;
+}
+
+.chat-room-bounding.unSeen{
+    font-weight: bold;
+}
+
+.opponent-last-message{
     width: 200px;
     color: #5c5c5c;
-    font-size: 20px;
+    font-size: 17px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -318,11 +326,12 @@
 }
 
 .send-message-bounding{
-    height: 30px;
+    height: auto;
     display: flex;
     gap: 20px;
     align-items: center;
     padding: 20px;
+    background-color: #d2e9ff;
 }
 
 .camera-icon{
@@ -333,20 +342,36 @@
     padding: 10px;
     border-radius: 50%;
     transition: background-color 0.15s ease;
+    justify-self: flex-end;
 }
 
 .camera-icon:hover{
     background-color: #aed8ff;
 }
 
-.send-message-bounding input{
-    outline: none;
-    width: 809px;
-    font-size: 20px;
+.send-message-bounding .message-input-bounding{
+    width: 810px;
     border: none;
     border-radius: 20px;
     padding: 10px;
     background-color: #D9D9D9;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.chat-small-upload-box{
+    width: 60px;
+    height: 60px;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    border: 2px dashed #ccc;
 }
 
 .send-icon{

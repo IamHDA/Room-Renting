@@ -7,17 +7,20 @@ export const SockJSContext = createContext();
 export const SockJSProvider = ({children}) => {
     const stompClientRef = useRef(null);
 
-    const setUpStompClient = (userId, onMessageReceived, onLogging) => {
+    const setUpStompClient = (userId, onMessageReceived, onPublicChannel) => {
         return new Promise((resolve) => {
             const socket = new SockJS("http://localhost:8080/ws");
             const stompClient = new Client({
                 webSocketFactory: () => socket,
                 reconnectDelay: 5000,
                 onConnect: () => {
-                    if(userId && onMessageReceived) stompClient.subscribe(`/user/${userId}/queue/messages`, onMessageReceived);
-                    if(onLogging) stompClient.subscribe('/user/public', onLogging);
+                    if(userId && onMessageReceived) {
+                        console.log(onMessageReceived);
+                        console.log(userId);
+                        stompClient.subscribe(`/user/${userId}/queue/messages`, onMessageReceived);
+                    }
+                    stompClient.subscribe('/topic/public', onPublicChannel);
                     stompClientRef.current = stompClient;
-                    console.log("connected");
                     resolve(true);
                 },
                 onStompError: (frame) => {

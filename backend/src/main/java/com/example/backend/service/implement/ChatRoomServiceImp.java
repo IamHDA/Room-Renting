@@ -1,5 +1,6 @@
 package com.example.backend.service.implement;
 
+import com.example.backend.Enum.ChatStatus;
 import com.example.backend.dto.chat.ChatRoomDTO;
 import com.example.backend.dto.chat.ChatRoomPost;
 import com.example.backend.dto.user.UserHeader;
@@ -72,19 +73,26 @@ public class ChatRoomServiceImp implements ChatRoomService {
                 .stream()
                 .map(chatRoom -> {
                     UserHeader recipient = modelMapper.map(userRepo.findById(chatRoom.getRecipientId()), UserHeader.class);
-                    return ChatRoomDTO.builder()
-                            .chatRoomPost(chatRoom.getPost())
-                            .lastMessage(chatRoom.getLastMessage())
-                            .recipient(recipient)
-                            .chatId(chatRoom.getChatId())
-                            .build() ;
+                    ChatRoomDTO dto = modelMapper.map(chatRoom, ChatRoomDTO.class);
+                    dto.setRecipient(recipient);
+                    return dto;
                 }).toList();
+    }
+
+    @Override
+    public String updateLastMessageStatus(String id) {
+        ChatRoom chatRoom = chatRoomRepo.findById(id).orElse(null);
+        chatRoom.getLastMessage().setStatus(ChatStatus.SEEN);
+        chatRoomRepo.save(chatRoom);
+        System.out.println(chatRoom);
+        return "Update last message status successfully";
     }
 
     @Override
     public String updateChatRoomPost(ChatRoomPost chatRoomPost, String chatId) {
         List<ChatRoom> chatRooms = chatRoomRepo.findByChatId(chatId);
-        chatRooms.forEach(chatRoom -> chatRoom.setPost(chatRoomPost));
+        System.out.println(chatRooms);
+        chatRooms.forEach(chatRoom -> chatRoom.setChatRoomPost(chatRoomPost));
         chatRoomRepo.saveAll(chatRooms);
         return "Update chat room post successfully";
     }

@@ -20,6 +20,5 @@ public class Message {
     private String chatId;
     private String content;
     private ChatStatus status;
-    @CreatedDate
-    private Instant created_at;
+    private Instant createdAt;
 }

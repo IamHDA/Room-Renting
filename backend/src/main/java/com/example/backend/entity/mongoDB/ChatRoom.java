@@ -1,6 +1,5 @@
 package com.example.backend.entity.mongoDB;
 
-import com.example.backend.Enum.ChatStatus;
 import com.example.backend.dto.chat.ChatRoomPost;
 import com.example.backend.dto.chat.LastMessage;
 import lombok.Builder;
@@ -16,7 +15,7 @@ public class ChatRoom {
     private String id;
     private String chatId;
     private LastMessage lastMessage;
-    private ChatRoomPost post;
+    private ChatRoomPost chatRoomPost;
     private long senderId;
     private long recipientId;
 }

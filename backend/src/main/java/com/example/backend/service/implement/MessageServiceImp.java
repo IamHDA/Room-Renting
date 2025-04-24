@@ -54,15 +54,15 @@ public class MessageServiceImp implements MessageService {
                         .senderId(messageDTO.getSenderId())
                         .recipientId(messageDTO.getRecipientId())
                         .content(messageDTO.getContent())
-                        .created_at(Instant.now())
-                        .status(ChatStatus.UNSEEN)
+                        .createdAt(Instant.now())
                 .build());
         List<ChatRoom> chatRooms = chatRoomRepo.findByChatId(chatId);
-        chatRooms.forEach(chatRoom -> chatRoom.setLastMessage(LastMessage.builder()
-                            .content(message.getContent())
-                            .senderId(message.getSenderId())
-                            .createdAt(message.getCreated_at())
-                    .build()));
+        chatRooms.forEach(chatRoom -> {
+            LastMessage lastMessage = modelMapper.map(message, LastMessage.class);
+            if(message.getSenderId() == chatRoom.getSenderId()) lastMessage.setStatus(ChatStatus.SEEN);
+            else lastMessage.setStatus(ChatStatus.UNSEEN);
+            chatRoom.setLastMessage(lastMessage);
+        });
         chatRoomRepo.saveAll(chatRooms);
 //        try {
 //            uploadMessageImage(messageDTO.getBase64Files(), message.getId());

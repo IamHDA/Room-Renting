@@ -5,10 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class ChatRoomDTO {
-    private UserHeader recipient;
+    private String id;
     private String chatId;
+    private UserHeader recipient;
     private LastMessage lastMessage;
     private ChatRoomPost chatRoomPost;
 }

@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface ChatRoomService {
     Optional<String> getChatRoomId(long senderId, long recipientId, boolean createIfNotExist);
     List<ChatRoomDTO> findBySender();
-
+    String updateLastMessageStatus(String id);
     String updateChatRoomPost(ChatRoomPost chatRoomPost, String chatId);
 }

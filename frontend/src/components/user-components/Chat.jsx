@@ -1,11 +1,24 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import '../../css/user-css/Chat.css';
-import {faCamera, faEllipsisVertical, faMagnifyingGlass, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {
+    faCamera,
+    faEllipsisVertical,
+    faMagnifyingGlass,
+    faPlus,
+    faTrash,
+    faXmark
+} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {getImageMime} from "../../utils/format.js";
 import AuthContext from "../../contexts/AuthContext.jsx";
-import {getChatRooms, getMessages, getRecipient, updateChatRoomPost} from "../../apiServices/chat.js";
+import {
+    getChatRooms,
+    getMessages,
+    getRecipient,
+    updateChatRoomPost,
+    updateLastMessageStatus
+} from "../../apiServices/chat.js";
 import SockJS from "sockjs-client";
 import {Client} from '@stomp/stompjs';
 import SockJSContext from "../../contexts/SockJSContext.jsx";
@@ -18,7 +31,6 @@ const MyComponent = () => {
     const navigate = useNavigate();
     const postCreatorId = location.state?.userId;
     const [chatRoomPost, setChatRoomPost] = useState({});
-    const fileInputRef = useRef(null);
     const messageEndRef = useRef(null);
     const chatRoomsRef = useRef(null);
     const recipientRef = useRef(null);
@@ -27,6 +39,7 @@ const MyComponent = () => {
     const [chatRooms, setChatRooms] = useState([]);
     const [pendingMessage, setPendingMessage] = useState("");
     const [virtualChatRoom, setVirtualChatRoom] = useState(false);
+    const [mediaList, setMediaList] = useState([]);
     // const [deleteConversation, setDeleteConversation] = useState(false);
 
     useEffect(() => {
@@ -42,6 +55,12 @@ const MyComponent = () => {
 
     useEffect(() => {
         chatRoomsRef.current = chatRooms;
+        const chatRoomId = localStorage.getItem("chatRoomId");
+        if(!chatRoomId) {
+            chatRooms.map(chatRoom => {
+                if(chatRoom.chatId === chatId) localStorage.setItem("chatRoomId", chatRoom.id);
+            });
+        }
     }, [chatRooms])
 
     useEffect(() => {
@@ -79,10 +98,6 @@ const MyComponent = () => {
         fetchData();
     }, [user]);
 
-    const handleCameraClick = () => {
-        fileInputRef.current.click();
-    };
-
     const updateRecipientStatus = (announcedStatus, recipient) => {
         if(announcedStatus === "connect") recipient.status = "ONLINE";
         else if(announcedStatus === "disconnect") recipient.status = "OFFLINE";
@@ -108,12 +123,13 @@ const MyComponent = () => {
     }, []);
 
     const onMessageReceived = useCallback(async (payload) => {
-        setTimeout(() => {
+        setTimeout(async () => {
             const message = JSON.parse(payload.body);
+            if(message.chatId === chatId) await updateLastMessageStatus(localStorage.getItem("chatRoomId"));
             if(message.chatId === chatIdRef.current) setMessages((prev) => [...prev, message]);
+            const tmpChatRooms = await fetchChatRooms();
+            setChatRooms(tmpChatRooms);
         }, 100);
-        const tmpChatRooms = await fetchChatRooms();
-        setChatRooms(tmpChatRooms);
     }, []);
 
     const sendMessage = async (e) => {
@@ -198,11 +214,28 @@ const MyComponent = () => {
                             </div>
                         )}
                         {chatRooms.length > 0 && chatRooms.map((chatRoom, index) => (
-                            <div className={`chat-room-bounding ${chatRoom.chatId === chatId ? "is-selected" : ""}`} key={index} onClick={() => {
+                            <div className={`chat-room-bounding ${chatRoom.lastMessage.status === "UNSEEN" ? "unSeen" : ""} ${chatRoom.chatId === chatId ? "is-selected" : ""}`} key={index} onClick={(e) => {
                                 localStorage.setItem("chatRoomPost", JSON.stringify(chatRoom.chatRoomPost));
-                                setChatRoomPost(chatRoom.chatRoomPost);
-                                recipientRef.current = chatRoom.recipient;
                                 localStorage.setItem("recipientId", chatRoom.recipient.id);
+                                localStorage.setItem("chatRoomId", chatRoom.id);
+                                if(chatId === chatRoom.chatId) {
+                                    localStorage.setItem("chatRoomId", chatRoom.id);
+                                }
+                                setChatRoomPost(chatRoom.chatRoomPost);
+                                if(chatRoom.lastMessage.status === "UNSEEN") updateLastMessageStatus(chatRoom.id);
+                                setChatRooms(prevRooms =>
+                                    prevRooms.map(room =>
+                                        room.chatId === chatRoom.chatId ?
+                                            {
+                                                ...room,
+                                                lastMessage: {
+                                                    ...room.lastMessage,
+                                                    status: "SEEN"
+                                                }
+                                            } : room
+                                    )
+                                );
+                                recipientRef.current = chatRoom.recipient;
                                 navigate(`/chat/${chatRoom.chatId}`);
                             }}>
                                 <div className="img-container">
@@ -210,8 +243,8 @@ const MyComponent = () => {
                                     <div className={`status-dot ${chatRoom.recipient.status === "ONLINE" ? "online" : "offline"}`}></div>
                                 </div>
                                 <div className="opponent-name-message">
-                                    <h2>{chatRoom.recipient.fullName}</h2>
-                                    <p>{chatRoom.lastMessage.senderId === user.id ? "Bạn: " : ""} {chatRoom.lastMessage.content}</p>
+                                    <p className="opponent-name">{chatRoom.recipient.fullName}</p>
+                                    <p className="opponent-last-message">{chatRoom.lastMessage.senderId === user.id ? "Bạn: " : ""} {chatRoom.lastMessage.content}</p>
                                 </div>
                                 <img src={chatRoom.chatRoomPost.thumbnailUrl} className="chat-post-img"/>
                             </div>
@@ -275,30 +308,93 @@ const MyComponent = () => {
                             })}
                             <div ref={messageEndRef} />
                         </div>
-
-                        <img src="../../../public/chat-icon/line.png" className="line"/>
                         <div className="send-message-bounding">
-                            <FontAwesomeIcon icon={faCamera} className="camera-icon" onClick={handleCameraClick} />
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                multiple
-                                accept="image/*"
-                                style={{ display: "none" }}
-                            />
-                            <input
-                                type="text"
-                                value={pendingMessage}
-                                placeholder="Nhập tin nhắn"
-                                onChange={(e) => setPendingMessage(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") sendMessage();
-                                }}
-                            />
+                            <label htmlFor="mediaUpload" style={{ alignSelf: "flex-end" }}>
+                                <FontAwesomeIcon icon={faCamera} className="camera-icon" />
+                                <input
+                                    type="file"
+                                    id="mediaUpload"
+                                    name="media"
+                                    multiple
+                                    accept="image/*, video/*"
+                                    hidden
+                                    onChange={(e) => setMediaList([...e.target.files])}
+                                />
+                            </label>
+                            <div className="message-input-bounding">
+                                {mediaList.length > 0 && (
+                                    <div
+                                        style={{
+                                            backgroundColor: "inherit",
+                                            display: "flex",
+                                            gap: "10px",
+                                            overflowX: "auto",
+                                            width: "800px",
+                                        }}
+                                    >
+                                        <label htmlFor="addMedia" className="chat-small-upload-box">
+                                            <FontAwesomeIcon icon={faPlus} />
+                                            <input
+                                                type="file"
+                                                id="addMedia"
+                                                name="media"
+                                                accept="image/*, video/*"
+                                                multiple
+                                                hidden
+                                                onChange={(e) => {
+                                                    console.log(mediaList);
+                                                    setMediaList(prev => [...prev, ...e.target.files])
+                                                }}
+                                            />
+                                        </label>
+                                        {mediaList.map((file, index) => (
+                                            <div key={index} style={{position: "relative"}}>
+                                                <img src={URL.createObjectURL(file)}
+                                                     style={{width: "92px", height: "92px", borderRadius: "10px", objectFit:"cover"}} alt=""
+                                                />
+                                                <div
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: "0",
+                                                        right: "0",
+                                                        borderRadius: "50%",
+                                                        backgroundColor: "lightgray",
+                                                        width: "20px",
+                                                        height: "20px",
+                                                        display: "flex",
+                                                        justifyContent: "center",
+                                                        alignItems: "center",
+                                                        cursor: "pointer"
+                                                    }}
+                                                    onClick={() => {setMediaList(prev => prev.filter((_, i) => i !== index))}}>
+                                                    <FontAwesomeIcon icon={faXmark} style={{fontSize: "15px", color: "black"}}/>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                <input
+                                    type="text"
+                                    value={pendingMessage}
+                                    placeholder="Nhập tin nhắn"
+                                    style={{
+                                        width: "100%",
+                                        backgroundColor: "inherit",
+                                        fontSize: "20px",
+                                        outline: "none",
+                                        border: "none"
+                                    }}
+                                    onChange={(e) => setPendingMessage(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") sendMessage();
+                                    }}
+                                />
+                            </div>
                             <img
                                 src="../../../public/chat-icon/send.png"
                                 className="send-icon"
                                 onClick={sendMessage}
+                                style={{ alignSelf: "flex-end" }}
                             />
                         </div>
                     </div>

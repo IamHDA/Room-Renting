@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import '../../css/user-css/PostManage.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -56,14 +56,6 @@ const MyComponent = () => {
         e.stopPropagation();
         setSelectedFurniture(e.target.innerText);
         setShowFurnitureOption(false)
-    }
-
-    const handleDeleteImage = (index) => {
-        setImageList(prev => prev.filter((_, i) => i !== index));
-    }
-
-    const handleDeleteVideo = (index) => {
-        setVideoList(prev => prev.filter((_, i) => i !== index));
     }
 
     const handleSubmitPostButton = async () => {
@@ -223,7 +215,7 @@ const MyComponent = () => {
                                                             accept="image/*"
                                                             multiple
                                                             hidden
-                                                            onChange={(e) => setImageList(prev => prev.concat(...prev, ...e.target.files))}
+                                                            onChange={(e) => setImageList(prev => [...prev, ...e.target.files])}
                                                         />
                                                     </label>
                                                     {imageList.map((image, index) => (
@@ -233,7 +225,7 @@ const MyComponent = () => {
                                                                  key={index}
                                                                  style={{ maxWidth: "70px" , maxHeight: "70px", border: "1px solid lightgray" }}
                                                             />
-                                                            <div className="delete-container" key={index + imageList.length} onClick={() => handleDeleteImage(index)}>
+                                                            <div className="delete-container" key={index + imageList.length} onClick={() => setImageList(prev => prev.filter((_, i) => i !== index))}>
                                                                 <FontAwesomeIcon icon={faXmark} style={{fontSize: "15px", color: "white"}}/>
                                                             </div>
                                                         </div>
@@ -279,7 +271,7 @@ const MyComponent = () => {
                                                                 <source src={URL.createObjectURL(video)} type="video/webm"/>
                                                                 <source src={URL.createObjectURL(video)} type="video/quicktime"/>
                                                             </video>
-                                                            <div className="delete-container" key={index + imageList.length} onClick={() => handleDeleteVideo(index)}>
+                                                            <div className="delete-container" key={index + imageList.length} onClick={() => setVideoList(prev => prev.filter((_, i) => i !== index))}>
                                                                 <FontAwesomeIcon icon={faXmark} style={{fontSize: "15px", color: "white"}}/>
                                                             </div>
                                                         </div>
