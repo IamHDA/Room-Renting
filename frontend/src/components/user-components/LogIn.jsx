@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect, useRef} from 'react';
+import React, {useState, useContext, useRef} from 'react';
 import '../../css/user-css/SignIn.css';
 import * as authService from '../../apiServices/authentication.js';
 import * as userService from '../../apiServices/user.js';

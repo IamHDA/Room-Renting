@@ -69,14 +69,26 @@ public class MessageServiceImp implements MessageService {
     }
 
     @Override
-    public String deleteMessage(String messageId) {
-        List<MessageMedia> messageMediaList = messageRepo.findById(messageId)
-                .map(Message::getMediaList)
-                .orElse(null);
-        messageMediaService.deleteMessageMedias(messageMediaList);
-        messageRepo.deleteById(messageId);
-        return "";
+    public String revokeMessage(String messageId, String chatId) {
+        Message message = messageRepo.findById(messageId).orElse(null);
+        System.out.println(message);
+        List<MessageMedia> messageMediaList = message.getMediaList();
+        System.out.println(messageMediaList);
+        if(!messageMediaList.isEmpty()) messageMediaService.deleteMessageMedias(messageMediaList);
+        message.setContent("Đã thu hồi tin nhắn");
+        message.setMediaList(new ArrayList<>());
+        messageRepo.save(message);
+        Message newestMessage = messageRepo.findFirstByChatIdOrderByCreatedAtDesc(chatId);
+        if(messageId.equals(newestMessage.getId())){
+            List<ChatRoom> chatRooms = chatRoomRepo.findByChatId(chatId);
+            chatRooms.forEach(chatRoom -> chatRoom.setLastMessage(modelMapper.map(message, LastMessage.class)));
+            chatRoomRepo.saveAll(chatRooms);
+        }
+        return "Message revoked successfully!";
     }
 
-
+    @Override
+    public String getLastMessageIdByChatId(String chatId) {
+        return messageRepo.findFirstByChatIdOrderByCreatedAtDesc(chatId).getId();
+    }
 }

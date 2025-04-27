@@ -37,7 +37,7 @@ public class ChatRoomController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteChatRoom(@RequestBody List<String> idList){
+    public ResponseEntity<String> deleteChatRooms(@RequestParam List<String> idList){
         return ResponseEntity.ok(chatRoomService.deleteChatRooms(idList));
     }
 }

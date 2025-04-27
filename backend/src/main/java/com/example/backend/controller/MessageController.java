@@ -4,7 +4,6 @@ import com.example.backend.dto.chat.MessageDTO;
 import com.example.backend.dto.chat.MessageMediaDTO;
 import com.example.backend.service.MessageMediaService;
 import com.example.backend.service.MessageService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +24,18 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getMessagesByChatId(chatId));
     }
 
+    @GetMapping("/getLastMessageId/{chatId}")
+    public ResponseEntity<String> getLastMessageIdBySender(@PathVariable String chatId){
+        return ResponseEntity.ok(messageService.getLastMessageIdByChatId(chatId));
+    }
+
     @PostMapping("/uploadMessageMedia")
     public ResponseEntity<List<MessageMediaDTO>> uploadMessageMedia(@RequestPart(name = "file") List<MultipartFile> files){
         return ResponseEntity.ok(messageMediaService.uploadMessageMedia(files));
     }
 
-    @DeleteMapping("/delete/{messageId}")
-    public ResponseEntity<String> deleteMessage(@PathVariable String messageId){
-        return ResponseEntity.ok(messageService.deleteMessage(messageId));
+    @PutMapping("/revoke")
+    public ResponseEntity<String> revokeMessage(@RequestParam(name="messageId") String messageId, @RequestParam(name="chatId") String chatId){
+        return ResponseEntity.ok(messageService.revokeMessage(messageId, chatId));
     }
 }

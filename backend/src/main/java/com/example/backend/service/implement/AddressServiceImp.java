@@ -1,14 +1,15 @@
 package com.example.backend.service.implement;
 
-import com.example.backend.entity.mySQL.Address;
+import com.example.backend.dto.address.AddressSearch;
+import com.example.backend.dto.address.CityDTO;
+import com.example.backend.dto.address.DistrictDTO;
+import com.example.backend.dto.address.WardDTO;
 import com.example.backend.entity.mySQL.City;
 import com.example.backend.entity.mySQL.District;
 import com.example.backend.entity.mySQL.Ward;
-import com.example.backend.repository.mySQL.AddressRepository;
-import com.example.backend.repository.mySQL.CityRepository;
-import com.example.backend.repository.mySQL.DistrictRepository;
-import com.example.backend.repository.mySQL.WardRepository;
+import com.example.backend.repository.mySQL.*;
 import com.example.backend.service.AddressService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,40 +25,47 @@ public class AddressServiceImp implements AddressService {
     @Autowired
     private CityRepository cityRepo;
     @Autowired
-    private AddressRepository addressRepo;
+    private ModelMapper modelMapper;
+    @Autowired
+    private FilterRepository filterRepo;
 
     @Override
-    public List<City> getAllCities() {
-        return cityRepo.findAll();
-    }
-
-    @Override
-    public List<District> getDistrictByCity(int id) {
-        List<District> districts = districtRepo.findByCity_Id(id);
-        return districts;
-    }
-
-    @Override
-    public List<Ward> getWardByDistrict(int id) {
-        List<Ward> wards = wardRepo.findByDistrict_Id(id);
-        return wards;
-    }
-
-    @Override
-    public String getAddress(Address address) {
-        if(address == null) return "";
-        String addressDetail = address.getDetail();
-        Ward addressWard = address.getWard();
-        District addressDistrict = addressWard.getDistrict();
-        City addressCity = addressDistrict.getCity();
-        return (addressDetail.isBlank() ? "" : (addressDetail + ", ")) + addressWard.getName() + ", " + addressDistrict.getName() + ", " + addressCity.getName();
-    }
-
-    @Override
-    public List<String> getAvailableAddress(String keyword) {
-        return addressRepo.searchAddress(keyword)
+    public List<CityDTO> getAllCities() {
+        return cityRepo.findAll()
                 .stream()
-                .map(address -> getAddress(address))
+                .map(city -> modelMapper.map(city, CityDTO.class))
+                .toList();
+    }
+
+    @Override
+    public List<DistrictDTO> getDistrictByCity(int id) {
+        return districtRepo.findByCity_Id(id)
+                .stream()
+                .map(district -> modelMapper.map(district, DistrictDTO.class))
+                .toList();
+    }
+
+    @Override
+    public List<WardDTO> getWardByDistrict(int id) {
+        return wardRepo.findByDistrict_Id(id)
+                .stream()
+                .map(ward -> modelMapper.map(ward, WardDTO.class))
+                .toList();
+    }
+
+    @Override
+    public List<AddressSearch> getAvailableAddress(String keyword, String cityName) {
+        return filterRepo.searchAddress(keyword, cityName)
+                .stream()
+                .map(ward -> {
+                    District district = ward.getDistrict();
+                    City city = district.getCity();
+                    return AddressSearch.builder()
+                                .wardName(ward.getName())
+                                .districtName(district.getName())
+                                .cityName(city.getName())
+                            .build();
+                })
                 .toList();
     }
 }

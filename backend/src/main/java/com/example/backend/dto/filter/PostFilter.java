@@ -16,4 +16,5 @@ public class PostFilter {
     private double maxArea;
     private String furniture;
     private String sortCondition;
+    private int pageNumber;
 }

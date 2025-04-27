@@ -34,3 +34,11 @@ export const searchChatRooms = (keyword) => {
         }
     })
 }
+
+export const deleteChatRooms = (idList) => {
+    return request.remove("chatRoom/delete?" + idList.toString(), {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken")
+        }
+    })
+}

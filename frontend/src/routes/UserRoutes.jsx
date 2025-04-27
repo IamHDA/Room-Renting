@@ -10,13 +10,22 @@ import { HomePage,
     Chat
 } from '../pages/user-pages';
 import { AddressProvider } from '../contexts/AddressContext.jsx';
+import {FavouritePostProvider} from "../contexts/FavouritePostContext.jsx";
 
 const MyComponent = () => {
     return (
         <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={
+                <FavouritePostProvider>
+                    <HomePage />
+                </FavouritePostProvider>
+            }/>
+            <Route path="/list" element={
+                <FavouritePostProvider>
+                    <List />
+                </FavouritePostProvider>
+            } />
             <Route path="/detail/:postId" element={<PostDetail />} />
-            <Route path="/list" element={<List />} />
             <Route path="/account/:userId" element={<UserPage/> }/>
             <Route path="/savedPosts/:pageIndex?" element={<SavedPosts />} />
             <Route path="/personalInformation" element={

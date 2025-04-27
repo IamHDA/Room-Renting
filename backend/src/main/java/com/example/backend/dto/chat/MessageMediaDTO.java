@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 public class MessageMediaDTO {
     private String id;
     private String url;
+    private String filePath;
     private MediaType type;
 }

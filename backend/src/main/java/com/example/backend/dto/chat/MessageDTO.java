@@ -20,6 +20,6 @@ public class MessageDTO {
     private long recipientId;
     private String content;
     private List<MessageMediaDTO> mediaList;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm, dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private Instant createdAt;
 }

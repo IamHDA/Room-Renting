@@ -1,6 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.AddressDTO;
+import com.example.backend.dto.address.AddressSearch;
+import com.example.backend.dto.address.CityDTO;
+import com.example.backend.dto.address.DistrictDTO;
+import com.example.backend.dto.address.WardDTO;
 import com.example.backend.entity.mySQL.City;
 import com.example.backend.entity.mySQL.District;
 import com.example.backend.entity.mySQL.Ward;
@@ -19,22 +22,25 @@ public class AddressController {
     private AddressService addressService;
 
     @GetMapping("/wards/{id}")
-    public ResponseEntity<List<Ward>> getWardsByDistrict(@PathVariable("id") int id){
+    public ResponseEntity<List<WardDTO>> getWardsByDistrict(@PathVariable("id") int id){
         return ResponseEntity.ok(addressService.getWardByDistrict(id));
     }
 
     @GetMapping("/districts/{id}")
-    public ResponseEntity<List<District>> getDistrictsByCity(@PathVariable("id") int id){
+    public ResponseEntity<List<DistrictDTO>> getDistrictsByCity(@PathVariable("id") int id){
         return ResponseEntity.ok(addressService.getDistrictByCity(id));
     }
 
     @GetMapping("/cities")
-    public ResponseEntity<List<City>> getCities(){
+    public ResponseEntity<List<CityDTO>> getCities(){
         return ResponseEntity.ok(addressService.getAllCities());
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<String>> getAvailableAddress(@RequestParam(name = "keyword") String keyword){
-        return ResponseEntity.ok(addressService.getAvailableAddress(keyword));
+    public ResponseEntity<List<AddressSearch>> getAvailableAddress(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "cityName", defaultValue = "") String cityName
+    ){
+        return ResponseEntity.ok(addressService.getAvailableAddress(keyword, cityName));
     }
 }

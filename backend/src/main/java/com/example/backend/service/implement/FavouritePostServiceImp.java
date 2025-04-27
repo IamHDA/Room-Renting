@@ -99,7 +99,7 @@ public class FavouritePostServiceImp implements FavouritePostService {
                     postDetailSummaryDTO.setPrice(postDetail.getPrice());
                     postSummaryDTO.setDescription(util.textFormat(post.getDescription()));
                     postSummaryDTO.setUserId(post.getUser().getId());
-                    postSummaryDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
+                    postSummaryDTO.setAddressDTO(util.getTextAddress(post.getAddress()));
                     postSummaryDTO.setPostDetailSummaryDTO(postDetailSummaryDTO);
                     postSummaryDTO.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());
                     return postSummaryDTO;

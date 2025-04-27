@@ -9,13 +9,14 @@ import {getNewPosts} from '../../apiServices/post.js';
 import {addToFavourite, getFavouritePostsIdByUser, removeFromFavourite} from '../../apiServices/favouritePost.js';
 import AuthContext from "../../contexts/AuthContext.jsx";
 import {priceFormat} from "../../utils/format.js";
+import FavouritePostContext from "../../contexts/FavouritePostContext.jsx";
 
 
 const MyComponent = () => {
     const [newPosts, setNewPosts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [favouritePostIds, setFavouritePostIds] = useState([]);
     const {user} = useContext(AuthContext);
+    const { heartButtonHandle, setFavouritePostIds, favouritePostIds } = useContext(FavouritePostContext);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,13 +26,11 @@ const MyComponent = () => {
             else{
                 try{
                     const response = await getNewPosts();
-                    localStorage.setItem("posts", JSON.stringify(response));
                     setNewPosts(response);
                 }catch(e){
                     console.log(e);
                 }
             }
-
             if(user){
                 const tmpFav = localStorage.getItem("favouritePostsId");
                 if(tmpFav) setFavouritePostIds(JSON.parse(tmpFav));
@@ -42,7 +41,6 @@ const MyComponent = () => {
                         setFavouritePostIds(response);
                     }catch(e){
                         console.log(e);
-                        setFavouritePostIds([]);
                     }
                 }
             } else {
@@ -53,31 +51,6 @@ const MyComponent = () => {
 
         fetchData();
     }, [user]);
-
-    const heartButtonHandle = async (postId) => {
-        if(!user) alert("Đăng nhập để sử dụng chức năng này");
-        if(favouritePostIds.includes(postId)){
-            const response = await removeFromFavourite(postId);
-            if(response !== "Removed post from favourite") alert("Có lỗi xảy ra");
-            else{
-                const newFavouritePostList = [...favouritePostIds].filter(id => id !== postId);
-                setFavouritePostIds(newFavouritePostList);
-                localStorage.setItem("favouritePostsId", JSON.stringify(newFavouritePostList));
-            }
-        }else{
-            try{
-                const response = await addToFavourite(postId);
-                if(response !== "Added post to favourite") alert("Có lỗi xảy ra");
-                else{
-                    const newFavouritePostList = [...favouritePostIds, postId];
-                    setFavouritePostIds(newFavouritePostList);
-                    localStorage.setItem("favouritePostsId", JSON.stringify(newFavouritePostList));
-                }
-            }catch(e){
-                console.log(e);
-            }
-        }
-    }
 
     return (
         <div>

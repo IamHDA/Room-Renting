@@ -1,6 +1,6 @@
 package com.example.backend.dto.post;
 
-import com.example.backend.dto.AddressDTO;
+import com.example.backend.dto.address.AddressDTO;
 import lombok.Data;
 
 @Data

@@ -8,6 +8,12 @@ export const getPost = async (postId) => {
     return await request.get("post/specificPost/" + postId);
 }
 
+export const getPostsByCriteria = async (params = {}) => {
+    return await request.get("post/postsByCriteria", {
+        params: params
+    });
+}
+
 export const getEnablePostsByUserId = async (userId) => {
     return await request.get("post/userEnablePosts/" + userId);
 }

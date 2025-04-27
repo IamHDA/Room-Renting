@@ -5,7 +5,7 @@
 
 .chat-container{
     width: 1440px;
-    height: 895px;
+    max-height: 895px;
     margin: 0 auto;
     background-color: white;
     display: flex;
@@ -75,8 +75,12 @@
     transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
-.chat-room-bounding.isDeleting{
-    background-color: #ff3f3f;
+.check-icon{
+    font-size: 30px;
+}
+
+.check-icon.disable{
+    display: none;
 }
 
 .chat-room-bounding:hover {
@@ -164,7 +168,7 @@
 
 .chat-header{
     display: flex;
-    height: 66px;
+    height: 70px;
     padding: 10px;
     align-items: center;
     gap: 10px;
@@ -266,7 +270,6 @@
 .post-title-price-area p{
     font-size: 18px;
     font-weight: bold;
-    color: red;
 }
 
 .post-title-price-area .post-price-area{
@@ -292,26 +295,88 @@
     margin-bottom: 25px;
 }
 
+.delete-message-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: none;
+    background-color: #a3a3a3;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+}
+
 .recipient-message-div{
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     align-self: flex-start;
+    position: relative;
+    transition: width 0.15s ease;
+}
+
+.recipient-message-div:hover .delete-message-button, .sender-message-div:hover .delete-message-button{
+    opacity: 1;
+}
+
+.recipient-avatar-message{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+}
+
+.sender-message-div .delete-message-button{
+    left: -40px;
 }
 
 .sender-message-div{
     align-self: flex-end;
     gap: 5px;
     display: flex;
-    flex-direction: column;
+    position: relative;
 }
 
+.message-create-time{
+    position: absolute;
+    color: #636363;
+    background-color: #e5e5e5;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    font-size: 15px;
+    border-radius: 15px;
+    text-align: center;
+    width: 110px;
+}
+
+.sender-message-div .message-create-time{
+    left: -50px;
+    top: 50%;
+    transform: translate(-105%, -50%);
+}
+
+.sender-message-div:hover .message-create-time{
+    opacity: 1;
+}
+
+.recipient-message-div .message-create-time{
+    top: 50%;
+    right: -50px;
+    transform: translate(60%, -57%);
+}
+
+.recipient-message-div:hover .message-create-time{
+    opacity: 1;
+}
 
 .sender-img{
     width: 50px;
     height: 50px;
     border-radius: 50%;
-
 }
 
 .sender-message, .recipient-message{
@@ -329,6 +394,11 @@
     align-self: flex-start;
 }
 
+.sender-message-bounding{
+    display: flex;
+    flex-direction: column;
+}
+
 .sender-message{
     background-color: #008CFF;
     color: white;
@@ -337,9 +407,9 @@
 
 .send-message-bounding{
     height: auto;
+    align-items: center;
     display: flex;
     gap: 20px;
-    align-items: center;
     padding: 20px;
     background-color: #d2e9ff;
 }

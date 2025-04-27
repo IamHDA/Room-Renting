@@ -102,8 +102,8 @@ public class ChatRoomServiceImp implements ChatRoomService {
 
     @Override
     public String deleteChatRooms(List<String> idList) {
-        chatRoomRepo.deleteAllById(idList);
-        return "ChatRoom deleted successfully!";
+        chatRoomRepo.deleteAllByIdIn(idList);
+        return "ChatRoom list deleted successfully!";
     }
 
     public ChatRoomDTO convertToChatRoomDTO(ChatRoom chatRoom){

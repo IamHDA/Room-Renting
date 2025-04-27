@@ -38,29 +38,31 @@ public class PostController {
     }
 
     @GetMapping("/postsByCriteria")
-    public ResponseEntity<List<PostSummaryDTO>> getPostByCriteria(
-            @RequestParam(name = "detail") String detail,
-            @RequestParam(name = "ward") String ward,
-            @RequestParam(name = "district") String district,
-            @RequestParam(name = "city") String city,
-            @RequestParam(name = "minPrice") double minPrice,
-            @RequestParam(name = "maxPrice") double maxPrice,
-            @RequestParam(name = "minArea") double minArea,
-            @RequestParam(name = "maxArea") double maxArea,
-            @RequestParam(name = "furniture") String furniture,
-            @RequestParam(name = "sortCondition") String sortCondition
+    public ResponseEntity<PostSummaryList> getPostByCriteria(
+            @RequestParam(name = "detail", defaultValue = "") String detail,
+            @RequestParam(name = "ward", defaultValue = "") String ward,
+            @RequestParam(name = "district", defaultValue = "") String district,
+            @RequestParam(name = "city", defaultValue = "") String city,
+            @RequestParam(name = "minPrice", defaultValue = "0") double minPrice,
+            @RequestParam(name = "maxPrice", defaultValue = "0") double maxPrice,
+            @RequestParam(name = "minArea", defaultValue = "0") double minArea,
+            @RequestParam(name = "maxArea", defaultValue = "0") double maxArea,
+            @RequestParam(name = "furniture", defaultValue = "") String furniture,
+            @RequestParam(name = "sortCondition", defaultValue = "createdAt desc") String sortCondition,
+            @RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber
     ){
         PostFilter filter = PostFilter.builder()
-                .addressDetail(detail)
-                .addressWard(ward)
-                .addressDistrict(district)
-                .addressCity(city)
-                .minPrice(minPrice)
-                .maxPrice(maxPrice)
-                .minArea(minArea)
-                .maxArea(maxArea)
-                .furniture(furniture)
-                .sortCondition(sortCondition)
+                    .addressDetail(detail)
+                    .addressWard(ward)
+                    .addressDistrict(district)
+                    .addressCity(city)
+                    .minPrice(minPrice)
+                    .maxPrice(maxPrice)
+                    .minArea(minArea)
+                    .maxArea(maxArea)
+                    .furniture(furniture)
+                    .sortCondition(sortCondition)
+                    .pageNumber(pageNumber)
                 .build();
         return ResponseEntity.ok(postService.getPostsByCriteria(filter));
     }

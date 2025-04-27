@@ -15,8 +15,6 @@ export const SockJSProvider = ({children}) => {
                 reconnectDelay: 5000,
                 onConnect: () => {
                     if(userId && onMessageReceived) {
-                        console.log(onMessageReceived);
-                        console.log(userId);
                         stompClient.subscribe(`/user/${userId}/queue/messages`, onMessageReceived);
                     }
                     stompClient.subscribe('/topic/public', onPublicChannel);

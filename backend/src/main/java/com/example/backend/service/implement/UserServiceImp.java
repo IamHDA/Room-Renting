@@ -61,7 +61,7 @@ public class UserServiceImp implements UserService {
         UserProfile userProfile = modelMapper.map(user, UserProfile.class);
         userProfile.setStatus(user.getStatus().getDisplayName());
         userProfile.setJoinTime(util.getJoinTime(user.getCreatedAt()));
-        userProfile.setAddressDTO(addressService.getAddress(user.getAddress()));
+        userProfile.setAddressDTO(util.getTextAddress(user.getAddress()));
         return userProfile;
     }
 
@@ -69,7 +69,7 @@ public class UserServiceImp implements UserService {
     public UserPersonalInformation getPersonalInformation(){
         User user = getCurrentUser();
         UserPersonalInformation information = modelMapper.map(getCurrentUser(), UserPersonalInformation.class);
-        information.setAddressText(addressService.getAddress(user.getAddress()));
+        information.setAddressText(util.getTextAddress(user.getAddress()));
         return information;
     }
 

@@ -47,16 +47,17 @@ public class MessageMediaServiceImp implements MessageMediaService {
             log.error("e: ", e);
             throw new RuntimeException("Upload images failed!");
         }
-        return messageMediaRepo.saveAll(messageMediaList)
-                .stream()
+        List<MessageMedia> res = messageMediaRepo.saveAll(messageMediaList);
+        return res.stream()
                 .map(messageMedia -> modelMapper.map(messageMedia, MessageMediaDTO.class))
-                .toList() ;
+                .toList();
     }
 
     @Override
     public void deleteMessageMedias(List<MessageMedia> messageMediaList){
         for(MessageMedia messageMedia : messageMediaList){
             try{
+                System.out.println(messageMedia.getFilePath());
                 util.deleteFile(messageMedia.getFilePath());
             }catch (Exception e){
                 log.error("e: ", e);

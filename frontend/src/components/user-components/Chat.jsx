@@ -1,20 +1,19 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import '../../css/user-css/Chat.css';
-import {
-    faCamera,
-    faEllipsisVertical,
-    faMagnifyingGlass,
-    faPlus,
-    faTrash,
-    faXmark
-} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faCheck, faMagnifyingGlass, faPlus, faTrash, faX, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {getImageMime} from "../../utils/format.js";
 import AuthContext from "../../contexts/AuthContext.jsx";
-import { getRecipient } from "../../apiServices/chat.js";
-import { updateChatRoomPost, updateLastMessageStatus, getChatRooms, searchChatRooms} from "../../apiServices/chatRoom.js";
-import { getMessages, uploadMessageMedia } from "../../apiServices/message.js";
+import {getRecipient} from "../../apiServices/chat.js";
+import {
+    deleteChatRooms,
+    getChatRooms,
+    searchChatRooms,
+    updateChatRoomPost,
+    updateLastMessageStatus
+} from "../../apiServices/chatRoom.js";
+import {getLastMessageIdByChatId, getMessages, revokeMessage, uploadMessageMedia} from "../../apiServices/message.js";
 import SockJSContext from "../../contexts/SockJSContext.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 
@@ -38,8 +37,9 @@ const MyComponent = () => {
     const [searchText, setSearchText] = useState("");
     const debounceSearch = useDebounce(searchText, 500);
     const [chatRoomsFromSearch, setChatRoomsFromSearch] = useState([]);
+    const [deleteChatRoomId, setDeleteChatRoomId] = useState([]);
     const [currentChatMediaList, setCurrentChatMediaList] = useState([]);
-    // const [deleteConversation, setDeleteConversation] = useState(false);
+    const [deleteChatRoom, setDeleteChatRoom] = useState(false);
 
     useEffect(() => {
         return () => {
@@ -50,6 +50,16 @@ const MyComponent = () => {
 
     useEffect(() => {
         chatIdRef.current = chatId;
+        let subscription;
+        if(stompClientRef.current) {
+             subscription = stompClientRef.current.subscribe(
+                `/topic/chat/${chatId}`,
+                onMessageRevoke
+            );
+        }
+        return () => {
+            if (subscription) subscription.unsubscribe();
+        };
     }, [chatId]);
 
     useEffect(() => {
@@ -138,6 +148,10 @@ const MyComponent = () => {
         else if(announcedStatus === "disconnect") recipient.status = "OFFLINE";
     }
 
+    const onMessageRevoke = async (payload) => {
+        setMessages(await getMessages(payload.body));
+    }
+
     const onPublicChannel = useCallback( (payload) => {
         const tmp = payload.body;
         const message = tmp.split(" ");
@@ -158,8 +172,10 @@ const MyComponent = () => {
     const onMessageReceived = useCallback(async (payload) => {
         setTimeout(async () => {
             const message = JSON.parse(payload.body);
-            if(message.chatId === chatId) await updateLastMessageStatus(localStorage.getItem("chatRoomId"));
-            if(message.chatId === chatIdRef.current) setMessages((prev) => [...prev, message]);
+            if(message.chatId === chatIdRef.current) {
+                await updateLastMessageStatus(localStorage.getItem("chatRoomId"));
+                setMessages((prev) => [...prev, message]);
+            }
             const tmpChatRooms = await fetchChatRooms();
             setChatRooms(tmpChatRooms);
         }, 150);
@@ -193,13 +209,13 @@ const MyComponent = () => {
             destination: "/app/chat",
             body: JSON.stringify(payload)
         })
+        payload.id = await getLastMessageIdByChatId(chatId);
         let check = false;
         if(virtualChatRoom){
             await updateChatRoomPost(chatRoomPost, `${user.id}_${recipientRef.current.id}`);
             const tmpChatRooms = await fetchChatRooms();
             setChatRooms(tmpChatRooms);
             setVirtualChatRoom(false);
-            navigate(`/chat/${chatIdRef.current}`);
             check = true;
         }
         const tmpChatRooms = await fetchChatRooms();
@@ -259,16 +275,33 @@ const MyComponent = () => {
         <div className="chat-body">
             <div className="chat-container">
                 <div className="left">
-                    <div className="search-chat-room">
-                        <FontAwesomeIcon icon={faMagnifyingGlass} />
-                        <input
-                            type="text"
-                            value={searchText}
-                            placeholder="Tìm kiếm người dùng"
-                            onChange={(e) => setSearchText(e.target.value)}
-                        />
-                    </div>
-                    <img src="/chat-icon/line.png" className="line" style={{width: "110%"}}/>
+                    {!deleteChatRoom ?
+                        <div className="search-chat-room">
+                            <FontAwesomeIcon icon={faMagnifyingGlass}/>
+                            <input
+                                type="text"
+                                value={searchText}
+                                placeholder="Tìm kiếm người dùng"
+                                onChange={(e) => setSearchText(e.target.value)}
+                            />
+                        </div> :
+                        <div style={{
+                            display: "flex",
+                            gap: "10px",
+                            marginTop: "15px",
+                            marginBottom: "20px",
+                            alignItems: "flex-start",
+                            marginRight: "auto"
+                        }}>
+                            <FontAwesomeIcon
+                                icon={faX}
+                                style={{fontSize: "20px", marginTop: "8px", cursor: "pointer"}}
+                                onClick={() => setDeleteChatRoom(false)}
+                            />
+                            <div style={{fontSize: "25px"}}>Đã chọn: <span style={{color: "#008CFF"}}>{deleteChatRoomId.length}</span></div>
+                        </div>
+                    }
+                    <img src="/chat-icon/line.png" className="line" style={{width: "105.5%"}}/>
                     {!searchText ? (
                         <div className="chat-room-container">
                             {virtualChatRoom && recipientRef.current && (
@@ -286,16 +319,50 @@ const MyComponent = () => {
                                 </div>
                             )}
                             {chatRooms.length > 0 && chatRooms.map((chatRoom, index) => (
-                                <div className={`chat-room-bounding ${chatRoom.lastMessage.status === "UNSEEN" ? "unSeen" : ""} ${chatRoom.chatId === chatId ? "is-selected" : ""}`} key={index} onClick={() => handleClickChatRoom(chatRoom)}>
+                                <div className={`chat-room-bounding ${chatRoom.lastMessage.status === "UNSEEN" ? "unSeen" : ""} ${chatRoom.chatId === chatId ? "is-selected" : ""}`}
+                                     key={index}
+                                     onClick={(e) => {
+                                         if(!deleteChatRoom) handleClickChatRoom(chatRoom);
+                                         else {
+                                             const checkIcon = e.currentTarget.querySelector(".check-icon.disable");
+                                             if(checkIcon) {
+                                                 checkIcon.classList.remove("disable");
+                                                 setDeleteChatRoomId(prev => [...prev, chatRoom.id]);
+                                             }
+                                             else {
+                                                 e.currentTarget.querySelector(".check-icon").classList.add("disable");
+                                                 setDeleteChatRoomId(prev => [...prev.filter(id => id !== chatRoom.id)]);
+                                             }
+                                         }
+                                     }}>
                                     <div className="img-container">
                                         <img src={`data:${getImageMime(chatRoom.recipient.avatar)};base64,${chatRoom.recipient.avatar}`} className="opponent-img"/>
                                         <div className={`status-dot ${chatRoom.recipient.status === "ONLINE" ? "online" : "offline"}`}></div>
                                     </div>
                                     <div className="opponent-name-message">
                                         <p className="opponent-name">{chatRoom.recipient.fullName}</p>
-                                        <p className="opponent-last-message">{chatRoom.lastMessage.senderId === user.id ? "Bạn: " : ""} {chatRoom.lastMessage.content}</p>
+                                        <p className="opponent-last-message">{chatRoom.lastMessage.senderId === user.id ? "Bạn: " : ""} {
+                                            chatRoom.lastMessage.content === "Đã thu hồi tin nhắn" ? (<i>{chatRoom.lastMessage.content}</i>) : chatRoom.lastMessage.content}
+                                        </p>
                                     </div>
-                                    <img src={chatRoom.chatRoomPost.thumbnailUrl} className="chat-post-img"/>
+                                    {!deleteChatRoom ?
+                                        <img src={chatRoom.chatRoomPost.thumbnailUrl} className="chat-post-img"/> :
+                                        <div
+                                            className="delete-bounding"
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                width: "50px",
+                                                height: "50px",
+                                                borderRadius: "10px",
+                                                backgroundColor: "lightgray",
+                                                marginLeft: "auto"
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={faCheck} className="check-icon disable"/>
+                                        </div>
+                                    }
                                 </div>
                             ))}
                         </div>
@@ -325,7 +392,19 @@ const MyComponent = () => {
                         </div>
                     )}
                     <img src="/chat-icon/line.png" className="line"/>
-                    <div className="delete-conversation">
+                    <div className="delete-conversation" onClick={async () => {
+                        if(deleteChatRoom) {
+                            const params = new URLSearchParams();
+                            deleteChatRoomId.forEach(id => params.append("idList", id));
+                            const response = await deleteChatRooms(params);
+                            setChatRooms(prev => [...prev.filter(id => !deleteChatRoomId.includes(id))]);
+                            setDeleteChatRoom(false);
+                            if(response !== "ChatRoom list deleted successfully!") alert("Có lỗi xảy ra khi xóa hội thoại")
+                        }else {
+                            setDeleteChatRoom(true);
+                            alert("Chú ý: Nếu xóa sẽ không thể chat lại với người bị xóa")
+                        }
+                    }}>
                         <FontAwesomeIcon icon={faTrash} />
                         <p>Xóa hội thoại</p>
                     </div>
@@ -346,7 +425,6 @@ const MyComponent = () => {
                                     </div>
                                 </div>
                             </Link>
-                            <FontAwesomeIcon icon={faEllipsisVertical} className="additional-icon"/>
                         </div>
                         <img src="/chat-icon/line.png" className="line"/>
                         <Link to={`/detail/${chatRoomPost.id}`} className="chat-post-container">
@@ -354,8 +432,8 @@ const MyComponent = () => {
                             <div className="post-title-price-area">
                                 <h3 >{chatRoomPost.title}</h3>
                                 <div className="post-price-area">
-                                    <p>{chatRoomPost.price} triệu/tháng</p>
-                                    <p>{chatRoomPost.area}m&sup2;</p>
+                                    <p style={{color:"red"}}>{chatRoomPost.price} triệu/tháng</p>
+                                    <p style={{fontWeight: "450"}}>{chatRoomPost.area}m&sup2;</p>
                                 </div>
                             </div>
                         </Link>
@@ -365,8 +443,44 @@ const MyComponent = () => {
                                 if (message.senderId === user.id) {
                                     return (
                                         <div key={index} className="sender-message-div">
-                                            {message.content !== "" && <p className="sender-message">{message.content}</p>}
-                                            {message.mediaList && displayMessageMedia(message.mediaList)}
+                                            {<div className="message-create-time">{message.createdAt}</div>}
+                                            <div className="sender-message-bounding">
+                                                {message.content !== "" &&
+                                                    <p className="sender-message">
+                                                        {message.content === "Đã thu hồi tin nhắn" ? (
+                                                            <i>{message.senderId === user.id ? "Bạn đã thu hồi tin nhắn" : "Đã thu hồi tin nhắn"}</i>
+                                                        ) : (
+                                                            message.content
+                                                        )}
+                                                    </p>
+                                                }
+                                                {message.mediaList && displayMessageMedia(message.mediaList)}
+                                            </div>
+                                            {!(message.content === "Đã thu hồi tin nhắn") && (
+                                                <button className="delete-message-button" onClick={ async() => {
+                                                    const response = await revokeMessage(message.id, chatId);
+                                                    if(response !== "Message revoked successfully!") alert("Có lỗi xảy ra trong quá trình xóa tin nhắn");
+                                                    else {
+                                                        const payload = {
+                                                            chatId,
+                                                            messageId: message.id,
+                                                            senderId: user.id
+                                                        }
+                                                        stompClientRef.current.publish({
+                                                            destination: "/app/message.revoke",
+                                                            body: JSON.stringify(payload)
+                                                        })
+                                                        setMessages(prev => prev.map(tmp => {
+                                                            if(tmp.id === message.id){
+                                                                return { ...tmp, content: "Đã thu hồi tin nhắn", mediaList: [] };
+                                                            }
+                                                            return tmp;
+                                                        }));
+                                                    }
+                                                }}>
+                                                    <FontAwesomeIcon icon={faXmark}  style={{ color: "white", fontSize: "18px" }} />
+                                                </button>
+                                            )}
                                         </div>
                                     );
                                 } else {
@@ -374,14 +488,12 @@ const MyComponent = () => {
                                         <div className="recipient-message-div" key={index}>
                                             <img
                                                 src={`data:${getImageMime(recipientRef.current.avatar)};base64,${recipientRef.current.avatar}`}
-                                                style={{ height: "45px", width: "45px", borderRadius: "50%", alignSelf: "flex-end" }}
+                                                style={{ height: "45px", width: "45px", borderRadius: "50%", alignSelf: "flex-end", cursor: "pointer" }}
+                                                onClick={() => navigate(`/account/${recipientRef.current.id}`)}
                                             />
-                                            <div style={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                gap: "5px"
-                                            }}>
-                                                {message.content !== "" && <p className="recipient-message">{message.content}</p>}
+                                            {<div className="message-create-time">{message.createdAt}</div>}
+                                            <div className="recipient-avatar-message">
+                                                {message.content !== "" && <p className="recipient-message">{message.content === "Đã thu hồi tin nhắn" ? <i>{message.content}</i> : message.content}</p>}
                                                 {message.mediaList && displayMessageMedia(message.mediaList)}
                                             </div>
                                         </div>

@@ -1,11 +1,7 @@
 package com.example.backend.utils;
 
-import com.example.backend.dto.post.PostCreator;
-import com.example.backend.dto.post.PostDTO;
-import com.example.backend.dto.post.PostDetailDTO;
-import com.example.backend.dto.post.PostMediaDTO;
-import com.example.backend.entity.mySQL.Post;
-import com.example.backend.entity.mySQL.User;
+import com.example.backend.dto.post.*;
+import com.example.backend.entity.mySQL.*;
 import com.example.backend.repository.mongoDB.PostMediaRepository;
 import com.example.backend.repository.mySQL.PostRepository;
 import com.example.backend.service.AddressService;
@@ -28,8 +24,6 @@ public class Util {
     @Autowired
     private PostMediaRepository postMediaRepo;
     @Autowired
-    private AddressService addressService;
-    @Autowired
     private ModelMapper modelMapper;
 
     public String textFormat(String text){
@@ -47,6 +41,22 @@ public class Util {
         return (int) diff;
     }
 
+    public List<PostSummaryDTO> convertPostToPostSummary(List<Post> posts){
+        return posts.stream()
+                .map(post -> {
+                    PostDetail postDetail = post.getPostDetail();
+                    PostSummaryDTO dto = modelMapper.map(post, PostSummaryDTO.class);
+                    PostDetailSummaryDTO postDetailSummaryDTO = modelMapper.map(postDetail, PostDetailSummaryDTO.class);
+                    dto.setUserId(post.getUser().getId());
+                    dto.setAddressDTO(getTextAddress(post.getAddress()));
+                    dto.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());
+                    dto.setDescription(textFormat(post.getDescription()));
+                    dto.setPostDetailSummaryDTO(postDetailSummaryDTO);
+                    return dto;
+                })
+                .toList();
+    }
+
     public PostDTO convertPostToPostDTO(long postId){
         Post post = postRepo.findById(postId).orElse(null);
         User user = post.getUser();
@@ -62,9 +72,18 @@ public class Util {
         postDTO.setPostMediaDTO(postMediaDTOList);
         postDTO.setPostCreator(postCreator);
         postDTO.setPostDetailDTO(modelMapper.map(post.getPostDetail(), PostDetailDTO.class));
-        postDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
+        postDTO.setAddressDTO(getTextAddress(post.getAddress()));
         postDTO.setDescription(textFormat(post.getDescription()));
         return postDTO;
+    }
+
+    public String getTextAddress(Address address) {
+        if(address == null) return "";
+        String addressDetail = address.getDetail();
+        Ward addressWard = address.getWard();
+        District addressDistrict = addressWard.getDistrict();
+        City addressCity = addressDistrict.getCity();
+        return (addressDetail.isBlank() ? "" : (addressDetail + ", ")) + addressWard.getName() + ", " + addressDistrict.getName() + ", " + addressCity.getName();
     }
 
     public void deleteFile(String filePath) throws IOException {

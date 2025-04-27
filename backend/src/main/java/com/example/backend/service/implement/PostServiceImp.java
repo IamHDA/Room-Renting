@@ -2,7 +2,7 @@ package com.example.backend.service.implement;
 
 import com.example.backend.Enum.MediaType;
 import com.example.backend.Enum.PostStatus;
-import com.example.backend.dto.*;
+import com.example.backend.dto.address.AddressDTO;
 import com.example.backend.dto.filter.PostFilter;
 import com.example.backend.dto.post.*;
 import com.example.backend.entity.mongoDB.PostMedia;
@@ -59,7 +59,7 @@ public class PostServiceImp implements PostService {
                     postDetailSummaryDTO.setPrice(postDetail.getPrice());
                     postSummaryDTO.setDescription(util.textFormat(post.getDescription()));
                     postSummaryDTO.setUserId(post.getUser().getId());
-                    postSummaryDTO.setAddressDTO(addressService.getAddress(post.getAddress()));
+                    postSummaryDTO.setAddressDTO(util.getTextAddress(post.getAddress()));
                     postSummaryDTO.setPostDetailSummaryDTO(postDetailSummaryDTO);
                     postSummaryDTO.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());
                     return postSummaryDTO;
@@ -74,13 +74,13 @@ public class PostServiceImp implements PostService {
     @Override
     public List<PostSummaryDTO> getEnablePostsByUser(long userId) {
         List<Post> posts = postRepo.findByUser_IdAndStatus(userId, PostStatus.ENABLED);
-        return convertPostToPostSummary(posts);
+        return util.convertPostToPostSummary(posts);
     }
 
     @Override
     public List<PostSummaryDTO> getDisablePostsByUser(long userId) {
         List<Post> posts = postRepo.findByUser_IdAndStatus(userId, PostStatus.DISABLED);
-        return convertPostToPostSummary(posts);
+        return util.convertPostToPostSummary(posts);
     }
 
     @Override
@@ -89,8 +89,13 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public List<PostSummaryDTO> getPostsByCriteria(PostFilter filter) {
-        return convertPostToPostSummary(filterRepo.filterPost(filter));
+    public PostSummaryList getPostsByCriteria(PostFilter filter) {;
+        List<PostSummaryDTO> posts = util.convertPostToPostSummary(filterRepo.filterPost(filter));
+        long totalLength = filterRepo.countPost(filter);
+        return PostSummaryList.builder()
+                .posts(posts)
+                .totalLength(totalLength)
+                .build();
     }
 
     @Override
@@ -200,21 +205,5 @@ public class PostServiceImp implements PostService {
         post.setUpdatedAt(LocalDateTime.now());
         postRepo.save(post);
         return "Post updated successfully!";
-    }
-
-    List<PostSummaryDTO> convertPostToPostSummary(List<Post> posts){
-        return posts.stream()
-                .map(post -> {
-                    PostDetail postDetail = post.getPostDetail();
-                    PostSummaryDTO dto = modelMapper.map(post, PostSummaryDTO.class);
-                    PostDetailSummaryDTO postDetailSummaryDTO = modelMapper.map(postDetail, PostDetailSummaryDTO.class);
-                    dto.setUserId(post.getUser().getId());
-                    dto.setAddressDTO(addressService.getAddress(post.getAddress()));
-                    dto.setThumbnailURL(postMediaRepo.findFirstByPostId(post.getId()).getUrl());
-                    dto.setDescription(util.textFormat(post.getDescription()));
-                    dto.setPostDetailSummaryDTO(postDetailSummaryDTO);
-                    return dto;
-                })
-                .toList();
     }
 }

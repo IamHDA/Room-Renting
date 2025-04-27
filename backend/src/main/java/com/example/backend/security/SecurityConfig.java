@@ -66,6 +66,8 @@ public class SecurityConfig {
                                 "address/search",
                                 "PostMedia/**",
                                 "MessageMedia/**",
+                                "address/cities",
+                                "address/districts/**",
                                 "ws/**"
                         ).permitAll()
                         .requestMatchers(

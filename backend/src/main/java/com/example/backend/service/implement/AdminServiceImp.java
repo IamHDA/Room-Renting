@@ -109,7 +109,7 @@ public class AdminServiceImp implements AdminService {
     public UserReportDTO getUserReport(long userId) {
         User user = userRepo.findById(userId);
         AdminUserDTO userDTO = modelMapper.map(userRepo.findById(userId), AdminUserDTO.class);
-        userDTO.setAddressDTO(addressService.getAddress(user.getAddress()));
+        userDTO.setAddressDTO(util.getTextAddress(user.getAddress()));
         List<AccountDTO> accounts = accountRepo.findByUser(user)
                 .stream()
                 .map(account -> modelMapper.map(account, AccountDTO.class))

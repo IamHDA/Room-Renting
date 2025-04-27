@@ -45,6 +45,11 @@ public class ChatController {
         return "disconnect " + disconnectedUserId;
     }
 
+    @MessageMapping("/message.revoke")
+    public void message(@Payload RevokeRequest revokeRequest){
+        messagingTemplate.convertAndSend("/topic/chat/" + revokeRequest.getChatId(), revokeRequest.getChatId());
+    }
+
     @GetMapping("/recipient/{userId}")
     public ResponseEntity<UserHeader> getRecipient(@PathVariable long userId){
         return ResponseEntity.ok(userService.getUserHeader(userId));

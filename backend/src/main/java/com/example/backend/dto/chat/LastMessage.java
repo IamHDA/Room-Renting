@@ -1,6 +1,7 @@
 package com.example.backend.dto.chat;
 
 import com.example.backend.Enum.ChatStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 

@@ -12,16 +12,4 @@ import java.util.Optional;
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
     Optional<Address> findByDetailAndWard_Id(String detail, int wardId);
-
-    @Query("""
-    select a from Address a
-    join Ward w on a.ward = w
-    join District d on w.district = d
-    join City c on d.city = c
-    where lower(a.detail) like lower(concat('%', :keyword, '%'))
-    or lower(w.name) like lower(concat('%', :keyword, '%'))
-    or lower(d.name) like lower(concat('%', :keyword, '%'))
-    or lower(c.name) like lower(concat('%', :keyword, '%'))
-""")
-    List<Address> searchAddress(@Param("keyword") String keyword);
 }

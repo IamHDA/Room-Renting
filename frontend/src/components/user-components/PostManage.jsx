@@ -368,7 +368,7 @@ const MyComponent = () => {
                                                 <div className="option">
                                                     <p className="options" onClick={handleFurnitureOption}>Cao cấp</p>
                                                     <p className="options" onClick={handleFurnitureOption}>Đầy đủ</p>
-                                                    <p className="options" onClick={handleFurnitureOption}>Nhà trống</p>
+                                                    <p className="options" onClick={handleFurnitureOption}>Không có</p>
                                                 </div>
                                             )}
                                         </div>
