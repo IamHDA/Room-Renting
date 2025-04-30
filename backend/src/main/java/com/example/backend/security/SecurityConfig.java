@@ -2,6 +2,8 @@ package com.example.backend.security;
 
 import com.example.backend.Enum.Role;
 import com.example.backend.config.handler.CustomLogoutHandler;
+import com.example.backend.config.handler.CustomOauth2SuccessHandler;
+import com.example.backend.service.implement.AuthenticationServiceImp;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,10 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -39,6 +39,8 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
     @Autowired
     private CustomLogoutHandler customLogoutHandler;
+    @Autowired
+    private CustomOauth2SuccessHandler customOauth2SuccessHandler;
 
     @Bean
     public AuthenticationProvider authProvider(){
@@ -68,14 +70,20 @@ public class SecurityConfig {
                                 "MessageMedia/**",
                                 "address/cities",
                                 "address/districts/**",
-                                "ws/**"
+                                "ws/**",
+                                "account/currentAccount"
                         ).permitAll()
                         .requestMatchers(
                                 "admin/**"
                         ).hasAuthority(Role.ADMIN.name())
                         .anyRequest().authenticated())
+                .oauth2Login(oauth -> oauth
+                        .successHandler(customOauth2SuccessHandler)
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(accessDeniedHandler))
                 .logout(customizer -> customizer

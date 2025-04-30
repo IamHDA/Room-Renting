@@ -14,20 +14,20 @@ import com.example.backend.repository.mySQL.TokenRepository;
 import com.example.backend.repository.mySQL.UserRepository;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.AuthenticationService;
+import com.example.backend.service.TokenService;
+import com.example.backend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.nio.file.Files;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,8 +37,6 @@ import java.util.List;
 public class AuthenticationServiceImp implements AuthenticationService {
 
     @Autowired
-    private TokenRepository tokenRepo;
-    @Autowired
     private AccountRepository accountRepo;
     @Autowired
     private UserRepository userRepo;
@@ -46,12 +44,14 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private TokenService tokenService;
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
-        if(accountRepo.findByIdentifier(request.getIdentifier()).isPresent()){
-            return new AuthenticationResponse(null, null, "Identifier is already in use!");
-        }
+        if(accountRepo.findByIdentifier(request.getIdentifier()).isPresent()) return new AuthenticationResponse(null, null, "Identifier is already in use!");
         User newUser = userRepo.findByPhoneNumberOrEmail(request.getIdentifier(), request.getIdentifier()).orElseGet(() -> {
             User user = new User();
             user.setFullName(request.getFullName());
@@ -60,15 +60,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
             if(request.getFullName().equals("Admin")) user.setRole(Role.ADMIN);
             else user.setRole(Role.USER);
             user.setStatus(UserStatus.ONLINE);
-            try {
-                ClassPathResource avatarResource = new ClassPathResource("static/default-avatar.jpeg");
-                user.setAvatar(Files.readAllBytes(avatarResource.getFile().toPath()));
-                ClassPathResource bgResource = new ClassPathResource("static/default-background.jpeg");
-                user.setBackgroundImage(Files.readAllBytes(bgResource.getFile().toPath()));
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
-            userRepo.save(user);
+            userService.addDefaultProfileImage(user);
             return user;
         });
         Account account = new Account();
@@ -79,33 +71,39 @@ public class AuthenticationServiceImp implements AuthenticationService {
         accountRepo.save(account);
         String accessToken = jwtTokenProvider.generateAccessToken(account);
         String refreshToken = jwtTokenProvider.generateRefreshToken(account);
-        saveAccountToken(accessToken, refreshToken, account);
+        tokenService.saveAccountToken(accessToken, refreshToken, account);
         return new AuthenticationResponse(accessToken, refreshToken, "User registration successful");
     }
 
     @Override
     public AuthenticationResponse login(LoginRequest request) {
         Account account = accountRepo.findByIdentifier(request.getIdentifier()).orElse(null);
-        if(account == null){
-            return new AuthenticationResponse(null, null, "Account not found!");
-        }
-        try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getIdentifier(), request.getPassword()));
-        }catch(BadCredentialsException e){
-            return new AuthenticationResponse(null, null, "Password is incorrect!");
+        if(account == null) return new AuthenticationResponse(null, null, "Account not found!");
+        if(account.getProvider() == Provider.LOCAL) {
+            try{
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(account.getUser().getPhoneNumber(), request.getPassword()));
+            }catch(BadCredentialsException e){
+                return new AuthenticationResponse(null, null, "Password is incorrect!");
+            }
         }
         String accessToken = jwtTokenProvider.generateAccessToken(account);
         String refreshToken = jwtTokenProvider.generateRefreshToken(account);
         User user = account.getUser();
         user.setStatus(UserStatus.ONLINE);
         userRepo.save(user);
-        List<Token> validTokenByUser = tokenRepo.findByAccountIdAndLoggedOutFalse(account.getId());
-        if(!validTokenByUser.isEmpty()){
-            validTokenByUser.forEach((token) -> {
-                token.setLoggedOut(true);
-            });
-        }
-        saveAccountToken(accessToken, refreshToken, account);
+        tokenService.disableOldTokens(account);
+        tokenService.saveAccountToken(accessToken, refreshToken, account);
+        return new AuthenticationResponse(accessToken, refreshToken, "User login successful");
+    }
+
+    public AuthenticationResponse oauth2Login(Authentication authentication){
+        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+        String email = oauth2User.getAttribute("email");
+        Account account = accountRepo.findByIdentifier(email).orElse(null);
+        String accessToken = jwtTokenProvider.generateAccessToken(account);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(account);
+        tokenService.disableOldTokens(account);
+        tokenService.saveAccountToken(accessToken, refreshToken, account);
         return new AuthenticationResponse(accessToken, refreshToken, "User login successful");
     }
 
@@ -124,18 +122,9 @@ public class AuthenticationServiceImp implements AuthenticationService {
         if(jwtTokenProvider.isValidRefreshToken(token, account)){
             String accessToken = jwtTokenProvider.generateAccessToken(account);
             String refreshToken = jwtTokenProvider.generateRefreshToken(account);
-            saveAccountToken(accessToken, refreshToken, account);
+            tokenService.saveAccountToken(accessToken, refreshToken, account);
             return new ResponseEntity(new AuthenticationResponse(accessToken, refreshToken, "New Token generated"), HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-    }
-
-    private void saveAccountToken(String accessToken, String refreshToken, Account account) {
-        Token token = new Token();
-        token.setAccessToken(accessToken);
-        token.setRefreshToken(refreshToken);
-        token.setLoggedOut(false);
-        token.setAccount(account);
-        tokenRepo.save(token);
     }
 }

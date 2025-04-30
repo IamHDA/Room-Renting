@@ -15,15 +15,20 @@ import com.example.backend.service.UserService;
 import com.example.backend.utils.Util;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -36,8 +41,6 @@ public class UserServiceImp implements UserService {
     @Autowired
     private Util util;
     @Autowired
-    private AddressService addressService;
-    @Autowired
     private AccountRepository accountRepo;
     @Autowired
     private WardRepository wardRepo;
@@ -48,8 +51,14 @@ public class UserServiceImp implements UserService {
         String currentIdentifier = "";
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null && !(authentication instanceof AnonymousAuthenticationToken)){
-            currentIdentifier = authentication.getName().trim();
-            System.out.println("Current User: " + currentIdentifier);
+            System.out.println("SDFDSF");
+            if(authentication instanceof UsernamePasswordAuthenticationToken){
+                currentIdentifier = authentication.getName().trim();
+                System.out.println("Current User: " + currentIdentifier);
+            }else if(authentication instanceof OAuth2AuthenticationToken){
+                OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+                currentIdentifier = oAuth2User.getAttributes().get("email").toString();
+            }
         }
         return userRepo.findByPhoneNumberOrEmail(currentIdentifier, currentIdentifier)
                 .orElseThrow(() -> new UsernameNotFoundException("Người dùng không tồn tại"));
@@ -96,7 +105,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public String changePersonalInformation(UserPersonalInformation information){
-        User user = userRepo.findByPhoneNumber(information.getPhoneNumber());
+        User user = userRepo.findByPhoneNumberOrEmail(information.getPhoneNumber(), "").orElse(null);
         if(information.getAddressText().isEmpty()){
             String[] addressText = new String[] {"", "", "", ""};
             addressText = information.getAddressText().split(", ");
@@ -128,5 +137,17 @@ public class UserServiceImp implements UserService {
             }
         }
         return "Change password successfully!";
+    }
+
+    public void addDefaultProfileImage(User user){
+        try {
+            ClassPathResource avatarResource = new ClassPathResource("static/default-avatar.jpeg");
+            user.setAvatar(Files.readAllBytes(avatarResource.getFile().toPath()));
+            ClassPathResource bgResource = new ClassPathResource("static/default-background.jpeg");
+            user.setBackgroundImage(Files.readAllBytes(bgResource.getFile().toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
+        userRepo.save(user);
     }
 }

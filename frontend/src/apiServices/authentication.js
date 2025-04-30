@@ -17,10 +17,13 @@ export const refreshToken = async () => {
 }
 
 export const logout = async () => {
-    const response = await request.post('logout',{}, {
+    return await request.post('logout',{}, {
         headers:{
             Authorization: "Bearer " + localStorage.getItem('accessToken'),
         }
     })
-    return response;
+}
+
+export const loginWithGoogleButton = async () => {
+    return await request.get('api/auth/google-login', {});
 }

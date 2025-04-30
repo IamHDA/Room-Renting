@@ -4,13 +4,16 @@ import com.example.backend.dto.post.*;
 import com.example.backend.entity.mySQL.*;
 import com.example.backend.repository.mongoDB.PostMediaRepository;
 import com.example.backend.repository.mySQL.PostRepository;
+import com.example.backend.repository.mySQL.UserRepository;
 import com.example.backend.service.AddressService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.SQLOutput;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -25,6 +28,8 @@ public class Util {
     private PostMediaRepository postMediaRepo;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private UserRepository userRepo;
 
     public String textFormat(String text){
         return text.replace("\n", "<br>");

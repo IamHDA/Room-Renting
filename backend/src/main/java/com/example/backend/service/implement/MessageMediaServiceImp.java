@@ -35,13 +35,14 @@ public class MessageMediaServiceImp implements MessageMediaService {
                 String mediaUrl = url + file.getOriginalFilename();
                 String tmp = file.getContentType().split("/")[0];
                 MediaType type = MediaType.valueOf(tmp.toUpperCase());
-                String filePath = "/home/iamhda/ETC/Room-Renting/backend/src/main/resources/static/MessageMedia/" + file.getOriginalFilename();
+                String filePath = "C:\\Room-Renting\\backend\\src\\main\\resources\\static\\MessageMedia" + file.getOriginalFilename();
+                file.transferTo(new File(filePath));
+                filePath = filePath.replace("\\", "/");
                 messageMediaList.add(MessageMedia.builder()
                             .type(type)
                             .url(mediaUrl)
                             .filePath(filePath)
                         .build());
-                file.transferTo(new File(filePath));
             }
         }catch (Exception e){
             log.error("e: ", e);

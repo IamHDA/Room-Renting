@@ -55,6 +55,38 @@ const MyComponent = ({handleSignInPopUp}) => {
         setShowPassword(!showPassword);
     }
 
+    const handleOAuthLogin = (provider) => {
+        const popup = window.open(
+            `http://localhost:8080/oauth2/authorization/${provider}`,
+            `${provider} Login`,
+            'width=500,height=600'
+        );
+
+        const messageListener = async (event) => {
+            if (event.origin !== "http://localhost:8080") return;
+
+            const { accessToken, refreshToken } = event.data;
+            if (accessToken && refreshToken) {
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+                const user = await userService.currentUser();
+                await setUpStompClient();
+                stompClientRef.current.publish({
+                    destination: "/app/user.connect",
+                    body: JSON.stringify(user.id)
+                })
+                localStorage.setItem('user', JSON.stringify(user));
+                setUser(user);
+                window.location.reload();
+            }
+            window.removeEventListener("message", messageListener);
+            popup?.close();
+        };
+
+        window.addEventListener("message", messageListener);
+    };
+
+
     return (
         <div>
             <div className="curtain">
@@ -83,15 +115,16 @@ const MyComponent = ({handleSignInPopUp}) => {
                         <button className="signIn-button" onClick= {handleLogin}>Xác nhận</button>
                         <p className="third-party-signIn">- Hoặc đăng nhập bằng -</p>
                         <div className="two-signIn-method">
-                            <a className="google-signIn-bounding">
-                                <img src="../../../public/signIn/google-logo.png"/>
+                            <button onClick={() => handleOAuthLogin("google")} className="google-signIn-bounding">
+                                <img src="/signIn/google-logo.png" />
                                 Google
-                            </a>
-                            <a className="facebook-signIn-bounding">
-                                <img src="../../../public/signIn/facebook.png"/>
+                            </button>
+                            <button onClick={() => handleOAuthLogin("facebook")} className="facebook-signIn-bounding">
+                                <img src="/signIn/facebook.png" />
                                 Facebook
-                            </a>
+                            </button>
                         </div>
+
                         <p className="back-to-register">Chưa có tài khoản? <span onClick={() => {handleSignInPopUp("back")}}>Đăng ký ngay</span></p>
                     </div>
                     <div className="close" onClick={handleSignInPopUp}>

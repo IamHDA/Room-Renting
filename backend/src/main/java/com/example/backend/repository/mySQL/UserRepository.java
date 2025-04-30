@@ -11,7 +11,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByPhoneNumberOrEmail(String phoneNumber, String email);
     User findById(long userId);
-    User findByPhoneNumber(String phoneNumber);
     long count();
     @Query("""
     select count(u) from User u

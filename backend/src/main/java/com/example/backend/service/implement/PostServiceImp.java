@@ -107,14 +107,15 @@ public class PostServiceImp implements PostService {
                 String mediaUrl = url + file.getOriginalFilename();
                 String tmp = file.getContentType().split("/")[0];
                 MediaType type = MediaType.valueOf(tmp.toUpperCase());
-                String filePath = "/home/iamhda/ETC/Room-Renting/backend/src/main/resources/static/PostMedia/" + file.getOriginalFilename();
+                String filePath = "C:\\Room-Renting\\backend\\src\\main\\resources\\static\\PostMedia" + file.getOriginalFilename();
+                file.transferTo(new File(filePath));
+                filePath = filePath.replace("\\", "/");
                 postMediaList.add(PostMedia.builder()
                             .type(type)
                             .url(mediaUrl)
                             .postId(postId)
                             .filePath(filePath)
                         .build());
-                file.transferTo(new File(filePath));
             }
             postMediaRepo.saveAll(postMediaList);
         }catch (Exception e){

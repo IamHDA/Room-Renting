@@ -2,10 +2,24 @@ spring:
   application:
     name: backend
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 305289450602-euu5eo1cdj4vspj4g81ldnq6je06lhor.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
+          facebook:
+            client-id: 1446358566365773
+            client-secret: e0931417cf96ff6b023129bfe0504a86
+
   datasource:
-    url: jdbc:mysql://localhost:3306/RentingRoom
+    url: jdbc:mysql://localhost:3306/room_renting
     username: root
-    password: Duyanh2004@
+    password: Duyanh090@
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       pool-name: HikariCP

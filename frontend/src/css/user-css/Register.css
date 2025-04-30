@@ -76,6 +76,7 @@
     border: none;
     font-size: 20px;
     font-weight: 560;
+    width: 100%;
 }
 
 .google-sign-bounding, .facebook-sign-bounding{

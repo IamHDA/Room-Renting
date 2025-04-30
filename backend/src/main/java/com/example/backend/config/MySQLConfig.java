@@ -34,10 +34,10 @@ public class MySQLConfig {
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource mysqlDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:mysql://localhost:3306/RentingRoom");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/room_renting");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUsername("root");
-        dataSource.setPassword("Duyanh2004@");
+        dataSource.setPassword("Duyanh090@");
         return dataSource;
     }
 
