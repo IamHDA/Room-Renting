@@ -75,6 +75,8 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
             account.setUser(user);
             account = accountRepo.save(account);
         }
+        account.getUser().setStatus(UserStatus.ONLINE);
+        userRepo.save(account.getUser());
         tokenService.disableOldTokens(account);
         String accessToken = jwtTokenProvider.generateAccessToken(account);
         String refreshToken = jwtTokenProvider.generateRefreshToken(account);

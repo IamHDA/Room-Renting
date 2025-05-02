@@ -1,8 +1,6 @@
 package com.example.backend.dto.chat;
 
-import com.example.backend.Enum.ChatStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
+import com.example.backend.Enum.MessageStatus;
 import lombok.Data;
 
 import java.time.Instant;
@@ -11,6 +9,6 @@ import java.time.Instant;
 public class LastMessage {
     private long senderId;
     private Instant createdAt;
-    private ChatStatus status;
+    private MessageStatus status;
     private String content;
 }

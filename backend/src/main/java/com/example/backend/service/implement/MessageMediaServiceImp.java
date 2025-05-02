@@ -35,7 +35,7 @@ public class MessageMediaServiceImp implements MessageMediaService {
                 String mediaUrl = url + file.getOriginalFilename();
                 String tmp = file.getContentType().split("/")[0];
                 MediaType type = MediaType.valueOf(tmp.toUpperCase());
-                String filePath = "C:\\Room-Renting\\backend\\src\\main\\resources\\static\\MessageMedia" + file.getOriginalFilename();
+                String filePath = "C:/Room-Renting/Media/MessageMedia/" + file.getOriginalFilename();
                 file.transferTo(new File(filePath));
                 filePath = filePath.replace("\\", "/");
                 messageMediaList.add(MessageMedia.builder()

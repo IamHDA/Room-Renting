@@ -5,11 +5,13 @@ import {faArrowLeft, faXmark} from "@fortawesome/free-solid-svg-icons";
 import * as authService from '../../apiServices/authentication.js';
 import * as userService from "../../apiServices/user.js";
 import {AuthContext} from '../../contexts/AuthContext.jsx';
+import {useNavigate} from "react-router-dom";
 
 const MyComponent = ({handleRegisterPopUp}) => {
     const [isMain, setIsMain] = useState(false);
     const [isInValidNumber, setIsInValidNumber] = useState(false);
     const [isValidPassword, setIsValidPassword] = useState(true);
+    const navigate = useNavigate();
     const { setUser } = useContext(AuthContext);
 
     const handleNavigate = () => {
@@ -50,6 +52,7 @@ const MyComponent = ({handleRegisterPopUp}) => {
                     localStorage.setItem('accessToken', response.accessToken);
                     localStorage.setItem('refreshToken', response.refreshToken);
                     const user = await userService.currentUser();
+                    if(user.fullName === "Admin") navigate("/admin/statistic");
                     localStorage.setItem('user', JSON.stringify(user));
                     setUser(user);
                     handleRegisterPopUp();

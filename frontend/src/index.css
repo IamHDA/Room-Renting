@@ -6,6 +6,10 @@ button{
     font-family: Roboto, sans-serif;
 }
 
+textarea{
+    font-family: Roboto, sans-serif;
+}
+
 body{
     margin: 0;
     padding: 0;
@@ -25,4 +29,13 @@ span{
 a{
     text-decoration: none;
     color: inherit;
+}
+
+.curtain{
+    background-color: rgba(217, 217, 217, 0.5);
+    height: 100vh;
+    width: 100vw;
+    z-index: 100;
+    position: fixed;
+    top: 0;
 }

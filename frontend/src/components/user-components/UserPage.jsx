@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import '../../css/user-css/UserPage.css';
-import {faCamera, faPhone, faSignal, faStar as faStarSolid} from "@fortawesome/free-solid-svg-icons";
-import {faStar as faStarRegular, faMessage, faCalendar, faCompass} from "@fortawesome/free-regular-svg-icons";
+import {faCamera, faPhone, faSignal, faStar as faStarSolid, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {faStar as faStarRegular, faMessage, faCalendar, faCompass, faFlag} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {AuthContext} from "../../contexts/AuthContext.jsx";
 import {Link, useParams} from "react-router-dom";
@@ -10,7 +10,8 @@ import UserEnablePost from "./UserEnablePost.jsx";
 import {getUserProfile} from "../../apiServices/user.js";
 import {getImageMime} from "../../utils/format.js";
 import { changeAvatar, changeBackgroundImage} from "../../apiServices/user.js";
-import { currentUser} from "../../apiServices/user.js";
+import { currentUser } from "../../apiServices/user.js";
+import {reportUser} from "../../apiServices/report.js";
 
 const MyComponent = () => {
     const [isLeft, setIsLeft] = React.useState(true);
@@ -18,11 +19,20 @@ const MyComponent = () => {
     const [onReview, setOnReview] = React.useState(false);
     const { user, setUser } = useContext(AuthContext);
     const [selectedStar, setSelectedStar] = React.useState(0);
+    const [currentReason, setCurrentReason] = useState(null);
+    const [currentDescription, setCurrentDescription] = useState("");
     const {userId} = useParams();
     const[userProfile, setUserProfile] = useState(null);
     const [enablePostLength, setEnablePostLength] = useState(0);
     const [disablePostLength, setDisablePostLength] = useState(0);
     const [changeImage, setChangeImage] = useState(false);
+    const [reportPopup, setReportPopup] = useState(false);
+    const reportReason = [
+        "Hình đại diện không hợp lệ",
+        "Thông tin cá nhân không hợp lệ",
+        "Có dấu hiệu lừa đảo",
+        "Lý do khác"
+    ]
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -74,6 +84,94 @@ const MyComponent = () => {
     return (
         <div className="user-page-body">
             <div className="user-page-container">
+                {reportPopup && (
+                    <>
+                        <div className="curtain"></div>
+                        <div
+                            style={{
+                                display: "flex",
+                                gap: "15px",
+                                flexDirection: "column",
+                                position: "fixed",
+                                top: "50%",
+                                left: "50%",
+                                transform: "translate(-50%, -50%)",
+                                zIndex: 1000,
+                                backgroundColor: "white",
+                                padding: "20px",
+                                borderRadius: "10px",
+                                textAlign: "center",
+                                fontSize: "22px",
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faXmark} className="close" onClick={() => {
+                                setReportPopup(false);
+                                setCurrentReason(null);
+                            }}/>
+                            <h2 style={{margin: "0"}}>Lý do</h2>
+                            {reportReason.map((reason, index) => (
+                                <label
+                                    key={index}
+                                    style={{display: "flex", gap: "20px", cursor: "pointer"}}
+                                    onClick={() => {
+                                        setCurrentReason(reason);
+                                        setCurrentDescription("");
+                                    }}
+                                >
+                                    <input type="radio" name="option" value={reason} style={{width: "20px"}}/>
+                                    {reason}
+                                </label>
+                            ))}
+                            {currentReason && (
+                                <textarea
+                                    id="report-description"
+                                    style={{
+                                        width: "95%",
+                                        alignSelf: "center",
+                                        height: "100px",
+                                        marginTop: "10px",
+                                        border: "1px solid black",
+                                        resize: "none",
+                                        fontSize: "20px"
+                                    }}
+                                    onChange={(e) => setCurrentDescription(e.target.value)}
+                                />
+                            )}
+                            <button
+                                style={{
+                                    width: "200px",
+                                    margin: "auto",
+                                    fontSize: "25px",
+                                    marginTop: "15px",
+                                    padding: "10px 0px 10px 0px",
+                                    borderRadius: "10px",
+                                    border: "none",
+                                    cursor: "pointer"
+                                }}
+                                onClick={async () => {
+                                    if(currentReason === null) alert("Chọn một lý do để báo cáo");
+                                    else {
+                                        try {
+                                            const reportBody = {
+                                                name: currentReason,
+                                                description: currentDescription,
+                                            }
+                                            const response = await reportUser(userId, reportBody);
+                                            if(response === "User reported successfully!") {
+                                                alert("Báo cáo người dùng thành công");
+                                                setCurrentDescription("");
+                                                setCurrentReason(null);
+                                                setReportPopup(false);
+                                            }else alert("Bạn không thể báo cáo cùng 1 lý do nhiều lần!");
+                                        }catch(e) {
+                                            console.log(e);
+                                        }
+                                    }
+                                }}
+                            >Báo cáo</button>
+                        </div>
+                    </>
+                )}
                 {userProfile && (
                     <div className="user-page-profile">
                         <div className="user-avatar-background">
@@ -96,7 +194,7 @@ const MyComponent = () => {
                                     <img src={`data:${getImageMime(userProfile.avatar)};base64,${userProfile.avatar}`} id="user-avatar-img"/>
                                     {userProfile.id === user.id && (
                                         <label htmlFor="avatarUpload" className="camera-bounding-avatar">
-                                            <FontAwesomeIcon icon={faCamera} />
+                                            <FontAwesomeIcon icon={faCamera}/>
                                             <input
                                                 type="file"
                                                 id="avatarUpload"
@@ -112,6 +210,21 @@ const MyComponent = () => {
                         </div>
                         <div className="user-lower-information">
                             <h2 id="user-page-username">{userProfile.fullName}</h2>
+                            {userProfile.id !== user.id && (
+                                <div
+                                    style={{
+                                        padding: "10px",
+                                        border: "1px solid black",
+                                        borderRadius: "8px",
+                                        position: "absolute",
+                                        top: "10px",
+                                        right: "10px",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faFlag} style={{fontSize: "22px"}} onClick={() => setReportPopup(true)}/>
+                                </div>
+                            )}
                             <div className="user-rating">
                                 <div className="rating-star">
                                     <FontAwesomeIcon icon={faStarRegular} id="star-1"/>
@@ -162,9 +275,9 @@ const MyComponent = () => {
                             <div className="sub-bounding" style={{alignItems: "flex-start"}}>
                                 <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
                                     <FontAwesomeIcon icon={faCompass} />
-                                    <p className="title" style={{width: "70px"}}>Địa chỉ:</p>
+                                    <p className="title" style={{width: "65px"}}>Địa chỉ:</p>
                                 </div>
-                                <p>{userProfile.dtoAddress === "" ? "Chưa cung cấp" : userProfile.dtoAddress}</p>
+                                <p>{userProfile.addressDTO === "" ? "Chưa cung cấp" : userProfile.addressDTO}</p>
                             </div>
                             <div className="sub-bounding">
                                 <FontAwesomeIcon icon={faPhone} />

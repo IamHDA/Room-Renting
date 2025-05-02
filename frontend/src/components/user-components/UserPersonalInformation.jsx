@@ -1,22 +1,25 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect, useRef} from 'react';
 import '../../css/user-css/PersonalInformation.css';
 import { AuthContext } from '../../contexts/AuthContext.jsx';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAngleDown, faEye, faEyeSlash, faX} from "@fortawesome/free-solid-svg-icons";
+import {faAngleDown, faArrowLeft, faEye, faEyeSlash, faX} from "@fortawesome/free-solid-svg-icons";
 import {getPersonalInformation} from "../../apiServices/user.js";
 import AddressContext from "../../contexts/AddressContext.jsx";
+import { checkExistedIdentifier, addNewAccountWithPhoneNumber, addNewAccountWithEmail } from "../../apiServices/account.js"
 import { changePersonalInformation, currentUser, changePassword } from "../../apiServices/user.js";
 
 const MyComponent = () => {
     const { allCities, allDistricts, allWards, setAllDistricts, setAllWards, fetchDistrictsByCity, fetchWardsByDistrict } = useContext(AddressContext);
-    const [isSelected, setIsSelected] = useState(true);
     const { user, setUser } = useContext(AuthContext);
+    const phoneNumberRef = useRef(null);
+    const [isSelected, setIsSelected] = useState(true);
     const [nameInput, setNameInput] = useState("");
     const [emailInput, setEmailInput] = useState("");
-    const [numberInput, setNumberInput] = useState("");
+    const [phoneNumberInput, setPhoneNumberInput] = useState("");
     const [pickAddress, setPickAddress] = useState(false);
     const [address, setAddress] = useState([]);
-    const [showPopUp, setShowPopUp] = useState(false);
+    const [showAddresses, setShowAddresses] = useState(false);
+    const [showAddPhoneNumber, setShowAddPhoneNumber] = useState(0);
     const [addressChoices, setAddressChoices] = useState([]);
     const [showPassword, setShowPassword] = useState(-1);
     const [savedChoice, setSavedChoice] = useState("");
@@ -27,7 +30,10 @@ const MyComponent = () => {
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword1, setNewPassword1] = useState("");
     const [newPassword2, setNewPassword2] = useState("");
-
+    const [emailLocked, setEmailLocked] = useState(false);
+    const [error, setError] = useState(0);
+    const [password1, setPassword1] = useState("");
+    const [password2, setPassword2] = useState("");
 
     useEffect(() => {
         const fetchInformation = async () => {
@@ -35,8 +41,10 @@ const MyComponent = () => {
                 const information = await getPersonalInformation();
                 setNameInput(information.fullName);
                 setEmailInput(information.email);
-                setNumberInput(information.phoneNumber);
+                phoneNumberRef.current = information.phoneNumber;
                 setAddress(information.addressText);
+                if(information.email !== null) setEmailLocked(true);
+                console.log(information.email);
             }catch(err){
                 console.log(err);
             }
@@ -72,7 +80,7 @@ const MyComponent = () => {
         try{
             const fullName = nameInput;
             const email = emailInput;
-            const phoneNumber = numberInput;
+            const phoneNumber = phoneNumberInput;
             let addressText;
             addressText = city + ", " + district + ", " + ward + (detail !== "" ? ", " + detail : "");
             const response = await changePersonalInformation({fullName, email, phoneNumber, addressText});
@@ -102,14 +110,18 @@ const MyComponent = () => {
         }
     }
 
+    const handleCheckExistedIdentifier = async (identifier) => {
+        return await checkExistedIdentifier(identifier);
+    }
+
     return (
         <div className="personal-information-body">
             <div className="personal-information-container">
-                {showPopUp && (
+                {showAddresses && (
                     <>
                         <div className="curtain"></div>
                         <div className="data-container">
-                            <FontAwesomeIcon icon={faX} className="close" onClick={() => setShowPopUp(false)} />
+                            <FontAwesomeIcon icon={faX} className="close" onClick={() => setShowAddresses(false)} />
                             <div className="data">
                                 {addressChoices && addressChoices.map((item, index) => (
                                     <p key={index}
@@ -122,11 +134,115 @@ const MyComponent = () => {
                                                setCity(item.name);
                                                fetchDistrictsByCity(item.id);
                                            }
-                                           setShowPopUp(false);
+                                           setShowAddresses(false);
                                        }}
                                        style={{cursor : "pointer", fontSize : "20px"}}
                                     >{item.name}</p>
                                 ))}
+                            </div>
+                        </div>
+                    </>
+                )}
+                {showAddPhoneNumber && (
+                    <>
+                        <div className="curtain"></div>
+                        <div className="pop-up-phone-number">
+                            <FontAwesomeIcon icon={faX} className="close" onClick={() => {
+                                setShowAddPhoneNumber(0);
+                                setError(0);
+                                setPhoneNumberInput(null);
+                            }} />
+                            <img src="../../../public/register-signIn/banner.jpg" className="illustration"/>
+                            <div className="pop-up-content">
+                                {showAddPhoneNumber === 1 && (
+                                    <>
+                                        <h2>Số điện thoại</h2>
+                                        <input
+                                            className={`pop-up-input ${error ? "error-js" : ""}`}
+                                            type="text"
+                                            placeholder="Nhập số điện thoại"
+                                            value={phoneNumberInput}
+                                            onChange={(e) => setPhoneNumberInput(e.target.value)}
+                                        />
+                                        {error === 1 && <p className="error">- Số điện thoại không hợp lệ</p>}
+                                        {error === 2 && <p className="error">- Số điện thoại đã được sử dụng</p>}
+                                        <button
+                                            className="continue-button"
+                                            onClick={async () => {
+                                                if(phoneNumberInput === "" || !/^\d+$/.test(phoneNumberInput) || phoneNumberInput.length !== 10) setError(1);
+                                                else if(await handleCheckExistedIdentifier(phoneNumberInput)) {
+                                                    setError(2);
+                                                }
+                                                else setShowAddPhoneNumber(2);
+                                            }}
+                                        >
+                                            Tiếp tục
+                                        </button>
+                                    </>
+                                )}
+                                {showAddPhoneNumber === 2 && (
+                                    <>
+                                        <FontAwesomeIcon
+                                            icon={faArrowLeft}
+                                            style={{
+                                                fontSize : "25px",
+                                                position: "absolute",
+                                                left: "49%",
+                                                top: "10px",
+                                            }}
+                                            onClick={() => setShowAddPhoneNumber(1)}
+                                        />
+                                        <h2>Mật khẩu</h2>
+                                        <input
+                                            className="pop-up-input"
+                                            type="password"
+                                            placeholder="Nhập mật khẩu"
+                                            value={password1}
+                                            onChange={(e) => setPassword1(e.target.value)}
+                                        />
+                                        <input
+                                            className="pop-up-input"
+                                            type="password"
+                                            placeholder="Nhập lại mật khẩu"
+                                            value={password2}
+                                            onChange={(e) => setPassword2(e.target.value)}
+                                        />
+                                        {error === 4 && <p className="error">- Mật khẩu không hợp lệ</p>}
+                                        {error === 3 && <p className="error">- Mật khẩu không khớp</p>}
+                                        <button
+                                            style={{
+                                                fontSize : "22px",
+                                                width: "86%",
+                                                padding: "10px",
+                                                backgroundColor: "#339dff",
+                                                color: "white",
+                                                fontWeight: "bold",
+                                                border: "none",
+                                                borderRadius: "10px",
+                                                cursor: "pointer"
+                                            }}
+                                            onClick={async () => {
+                                                if(password1 === "" || password2 === "") setError(4);
+                                                else if(password1 !== password2) setError(3);
+                                                else{
+                                                    try {
+                                                        const response = await addNewAccountWithPhoneNumber(phoneNumberInput, password1);
+                                                        if(response !== "Add phone number successfully!") alert("Có lỗi xảy ra");
+                                                        else {
+                                                            alert("Thêm số điện thoại thành công");
+                                                            phoneNumberRef.current = phoneNumberInput;
+                                                            setShowAddPhoneNumber(0);
+                                                        }
+                                                    }catch(err) {
+                                                        console.log(err);
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            Tiếp tục
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </>
@@ -141,23 +257,54 @@ const MyComponent = () => {
                         {isSelected === true ? (
                             <>
                                 <div className="personal-information-name-email-contact">
-                                    <div className="information-input-bounding">
-                                        <p className="title">Email</p>
-                                        <input
-                                            value={emailInput}
-                                            onChange={(e) => setEmailInput(e.target.value)}
-                                            type="text"/>
+                                    <div style={{display: "flex", gap: "20px", alignItems: "center"}}>
+                                        <div className="information-input-bounding">
+                                            <p className="title">Email</p>
+                                            <input
+                                                value={emailInput}
+                                                onChange={(e) => setEmailInput(e.target.value)}
+                                                type="text"
+                                                disabled={emailLocked}
+                                            />
+                                        </div>
+                                        {!emailLocked && <p
+                                            style={{fontSize: "20px", color: "#008CFF", cursor: "pointer"}}
+                                            onClick={async () => {
+                                                if(emailInput == null || !emailInput.includes("@gmail.com")) alert("Email không hợp lệ");
+                                                else if(await handleCheckExistedIdentifier(emailInput)) alert("Email đã được sử dụng");
+                                                else{
+                                                    try{
+                                                        const response = await addNewAccountWithEmail(emailInput);
+                                                        if(response !== "Add email successfully!") alert("Có lỗi xảy ra");
+                                                        else {
+                                                            alert("Thêm email thành công");
+                                                            setEmailLocked(true);
+                                                        }
+                                                    }catch(err) {
+                                                        console.log(err);
+                                                    }
+                                                }
+                                            }}
+                                        >+ Thêm email</p>}
                                     </div>
                                     <div className="information-input-bounding">
                                         <p className="title">Họ và tên</p>
                                         <input
                                             value={nameInput}
                                             onChange={(e) => setNameInput(e.target.value)}
-                                            type="text"/>
+                                            type="text"
+                                        />
                                     </div>
-                                    <div className="information-input-bounding">
-                                        <p className="title">Số điện thoại</p>
-                                        <input type="text" value={numberInput}/>
+                                    <div style={{display: "flex", gap: "20px", alignItems: "center"}}>
+                                        <div className="information-input-bounding">
+                                            <p className="title">Số điện thoại</p>
+                                            <input
+                                                type="text"
+                                                value={phoneNumberRef.current}
+                                                readOnly
+                                            />
+                                        </div>
+                                        {!phoneNumberRef.current && <p style={{fontSize: "20px", color: "#008CFF", cursor: "pointer"}} onClick={() => setShowAddPhoneNumber(1)}>+ Thêm số điện thoại</p>}
                                     </div>
                                 </div>
                                 <div className="personal-information-address">
@@ -177,7 +324,7 @@ const MyComponent = () => {
                                             onClick={() => {
                                                 setAddressChoices(allCities);
                                                 setSavedChoice("city");
-                                                setShowPopUp(true);
+                                                setShowAddresses(true);
                                             }}
                                         />
                                         <input
@@ -190,7 +337,7 @@ const MyComponent = () => {
                                             onClick={() => {
                                                 setAddressChoices(allDistricts);
                                                 setSavedChoice("district");
-                                                setShowPopUp(true);
+                                                setShowAddresses(true);
                                             }}
                                         />
                                     </div>
@@ -205,7 +352,7 @@ const MyComponent = () => {
                                             onClick={() => {
                                                 setAddressChoices(allWards);
                                                 setSavedChoice("ward");
-                                                setShowPopUp(true);
+                                                setShowAddresses(true);
                                             }}
                                         />
                                         <input

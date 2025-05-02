@@ -6,8 +6,6 @@ import {faHeart as normalHeart } from "@fortawesome/free-regular-svg-icons";
 import '../../css/user-css/HomePage.css';
 import {Link} from "react-router-dom";
 import {getNewPosts} from '../../apiServices/post.js';
-import {getCurrentAccount} from '../../apiServices/account.js';
-import {getFavouritePostsIdByUser} from '../../apiServices/favouritePost.js';
 import AuthContext from "../../contexts/AuthContext.jsx";
 import {priceFormat} from "../../utils/format.js";
 import FavouritePostContext from "../../contexts/FavouritePostContext.jsx";
@@ -17,7 +15,7 @@ const MyComponent = () => {
     const [newPosts, setNewPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const {user} = useContext(AuthContext);
-    const { heartButtonHandle, setFavouritePostIds, favouritePostIds } = useContext(FavouritePostContext);
+    const { heartButtonHandle, favouritePostIds } = useContext(FavouritePostContext);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,24 +30,8 @@ const MyComponent = () => {
                     console.log(e);
                 }
             }
-            if(user){
-                const tmpFav = localStorage.getItem("favouritePostsId");
-                if(tmpFav) setFavouritePostIds(JSON.parse(tmpFav));
-                else{
-                    try {
-                        const response = await getFavouritePostsIdByUser();
-                        localStorage.setItem("favouritePostsId", JSON.stringify(response));
-                        setFavouritePostIds(response);
-                    }catch(e){
-                        console.log(e);
-                    }
-                }
-            } else {
-                setFavouritePostIds([]);
-            }
             setLoading(false);
         }
-
         fetchData();
     }, [user]);
 

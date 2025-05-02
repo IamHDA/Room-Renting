@@ -1,5 +1,5 @@
 .personal-information-body{
-    height: 700px;
+    height: 900px;
     padding-top: 50px;
     padding-bottom: 50px;
     background: #E8E8E8;
@@ -61,12 +61,12 @@
 
 .personal-information-name-email-contact{
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .information-input-bounding{
-    width: 200px;
+    width: 500px;
 }
 
 .information-input-bounding, .personal-information-address{
@@ -264,4 +264,55 @@
 
 .password-error.js{
     display: block;
+}
+
+.pop-up-phone-number{
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+}
+
+.pop-up-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    gap: 20px;
+    width: 400px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.pop-up-input{
+    width: 80%;
+    font-size: 25px;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    outline: none;
+}
+
+.continue-button{
+    font-size : 22px;
+    width: 86%;
+    padding: 10px;
+    background-color: #339dff;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.error{
+    align-self: flex-start;
+    margin-left: 30px;
+    margin-top: -10px;
+    color: red;
+    font-size: 18px;
 }

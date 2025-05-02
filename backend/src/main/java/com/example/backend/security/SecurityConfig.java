@@ -57,24 +57,25 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
-                                "authenticate/**",
-                                "user/profile/**",
-                                "userRating/totalRating/**",
-                                "post/postsByCriteria",
-                                "post/newPosts",
-                                "post/specificPost/**",
-                                "post/userEnablePosts/**",
-                                "post/userDisablePosts/**",
-                                "address/search",
-                                "PostMedia/**",
-                                "MessageMedia/**",
-                                "address/cities",
-                                "address/districts/**",
-                                "ws/**",
-                                "account/currentAccount"
+                                "/authenticate/**",
+                                "/user/profile/**",
+                                "/userRating/totalRating/**",
+                                "/user/replyPercentage/**",
+                                "/post/postsByCriteria",
+                                "/post/newPosts",
+                                "/post/specificPost/**",
+                                "/post/userEnablePosts/**",
+                                "/post/userDisablePosts/**",
+                                "/address/search",
+                                "/PostMedia/**",
+                                "/MessageMedia/**",
+                                "/address/cities",
+                                "/address/districts/**",
+                                "/ws/**",
+                                "/account/existed"
                         ).permitAll()
                         .requestMatchers(
-                                "admin/**"
+                                "/admin/**"
                         ).hasAuthority(Role.ADMIN.name())
                         .anyRequest().authenticated())
                 .oauth2Login(oauth -> oauth

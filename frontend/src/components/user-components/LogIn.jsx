@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {AuthContext} from '../../contexts/AuthContext.jsx';
 import SockJSContext from "../../contexts/SockJSContext.jsx";
+import {useNavigate} from "react-router-dom";
 
 const MyComponent = ({handleSignInPopUp}) => {
     const {setUpStompClient, stompClientRef} = useContext(SockJSContext);
@@ -15,6 +16,7 @@ const MyComponent = ({handleSignInPopUp}) => {
     const [legitPassword, setLegitPassword] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const {setUser} = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleLogin = async () =>{
         legitAccountRef.current = 1;
@@ -41,6 +43,7 @@ const MyComponent = ({handleSignInPopUp}) => {
                         destination: "/app/user.connect",
                         body: JSON.stringify(user.id)
                     })
+                    if(user.fullName === "Admin") navigate("/admin/statistic");
                     localStorage.setItem('user', JSON.stringify(user));
                     setUser(user);
                     handleSignInPopUp();

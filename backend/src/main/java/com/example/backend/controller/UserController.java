@@ -38,6 +38,16 @@ public class UserController {
         return ResponseEntity.ok(userService.getPersonalInformation());
     }
 
+    @GetMapping("/email/{userId}")
+    public ResponseEntity<String> getUserEmail(@PathVariable long userId){
+        return ResponseEntity.ok(userService.getUserEmail(userId));
+    }
+
+    @GetMapping("/phoneNumber/{userId}")
+    public ResponseEntity<String> getUserPhoneNumber(@PathVariable long userId){
+        return ResponseEntity.ok(userService.getUserPhoneNumber(userId));
+    }
+
     @PutMapping("/changeAvatar")
     public ResponseEntity<String> changeAvatar(@RequestParam("avatar") MultipartFile file) throws IOException {
         return ResponseEntity.ok(userService.changeAvatar(file));

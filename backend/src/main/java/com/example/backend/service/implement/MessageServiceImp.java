@@ -1,6 +1,6 @@
 package com.example.backend.service.implement;
 
-import com.example.backend.Enum.ChatStatus;
+import com.example.backend.Enum.MessageStatus;
 import com.example.backend.dto.chat.*;
 import com.example.backend.entity.mongoDB.ChatRoom;
 import com.example.backend.entity.mongoDB.Message;
@@ -60,8 +60,8 @@ public class MessageServiceImp implements MessageService {
         List<ChatRoom> chatRooms = chatRoomRepo.findByChatId(chatId);
         chatRooms.forEach(chatRoom -> {
             LastMessage lastMessage = modelMapper.map(message, LastMessage.class);
-            if(message.getSenderId() == chatRoom.getSenderId()) lastMessage.setStatus(ChatStatus.SEEN);
-            else lastMessage.setStatus(ChatStatus.UNSEEN);
+            if(message.getSenderId() == chatRoom.getSenderId()) lastMessage.setStatus(MessageStatus.SEEN);
+            else lastMessage.setStatus(MessageStatus.UNSEEN);
             chatRoom.setLastMessage(lastMessage);
         });
         chatRoomRepo.saveAll(chatRooms);

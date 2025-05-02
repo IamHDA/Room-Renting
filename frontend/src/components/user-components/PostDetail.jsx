@@ -2,14 +2,18 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import 'swiper/css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faAngleLeft, faAngleRight, faX,} from '@fortawesome/free-solid-svg-icons';
+import {faAngleLeft, faAngleRight, faHeart as redHeart, faX, faXmark,} from '@fortawesome/free-solid-svg-icons';
 import '../../css/user-css/PostDetail.css';
 import {getPost} from "../../apiServices/post.js";
 import {getImageMime, priceFormat} from "../../utils/format.js";
 import AuthContext from "../../contexts/AuthContext.jsx";
 import {Link, useParams} from "react-router-dom";
+import {faHeart as normalHeart} from "@fortawesome/free-regular-svg-icons";
+import FavouritePostContext from "../../contexts/FavouritePostContext.jsx";
+import {reportPost} from "../../apiServices/report.js";
 
 const MyComponent = () => {
+    const { heartButtonHandle, favouritePostIds } = useContext(FavouritePostContext);
     const {postId} = useParams();
     const { user } = useContext(AuthContext);
     const [post, setPost] = useState(null);
@@ -18,7 +22,20 @@ const MyComponent = () => {
     const [mainMedia, setMainMedia] = useState({index: 0, type: "IMAGE"});
     const [totalLength, setTotalLength] = useState(null);
     const [fullImage, setFullImage] = useState(false);
-    const swiperRef = useRef(null);
+    const [reportPopup, setReportPopup] = useState(false);
+    const [currentReason, setCurrentReason] = useState(null);
+    const [currentDescription, setCurrentDescription] = useState("");
+    const swiperRef1 = useRef(null);
+    const swiperRef2 = useRef(null);
+    const reportReason = [
+        "Lừa đảo",
+        "Trùng lặp",
+        "Trọ đã được thuê",
+        "Không liên lạc được",
+        "Thông tin của tin đăng không đúng thực tế",
+        "Thông tin của người đăng không đúng thực tế",
+        "Lý do khác"
+    ]
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -34,6 +51,12 @@ const MyComponent = () => {
         }
         fetchPost();
     }, [])
+
+    // useEffect(() => {
+    //     if(fullImage === false){
+    //         swiperRef1.current = null;
+    //     }
+    // },[fullImage])
 
     const nextMedia = (index) => {
         const tmp = index + 1;
@@ -61,7 +84,10 @@ const MyComponent = () => {
     }
 
     useEffect(() => {
-        if(swiperRef.current) swiperRef.current.swiper.slideTo(mainMedia.index);
+        if(swiperRef1.current) swiperRef1.current.swiper.slideTo(mainMedia.index);
+        if(fullImage){
+            if(swiperRef2.current) swiperRef2.current.swiper.slideTo(mainMedia.index);
+        }
     }, [mainMedia])
 
     return (
@@ -87,7 +113,7 @@ const MyComponent = () => {
                     </button>
                     <FontAwesomeIcon icon={faX} className="close-image" onClick={() => setFullImage(prev => !prev)}/>
                     {totalLength > 4 ? (
-                        <Swiper ref={swiperRef} slidesPerView="5" grabCursor={true} style={{maxWidth: "860px"}} className="full-image-swiper">
+                        <Swiper ref={swiperRef2} slidesPerView="5" grabCursor={true} style={{maxWidth: "860px"}} className="full-image-swiper">
                             {postImages.map((image, index) => (
                                 <SwiperSlide>
                                     <img
@@ -135,6 +161,95 @@ const MyComponent = () => {
                     )}
                 </div>
             )}
+            {reportPopup && (
+                <>
+                    <div className="curtain report"></div>
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: "15px",
+                            flexDirection: "column",
+                            position: "fixed",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            zIndex: 1000,
+                            backgroundColor: "white",
+                            padding: "20px",
+                            borderRadius: "10px",
+                            textAlign: "center",
+                            fontSize: "22px",
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faXmark} className="close" onClick={() => {
+                            setReportPopup(false);
+                            setCurrentReason(null);
+                        }}/>
+                        <h2 style={{margin: "0"}}>Lý do</h2>
+                        {reportReason.map((reason, index) => (
+                            <label
+                                key={index}
+                                style={{display: "flex", gap: "20px", cursor: "pointer"}}
+                                onClick={() => {
+                                    setCurrentReason(reason);
+                                    setCurrentDescription("");
+                                }}
+                            >
+                                <input type="radio" name="option" value={reason} style={{width: "20px"}}/>
+                                {reason}
+                            </label>
+                        ))}
+                        {currentReason && currentReason !== "Trùng lặp" && currentReason !== "Trọ đã được thuê" && (
+                            <textarea
+                                id="report-description"
+                                style={{
+                                    width: "95%",
+                                    alignSelf: "center",
+                                    height: "100px",
+                                    marginTop: "10px",
+                                    border: "1px solid black",
+                                    resize: "none",
+                                    fontSize: "20px"
+                                }}
+                                onChange={(e) => setCurrentDescription(e.target.value)}
+                            />
+                        )}
+                        <button
+                            style={{
+                                width: "200px",
+                                margin: "auto",
+                                fontSize: "25px",
+                                marginTop: "15px",
+                                padding: "10px 0px 10px 0px",
+                                borderRadius: "10px",
+                                border: "none",
+                                cursor: "pointer"
+                            }}
+                            onClick={async () => {
+                                if(currentReason === null) alert("Hãy chọn một lý do");
+                                else {
+                                    const reportBody = {
+                                        name: currentReason,
+                                        description: currentDescription
+                                    }
+                                    try {
+                                        const response = await reportPost(postId, reportBody);
+                                        if(response === "Post reported successfully!") {
+                                            alert("Báo cáo tin đăng thành công");
+                                            setReportPopup(false);
+                                            setCurrentReason(null);
+                                            setCurrentDescription("");
+                                        }
+                                        else alert("Bạn không thể báo cáo cùng 1 lý do nhiều lần!");
+                                    }catch(e){
+                                        console.log(e);
+                                    }
+                                }
+                            }}
+                        >Báo cáo</button>
+                    </div>
+                </>
+            )}
             <div className="post-detail-container">
                 {post !== null && (
                     <>
@@ -159,7 +274,7 @@ const MyComponent = () => {
                                 </div>
                             </div>
                             {totalLength > 4 ? (
-                                <Swiper ref={swiperRef} slidesPerView="4" grabCursor={true} style={{maxWidth: "860px"}}>
+                                <Swiper ref={swiperRef1} slidesPerView="4" grabCursor={true} style={{maxWidth: "860px"}}>
                                     {postImages.map((image, index) => (
                                         <SwiperSlide key={index}>
                                             <img
@@ -218,10 +333,12 @@ const MyComponent = () => {
                                             <img src="../../../public/detail-icon/share.png" className="share"/>
                                             <img src="../../../public/detail-icon/alert.png" className="report" onClick={() => {
                                                 if(!user) alert("Đăng nhập để sử dụng chức năng này!")
+                                                else setReportPopup(true);
                                             }}/>
-                                            <img src="../../../public/detail-icon/heart.png" className="save" onClick={() => {
-                                                if(!user) alert("Đăng nhập để sử dụng chức năng này!")
-                                            }}/>
+                                            {!favouritePostIds.includes(post.id) ?
+                                                <FontAwesomeIcon icon={normalHeart} style={{fontSize: '30px', color: 'black'}} className="save" onClick={() => heartButtonHandle(post.id)}/> :
+                                                <FontAwesomeIcon icon={redHeart} style={{fontSize: '30px', color: "#ed333b"}} className="save" onClick={() => heartButtonHandle(post.id)}/>
+                                            }
                                         </div>
                                     )}
 
@@ -360,7 +477,7 @@ const MyComponent = () => {
                                 <img src="../../../public/detail-icon/stand-line.png" className="stand-line"/>
                                 <div className="sub">
                                     <p>Tỉ lệ phản hồi</p>
-                                    <p id="sub-rep">90%</p>
+                                    <p id="sub-rep">{post.postCreator.replyPercentage}%</p>
                                 </div>
                             </div>
                             <div  className="post-user-number-bounding">

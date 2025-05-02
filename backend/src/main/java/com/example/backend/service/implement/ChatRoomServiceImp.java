@@ -1,14 +1,12 @@
 package com.example.backend.service.implement;
 
-import com.example.backend.Enum.ChatStatus;
+import com.example.backend.Enum.MessageStatus;
 import com.example.backend.dto.chat.ChatRoomDTO;
 import com.example.backend.dto.chat.ChatRoomPost;
 import com.example.backend.dto.user.UserHeader;
 import com.example.backend.entity.mongoDB.ChatRoom;
 import com.example.backend.entity.mySQL.User;
 import com.example.backend.repository.mongoDB.ChatRoomRepository;
-import com.example.backend.repository.mongoDB.PostMediaRepository;
-import com.example.backend.repository.mySQL.PostRepository;
 import com.example.backend.repository.mySQL.UserRepository;
 import com.example.backend.service.ChatRoomService;
 import com.example.backend.service.UserService;
@@ -87,7 +85,7 @@ public class ChatRoomServiceImp implements ChatRoomService {
     @Override
     public String updateLastMessageStatus(String id) {
         ChatRoom chatRoom = chatRoomRepo.findById(id).orElse(null);
-        chatRoom.getLastMessage().setStatus(ChatStatus.SEEN);
+        chatRoom.getLastMessage().setStatus(MessageStatus.SEEN);
         chatRoomRepo.save(chatRoom);
         return "Update last message status successfully";
     }

@@ -25,7 +25,11 @@ const MyComponent = () => {
                     <List />
                 </FavouritePostProvider>
             } />
-            <Route path="/detail/:postId" element={<PostDetail />} />
+            <Route path="/detail/:postId" element={
+                <FavouritePostProvider>
+                    <PostDetail />
+                </FavouritePostProvider>
+            } />
             <Route path="/account/:userId" element={<UserPage/> }/>
             <Route path="/savedPosts/:pageIndex?" element={<SavedPosts />} />
             <Route path="/personalInformation" element={

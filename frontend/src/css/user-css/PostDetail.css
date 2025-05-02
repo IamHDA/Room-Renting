@@ -44,6 +44,11 @@
     background-color: #252525;
 }
 
+.curtain.report{
+    background-color: #c3c3c3;
+    opacity: 0.4;
+}
+
 .post-detail-body .close-image{
     position: absolute;
     top: 30px;
@@ -333,6 +338,10 @@
     font-size: 22px;
     font-weight: bold;
     color: black;
+}
+
+#sub-rep{
+    margin-top: 17px;
 }
 
 .post-user-number-bounding, .post-user-chatting-bounding{

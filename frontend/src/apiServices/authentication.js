@@ -1,11 +1,11 @@
 import * as request from '../utils/request.js'
 
 export const login = async (identifier, password) => {
-    return await request.post('authenticate/login', {identifier, password});
+    return await request.post('authenticate/login', {identifier, password}, {});
 }
 
 export const register = async (identifier, password, fullName) => {
-    return await request.post('authenticate/register', {identifier, password, fullName});
+    return await request.post('authenticate/register', {identifier, password, fullName}, {});
 }
 
 export const refreshToken = async () => {
@@ -22,8 +22,4 @@ export const logout = async () => {
             Authorization: "Bearer " + localStorage.getItem('accessToken'),
         }
     })
-}
-
-export const loginWithGoogleButton = async () => {
-    return await request.get('api/auth/google-login', {});
 }

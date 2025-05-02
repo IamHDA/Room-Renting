@@ -1,5 +1,6 @@
 package com.example.backend.service.implement;
 
+import com.example.backend.Enum.Provider;
 import com.example.backend.dto.user.UserHeader;
 import com.example.backend.dto.user.UserPersonalInformation;
 import com.example.backend.dto.user.UserProfile;
@@ -7,6 +8,7 @@ import com.example.backend.entity.mySQL.Account;
 import com.example.backend.entity.mySQL.Address;
 import com.example.backend.entity.mySQL.User;
 import com.example.backend.entity.mySQL.Ward;
+import com.example.backend.repository.mongoDB.ChatRoomRepository;
 import com.example.backend.repository.mySQL.AccountRepository;
 import com.example.backend.repository.mySQL.UserRepository;
 import com.example.backend.repository.mySQL.WardRepository;
@@ -30,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -42,6 +45,8 @@ public class UserServiceImp implements UserService {
     private Util util;
     @Autowired
     private AccountRepository accountRepo;
+    @Autowired
+    private ChatRoomRepository chatRoomRepo;
     @Autowired
     private WardRepository wardRepo;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
@@ -105,27 +110,23 @@ public class UserServiceImp implements UserService {
 
     @Override
     public String changePersonalInformation(UserPersonalInformation information){
-        User user = userRepo.findByPhoneNumberOrEmail(information.getPhoneNumber(), "").orElse(null);
+        User currentUser = getCurrentUser();
         if(information.getAddressText().isEmpty()){
             String[] addressText = new String[] {"", "", "", ""};
             addressText = information.getAddressText().split(", ");
             Ward ward = wardRepo.findByName(addressText[2]);
-            Address address = user.getAddress() == null ? new Address() : user.getAddress();
+            Address address = currentUser.getAddress() == null ? new Address() : currentUser.getAddress();
             address.setDetail(addressText[3]);
             address.setWard(ward);
-            user.setAddress(address);
+            currentUser.setAddress(address);
         }
-        user.setFullName(information.getFullName());
-        user.setPhoneNumber(information.getPhoneNumber());
-        user.setEmail(information.getEmail());
-        userRepo.save(user);
+        currentUser.setFullName(information.getFullName());
+        userRepo.save(currentUser);
         return "Change user information successfully!";
     }
 
     @Override
     public String changePassword(String oldPassword, String newPassword){
-        System.out.println(oldPassword);
-        System.out.println(newPassword);
         User user = getCurrentUser();
         List<Account> accounts = accountRepo.findByUser(user);
         for(Account account : accounts){
@@ -137,6 +138,16 @@ public class UserServiceImp implements UserService {
             }
         }
         return "Change password successfully!";
+    }
+
+    @Override
+    public String getUserEmail(long userId) {
+        return userRepo.findById(userId).getEmail();
+    }
+
+    @Override
+    public String getUserPhoneNumber(long userId) {
+        return userRepo.findById(userId).getPhoneNumber();
     }
 
     public void addDefaultProfileImage(User user){

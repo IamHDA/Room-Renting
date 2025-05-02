@@ -49,7 +49,7 @@ const MyComponent = () => {
         let district = document.getElementById("choose-address-district").innerText;
         let city = document.getElementById("choose-address-city").innerText;
         togglePickAddressPopUp();
-        document.getElementById("show-address").innerHTML = city + ", " + district + ", " + ward + (detail ? ", " + detail : "");
+        document.getElementById("show-address").innerHTML = city + ", " + district + ", " + ward + (detail ? ", " + detail.replace(/,/g, "") : "");
     }
 
     const handleFurnitureOption = (e) => {
@@ -103,7 +103,7 @@ const MyComponent = () => {
             });
             formData.append("post", jsonBlob);
             const response = await postManageService.createPost(formData);
-            if (response === "Post created"){
+            if (response === "Post created successfully"){
                 alert("Đã đăng thành công");
                 window.location.reload();
             }

@@ -35,8 +35,6 @@ public class FavouritePostServiceImp implements FavouritePostService {
     @Autowired
     private Util util;
     @Autowired
-    private AddressService addressService;
-    @Autowired
     private PostMediaRepository postMediaRepo;
 
     @Override

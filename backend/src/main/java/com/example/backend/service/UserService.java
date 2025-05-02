@@ -17,6 +17,7 @@ public interface UserService {
     String changeBackgroundImage(MultipartFile file) throws IOException;
     String changePersonalInformation(UserPersonalInformation information);
     String changePassword(String oldPassword, String newPassword);
-
+    String getUserEmail(long userId);
+    String getUserPhoneNumber(long userId);
     void addDefaultProfileImage(User user);
 }
