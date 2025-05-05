@@ -1,7 +1,7 @@
-package com.example.backend.dto;
+package com.example.backend.dto.admin;
 
+import com.example.backend.dto.AccountDTO;
 import com.example.backend.dto.report.ReportDTO;
-import com.example.backend.dto.user.AdminUserDTO;
 import lombok.Builder;
 import lombok.Data;
 

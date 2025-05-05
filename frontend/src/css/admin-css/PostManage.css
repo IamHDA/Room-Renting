@@ -1,13 +1,13 @@
 tr .user-id{
-    width: 130px;
+    width: 80px;
 }
 
 tr .post-price{
     width: 130px;
 }
 
-tr .update-time{
-    width: 220px;
+tr .update-time, tr .post-time{
+    width: 150px;
 }
 
 tr .user-id{
@@ -15,7 +15,7 @@ tr .user-id{
 }
 
 td.post-title{
-    max-width: 200px;
+    max-width: 250px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

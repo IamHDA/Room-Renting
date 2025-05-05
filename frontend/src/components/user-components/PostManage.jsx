@@ -55,7 +55,8 @@ const MyComponent = () => {
     const handleFurnitureOption = (e) => {
         e.stopPropagation();
         setSelectedFurniture(e.target.innerText);
-        setShowFurnitureOption(false)
+        setShowFurnitureOption(false);
+        console.log(selectedFurniture);
     }
 
     const handleSubmitPostButton = async () => {
@@ -86,7 +87,7 @@ const MyComponent = () => {
                 createPostDTO: {
                     title : title,
                     description : document.getElementById("post-create-description").value,
-                    price : document.getElementById("post-create-price").value,
+                    price : document.getElementById("post-create-price").value.replace(/,/g, "."),
                     area : area,
                     bedroom : document.getElementById("post-create-bedroom").value,
                     bathroom : document.getElementById("post-create-bathroom").value,
@@ -95,7 +96,7 @@ const MyComponent = () => {
                     parking : document.getElementById("post-create-parking").value,
                     wifi : document.getElementById("post-create-internet").value,
                     security: document.getElementById("post-create-security").value,
-                    furniture: document.getElementById("post-create-furniture").value
+                    furniture: selectedFurniture
                 }
             };
             const jsonBlob = new Blob([JSON.stringify(postCreateRequest)], {
@@ -299,7 +300,7 @@ const MyComponent = () => {
                                     <div className="post-price-area">
                                         <div className="container">
                                             <p>Giá thuê</p>
-                                            <input id="post-create-price" type="text"/>
+                                            <input id="post-create-price" type="text" style={{fontSize: "20px"}}/>
                                         </div>
                                         <div className="container">
                                             <p>Diện tích</p>

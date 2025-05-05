@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {getEnablePostsByUserId} from "../../apiServices/post.js";
-import Pagination from '../TablePagination.jsx'
+import Pagination from './TablePagination.jsx'
 import {Link} from "react-router-dom";
 
 const MyComponent = ({userId, setEnablePostLength}) => {

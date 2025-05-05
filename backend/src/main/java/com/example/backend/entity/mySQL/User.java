@@ -61,4 +61,8 @@ public class User {
     @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Report> reports;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<UserReport> userReports;
 }

@@ -4,7 +4,6 @@ import com.example.backend.Enum.PostStatus;
 import com.example.backend.dto.filter.AdminPostFilter;
 import com.example.backend.dto.filter.AdminUserFilter;
 import com.example.backend.dto.filter.PostFilter;
-import com.example.backend.dto.post.PostSummaryList;
 import com.example.backend.entity.mySQL.*;
 import com.example.backend.utils.Util;
 import jakarta.persistence.EntityManager;
@@ -26,7 +25,7 @@ public class FilterRepository {
         this.entityManager = entityManager;
     }
 
-    private List<Predicate> buildPredicates(
+    private List<Predicate> buildPostListPredicates(
             CriteriaBuilder cb,
             Root<Post> post,
             Join<Post, PostDetail> postDetail,
@@ -70,7 +69,7 @@ public class FilterRepository {
         Join<Ward, District> district = ward.join("district");
         Join<District, City> city = district.join("city");
 
-        List<Predicate> predicates = buildPredicates(cb, post, postDetail, address, ward, district, city, filter);
+        List<Predicate> predicates = buildPostListPredicates(cb, post, postDetail, address, ward, district, city, filter);
 
         String[] sort = filter.getSortCondition().split(" ");
 
@@ -97,17 +96,28 @@ public class FilterRepository {
         Join<Ward, District> district = ward.join("district");
         Join<District, City> city = district.join("city");
 
-        List<Predicate> predicates = buildPredicates(cb, countPost, postDetail, address, ward, district, city, filter);
+        List<Predicate> predicates = buildPostListPredicates(cb, countPost, postDetail, address, ward, district, city, filter);
 
         cq.select(cb.count(countPost)).where(predicates.toArray(new Predicate[0]));
         TypedQuery<Long> query = entityManager.createQuery(cq);
         return query.getSingleResult();
     }
 
+    List<Predicate> buildAdminPostListPredicate(
+            AdminPostFilter filter,
+            CriteriaBuilder cb,
+            Root<Post> post,
+            Join<Post, User> user
+    ){
+        List<Predicate> predicates = new ArrayList<>();
+        if(!filter.getAuthorName().isBlank()) predicates.add(cb.like(cb.lower(user.get("fullName")), "%" + filter.getAuthorName().toLowerCase() + "%"));
+        if(!filter.getStatus().isBlank()) predicates.add(cb.equal((post.get("status")), PostStatus.valueOf(filter.getStatus())));
+        return predicates;
+    }
+
     public List<Post> adminFilterPost(AdminPostFilter filter) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Post> cq = cb.createQuery(Post.class);
-        List<Predicate> predicates = new ArrayList<>();
 
         Root<Post> post = cq.from(Post.class);
         Join<Post, User> user = post.join("user");
@@ -116,24 +126,51 @@ public class FilterRepository {
         reportCountSubquery.select(cb.count(reportRoot))
                 .where(cb.equal(reportRoot.get("post"), post));
 
-        if(!filter.getAuthorName().isBlank()) predicates.add(cb.like(cb.lower(user.get("fullName")), "%" + filter.getAuthorName().toLowerCase() + "%"));
+        List<Predicate> predicates = buildAdminPostListPredicate(filter, cb, post, user);
 
-        String[] sort = filter.getSortCondition().split(" ");
-
-        if("id".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("id")) : cb.desc(post.get("id")) );
-        if("reportCount".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(reportCountSubquery.getSelection()) : cb.desc(reportCountSubquery.getSelection()));
-        if("createdAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("createdAt")) : cb.desc(post.get("createdAt")));
-        if("updatedAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("updatedAt")) : cb.desc(post.get("updatedAt")));
+        if(!filter.getSortCondition().isBlank()){
+            String[] sort = filter.getSortCondition().split(" ");
+            if("id".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("id")) : cb.desc(post.get("id")) );
+            if("reportCount".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(reportCountSubquery.getSelection()) : cb.desc(reportCountSubquery.getSelection()));
+            if("createdAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("createdAt")) : cb.desc(post.get("createdAt")));
+            if("updatedAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(post.get("updatedAt")) : cb.desc(post.get("updatedAt")));
+        }
 
         cq.where(predicates.toArray(new Predicate[0]));
         TypedQuery<Post> query = entityManager.createQuery(cq);
+        query.setFirstResult((filter.getPageNumber() - 1) * filter.getPageSize());
+        query.setMaxResults(filter.getPageSize());
         return query.getResultList();
+    }
+
+    public long countAdminPost(AdminPostFilter filter) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+        Root<Post> post = cq.from(Post.class);
+        Join<Post, User> user = post.join("user");
+
+        List<Predicate> predicates = buildAdminPostListPredicate(filter, cb, post, user);
+        cq.select(cb.count(post)).where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Long> query = entityManager.createQuery(cq);
+        return query.getSingleResult();
+    }
+
+    List<Predicate> buildAdminUserListPredicate(
+            AdminUserFilter filter,
+            CriteriaBuilder cb,
+            Root<User> user
+    ){
+        List<Predicate> predicates = new ArrayList<>();
+        if(!filter.getFullName().isBlank()) predicates.add(cb.like(cb.lower(user.get("fullName")), "%" + filter.getFullName().toLowerCase() + "%"));
+        if(!filter.getPhoneNumber().isBlank()) predicates.add(cb.like(user.get("phoneNumber"), "%" + filter.getPhoneNumber() + "%"));
+        if(!filter.getEmail().isBlank()) predicates.add(cb.like(user.get("email"), "%" + filter.getEmail() + "%"));
+        return predicates;
     }
 
     public List<User> adminFilterUser(AdminUserFilter filter) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
-        List<Predicate> predicates = new ArrayList<>();
 
         Root<User> user = cq.from(User.class);
         Subquery<Long> reportCountSubquery = cq.subquery(Long.class);
@@ -141,20 +178,32 @@ public class FilterRepository {
         reportCountSubquery.select(cb.count(reportRoot))
                 .where(cb.equal(reportRoot.get("user"), user));
 
-        if(!filter.getFullName().isBlank()) predicates.add(cb.like(cb.lower(user.get("fullName")), "%" + filter.getFullName().toLowerCase() + "%"));
-        if(!filter.getPhoneNumber().isBlank()) predicates.add(cb.like(user.get("phoneNumber"), "%" + filter.getPhoneNumber() + "%"));
+        List<Predicate> predicates = buildAdminUserListPredicate(filter, cb, user);
 
         String[] sort = filter.getSortCondition().split(" ");
 
         if("id".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(user.get("id")) : cb.desc(user.get("id")) );
-        if("fullName".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(user.get("fullName")) : cb.desc(user.get("fullName")));
         if("reportCount".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(reportCountSubquery.getSelection()) : cb.desc(reportCountSubquery.getSelection()));
         if("createdAt".equals(sort[0])) cq.orderBy("asc".equals(sort[1]) ? cb.asc(user.get("createdAt")) : cb.desc(user.get("createdAt")));
 
 
         cq.where(predicates.toArray(new Predicate[0]));
         TypedQuery<User> query = entityManager.createQuery(cq);
+        query.setFirstResult((filter.getPageNumber() - 1) * filter.getPageSize());
+        query.setMaxResults(filter.getPageSize());
         return query.getResultList();
+    }
+
+    public long countAdminUser(AdminUserFilter filter){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+        Root<User> user = cq.from(User.class);
+
+        List<Predicate> predicates = buildAdminUserListPredicate(filter, cb, user);
+        cq.select(cb.count(user)).where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Long> query = entityManager.createQuery(cq);
+        return query.getSingleResult();
     }
 
     public List<Ward> searchAddress(String keyword, String cityName) {

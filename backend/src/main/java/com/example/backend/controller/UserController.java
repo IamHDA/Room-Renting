@@ -4,6 +4,7 @@ import com.example.backend.dto.user.UserHeader;
 import com.example.backend.dto.user.UserPersonalInformation;
 import com.example.backend.dto.user.UserProfile;
 import com.example.backend.dto.user.UserStats;
+import com.example.backend.service.AuthenticationService;
 import com.example.backend.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
     @Autowired
     private UserService userService;
     @Autowired

@@ -21,11 +21,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -91,17 +95,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
         User user = account.getUser();
         user.setStatus(UserStatus.ONLINE);
         userRepo.save(user);
-        tokenService.disableOldTokens(account);
-        tokenService.saveAccountToken(accessToken, refreshToken, account);
-        return new AuthenticationResponse(accessToken, refreshToken, "User login successful");
-    }
-
-    public AuthenticationResponse oauth2Login(Authentication authentication){
-        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oauth2User.getAttribute("email");
-        Account account = accountRepo.findByIdentifier(email).orElse(null);
-        String accessToken = jwtTokenProvider.generateAccessToken(account);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(account);
         tokenService.disableOldTokens(account);
         tokenService.saveAccountToken(accessToken, refreshToken, account);
         return new AuthenticationResponse(accessToken, refreshToken, "User login successful");

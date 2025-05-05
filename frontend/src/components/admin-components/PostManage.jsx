@@ -1,12 +1,34 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import '../../css/admin-css/PostManage.css';
 import '../../css/admin-css/index.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAngleLeft, faAngleRight, faSort, faX, faXmark} from "@fortawesome/free-solid-svg-icons";
-import Pagination from "../PagePagination.jsx";
+import {faAngleLeft, faAngleRight, faX, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {getPosts, getPostReport, deleteReport} from "../../apiServices/admin.js";
+import {deletePost} from "../../apiServices/post.js";
+import SortIcon from "./SortIcon.jsx";
+import Pagination from "../admin-components/Pagination.jsx";
+import SearchIcon from "./SearchIcon.jsx";
+import {Swiper, SwiperSlide} from "swiper/react";
+import {priceFormat} from "../../utils/format.js";
 
 const MyComponent = () => {
     const [isSelected, setIsSelected] = useState(false);
+    const [posts, setPosts] = useState([]);
+    const totalPostsNumberRef = useRef(0);
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
+    const [sortCondition, setSortCondition] = useState("");
+    const [authorName, setAuthorName] = useState("");
+    const [postStatus, setPostStatus] = useState("");
+    const [post, setPost] = useState(null);
+    const [reports, setReports] = useState([]);
+    const [postImages, setPostImages] = useState([]);
+    const [postVideos, setPostVideos] = useState([]);
+    const [mainMedia, setMainMedia] = useState({index: 0, type: "IMAGE"});
+    const [totalLength, setTotalLength] = useState(null);
+    const [fullImage, setFullImage] = useState(false);
+    const swiperRef1 = useRef(null);
+    const swiperRef2 = useRef(null);
 
     useEffect(() => {
         const function2 = document.getElementById("function-2");
@@ -15,6 +37,83 @@ const MyComponent = () => {
         }
     }, [])
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const searchParams = {
+                    pageNumber,
+                    pageSize,
+                    sortCondition,
+                    authorName,
+                    status: postStatus
+                }
+                const response = await getPosts(searchParams);
+                setPosts(response.posts);
+                totalPostsNumberRef.current = response.totalLength;
+            }catch (e){
+                console.log(e);
+            }
+        }
+        fetchData();
+    }, [pageNumber, pageSize, sortCondition, authorName, postStatus])
+
+    useEffect(() => {
+        if(swiperRef1.current) swiperRef1.current.swiper.slideTo(mainMedia.index);
+        if(fullImage){
+            if(swiperRef2.current) swiperRef2.current.swiper.slideTo(mainMedia.index);
+        }
+    }, [mainMedia])
+
+    const nextMedia = (index) => {
+        const tmp = index + 1;
+        if(tmp === totalLength) setMainMedia({index: 0, type: "IMAGE"});
+        else if(tmp >= postImages.length) setMainMedia({index: tmp, type: "VIDEO"});
+        else setMainMedia({index: tmp, type: "IMAGE"});
+    }
+
+    const prevMedia = (index) => {
+        const tmp = index - 1;
+        if(tmp === -1){
+            if(postVideos.length !== 0) setMainMedia({index: totalLength - 1, type: "VIDEO"});
+            else setMainMedia({index: totalLength - 1, type: "IMAGE"});
+        }
+        else if(tmp < postImages.length) setMainMedia({index: tmp, type: "IMAGE"});
+        else setMainMedia({index: tmp, type: "VIDEO"});
+    }
+
+    const specificImage = (index) => {
+        setMainMedia({index: index, type: "IMAGE"});
+    }
+
+    const specificVideo = (index) => {
+        setMainMedia({index: postImages.length + index, type: "VIDEO"});
+    }
+
+    const handleGetPostReport = async (postId) => {
+        const response = await getPostReport(postId);
+        setPost(response.post);
+        setReports(response.reportList);
+        setTotalLength(response.post.postMediaDTO.length);
+        setPostImages(response.post.postMediaDTO.filter(media => media.type === "IMAGE"));
+        setPostVideos(response.post.postMediaDTO.filter(media => media.type === "VIDEO"));
+        setIsSelected(true);
+    }
+
+    const handleDeleteReport = async (reportId) => {
+        try {
+            const response = await deleteReport(reportId);
+            if(response === "Report deleted successfully!"){
+                alert("Xóa tin thành công");
+                const newReports = reports.map(report => report.id !== reportId);
+                setReports(newReports);
+            }else{
+                alert("Có lỗi xảy ra");
+            }
+        }catch (e){
+            console.log(e);
+        }
+    }
+
     return (
         <div className="admin-post-manage-body">
             {isSelected && <div className="curtain"></div>}
@@ -22,254 +121,310 @@ const MyComponent = () => {
                 <thead>
                     <tr>
                         <th className="stt">STT</th>
-                        <th className="id">ID <FontAwesomeIcon icon={faSort} className="sort-icon"/></th>
+                        <th className="id">
+                            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                <p style={{marginRight: "10px"}}>ID</p>
+                                <SortIcon
+                                    sortValue={"id "}
+                                    sortCondition={sortCondition}
+                                    setSortCondition={setSortCondition}
+                                />
+                            </div>
+                        </th>
                         <th className="user-id" >ID người đăng</th>
-                        <th className="author">Tên người đăng</th>
+                        <th className="author">
+                            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                <p>Tên người đăng</p>
+                                <SearchIcon item={"Người đăng"} setParam={setAuthorName} setCurrentPage={setPageNumber}/>
+                            </div>
+                        </th>
                         <th className="post-title">Tiêu đề tin</th>
-                        <th className="report-number">Số lượt báo cáo <FontAwesomeIcon icon={faSort} className="sort-icon"/></th>
-                        <th>Trạng thái</th>
-                        <th className="post-time">Thời gian đăng <FontAwesomeIcon icon={faSort} className="sort-icon"/></th>
-                        <th className="update-time">Thời gian chỉnh sửa <FontAwesomeIcon icon={faSort} className="sort-icon"/></th>
+                        <th className="report-number">
+                            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                <p style={{marginRight: "10px"}}>Số lượt báo cáo</p>
+                                <SortIcon
+                                    sortValue={"reportCount "}
+                                    sortCondition={sortCondition}
+                                    setSortCondition={setSortCondition}
+                                />
+                            </div>
+                        </th>
+                        <th style={{width: "180px"}}>
+                            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                <p>Trạng thái</p>
+                                <SearchIcon item={"Trạng thái"} setParam={setPostStatus} setCurrentPage={setPageNumber}/>
+                            </div>
+                        </th>
+                        <th className="post-time">
+                            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                <p style={{marginRight: "10px"}}>Thời gian đăng</p>
+                                <SortIcon
+                                    sortValue={"createdAt "}
+                                    sortCondition={sortCondition}
+                                    setSortCondition={setSortCondition}
+                                />
+                            </div>
+                        </th>
+                        <th className="update-time">
+                            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                <p style={{marginRight: "10px"}}>Thời gian cập nhật</p>
+                                <SortIcon
+                                    sortValue={"updatedAt "}
+                                    sortCondition={sortCondition}
+                                    setSortCondition={setSortCondition}
+                                />
+                            </div>
+                        </th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr onClick={() => setIsSelected(true)}>
-                        <td className="stt">1</td>
-                        <td className="id">1</td>
-                        <td className="user-id">4</td>
-                        <td>Hứa Duy Anh</td>
-                        <td className="post-title">Phòng trọ siêu cấp vippro dddddddddddddddddddddddddddddddddddddddddd</td>
-                        <td>4 lượt</td>
-                        <td>Đã ẩn</td>
-                        <td>13:02, 15/03/2025</td>
-                        <td>18:02, 16/03/2025</td>
-                        <td className="delete" onClick={(e) => {
-                            e.stopPropagation();
-                        }}><FontAwesomeIcon icon={faX}/></td>
-                    </tr>
+                    {posts.length > 0 ? posts.map((post, index) => (
+                        <tr key={index} onClick={() => handleGetPostReport(post.id)}>
+                            <td className="stt">{pageSize % (pageNumber * pageSize) + 1 + index}</td>
+                            <td className="id">{post.id}</td>
+                            <td className="user-id">{post.userId}</td>
+                            <td>{post.authorName}</td>
+                            <td className="post-title">{post.title}</td>
+                            <td>{post.reportedTime} lượt</td>
+                            <td>{post.postStatus === "ENABLED" ? "Đang hiển thị" : "Đã ẩn"}</td>
+                            <td>{post.createdAt}</td>
+                            <td>{post.updatedAt ? post.updatedAt : ""}</td>
+                            <td className="delete" onClick={(e) => {
+                                e.stopPropagation();
+                                deletePost(post.id);
+                            }}><FontAwesomeIcon icon={faX}/></td>
+                        </tr>
+                    )): (
+                        <tr>
+                            <td colSpan="10" style={{
+                                height: "200px",
+                                textAlign: "center",
+                                paddingTop: "20px",
+                                backgroundColor: "#fff"
+                            }}>
+                                <img src="../../../public/no-data.png" alt="No data" style={{width: "80px", height: "80px", opacity: 0.5}} />
+                                <p style={{marginTop: "10px", color: "#888"}}>Không có dữ liệu</p>
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
+            <Pagination
+                currentPage={pageNumber}
+                setCurrentPage={setPageNumber}
+                totalLength={totalPostsNumberRef.current}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+            />
             {isSelected && (
                 <div className="pop-up">
                     <div className="content-container">
                         <FontAwesomeIcon icon={faXmark} className="close" onClick={() => setIsSelected(false)}/>
                         <div className="post-detail">
-                            <div className="post-images">
-                                <div className="post-main-image">
-                                    <img src="../../../public/detail-icon/home.png"/>
-                                    <button className="next">
+                            <div className="post-media">
+                                <div className="post-main-media">
+                                    {mainMedia.type === "IMAGE" ? (
+                                        <img src={postImages[mainMedia.index].url} onClick={() => setFullImage(prev => !prev)}/>
+                                    ) : (
+                                        <video controls>
+                                            <source src={postVideos[mainMedia.index - postImages.length].url} type="video/mp4" />
+                                            <source src={postVideos[mainMedia.index - postImages.length].url} type="video/webm" />
+                                            <source src={postVideos[mainMedia.index - postImages.length].url} type="video/ogg" />
+                                        </video>
+                                    )}
+                                    <button className="next" onClick={() => nextMedia(mainMedia.index)}>
                                         <FontAwesomeIcon icon={faAngleRight} />
                                     </button>
-                                    <button className="prev">
+                                    <button className="prev" onClick={() => prevMedia(mainMedia.index)}>
                                         <FontAwesomeIcon icon={faAngleLeft} />
                                     </button>
                                 </div>
-                                <div className="post-images-thumbnail">
-                                    <img src="../../../public/detail-icon/home.png" className="thumbnail"/>
-                                    <img src="../../../public/detail-icon/home.png" className="thumbnail"/>
-                                    <img src="../../../public/detail-icon/home.png" className="thumbnail"/>
-                                    <img src="../../../public/detail-icon/home.png" className="thumbnail"/>
-                                </div>
                             </div>
-                            <h1>ĐỘC QUYỀN CHO THUÊ CĂN HỘ 2PN AKARI CITY NAM LONG</h1>
+                            {totalLength > 4 ? (
+                                <Swiper ref={swiperRef1} slidesPerView="4" grabCursor={true} style={{maxWidth: "800px"}}>
+                                    {postImages.map((image, index) => (
+                                        <SwiperSlide key={index}>
+                                            <img
+                                                src={image.url}
+                                                className={mainMedia.index !== index ? "thumbnail" : "thumbnail js"}
+                                                onClick={() => specificImage(index)}
+                                            />
+                                        </SwiperSlide>
+                                    ))}
+                                    {postVideos.map((video, index) => (
+                                        <SwiperSlide key={index}>
+                                            <img
+                                                src="../../../public/detail-icon/play-video.jpg"
+                                                className={mainMedia.index - postImages.length !== index ? "thumbnail" : "thumbnail js"}
+                                                style={{ backgroundColor: "white" }}
+                                                onClick={() => specificVideo(index)}
+                                            ></img>
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
+                            ) : (
+                                <div className="post-detail-image-container">
+                                    {postImages.map((image, index) => (
+                                        <img
+                                            key={index}
+                                            src={image.url}
+                                            className={mainMedia.index !== index ? "thumbnail" : "thumbnail js"}
+                                            onClick={() => specificImage(index)}
+                                        />
+                                    ))}
+                                    {postVideos.map((video, index) => (
+                                        <img
+                                            key={index}
+                                            src="../../../public/detail-icon/play-video.jpg"
+                                            className={mainMedia.index - postImages.length !== index ? "thumbnail" : "thumbnail js"}
+                                            style={{ backgroundColor: "white" }}
+                                            onClick={() => specificVideo(index)}
+                                        ></img>
+                                    ))}
+                                </div>
+                            )}
+                            <h1>{post.title}</h1>
                             <img src="../../../public/detail-icon/line.png" className="line"/>
                             <div className="post-detail-mixed">
                                 <div className="main-content">
                                     <div className="post-detail-price">
                                         <p className="title">Mức giá</p>
-                                        <p className="emphasize">8 triệu/tháng</p>
+                                        <p className="emphasize">{priceFormat(post.postDetailDTO.price)} triệu/tháng</p>
                                     </div>
                                     <div className="post-detail-area">
                                         <p className="title">Diện tích</p>
-                                        <p className="emphasize">62m&sup2;</p>
-                                    </div>
-                                    <div className="post-detail-bedroom">
-                                        <p className="title">Phòng ngủ</p>
-                                        <p className="emphasize">1 PN</p>
-                                    </div>
-                                    <div className="post-detail-function">
-                                        <img src="../../../public/detail-icon/share.png" className="share"/>
-                                        <img src="../../../public/detail-icon/alert.png" className="report"/>
-                                        <img src="../../../public/detail-icon/heart.png" className="save"/>
+                                        <p className="emphasize">{post.postDetailDTO.area}m&sup2;</p>
                                     </div>
                                 </div>
                                 <div className="post-location">
                                     <img src="../../../public/detail-icon/location.png"/>
-                                    <p>Akari City Nam Long, Võ Văn Kiệt, An Lạc, Bình Tân, Hồ Chí Minh</p>
+                                    <p>{post.addressDTO}</p>
                                 </div>
                                 <div className="post-time">
                                     <img src="../../../public/detail-icon/clock.png"/>
-                                    <p>12:00, 13/03/2025</p>
+                                    <p>{post.createdAt}</p>
                                 </div>
                             </div>
                             <img src="../../../public/detail-icon/line.png" className="line"/>
                             <div className="post-detail-description">
                                 <h2>Thông tin mô tả</h2>
-                                <div className="description-content">
-                                    <p>Cho thuê căn hộ Akari City Không gian sống hiện đại giữa lòng Sài Gòn</p>
-                                    <br/>
-                                    <p>Bạn đang tìm kiếm một nơi an cư lý tưởng với tiện nghi đẳng cấp và vị trí thuận lợi? Căn hộ Akari City chính là lựa chọn hoàn hảo dành cho bạn!</p>
-                                    <br/>
-                                    <p>Tổng quan dự án:</p>
-                                    <p>Vị trí: Số 77 Đại lộ Võ Văn Kiệt, phường An Lạc, Quận Bình Tân, TP. Hồ Chí Minh.</p>
-                                    <p>Chủ đầu tư: Tập đoàn Nam Long hợp tác cùng hai đối tác Nhật Bản.</p>
-                                    <p>Quy mô: Khu đô thị rộng hơn 8,5 ha với 3 giai đoạn phát triển, cung cấp gần 5.000 căn hộ.</p>
-                                    <br/>
-                                    <p>Thông tin căn hộ cho thuê:</p>
-                                    <p>Diện tích và giá thuê:</p>
-                                    <p>- Căn hộ 2 phòng ngủ, 1 phòng tắm (60-63m²): 8 triệu đồng/tháng.</p>
-                                    <p>- Căn hộ 2 phòng ngủ, 2 phòng tắm (78-81m²): 9 - 9,5 triệu đồng/tháng.</p>
-                                    <p>- Căn hộ 2 phòng ngủ, 2 phòng tắm (84-89m²): 10,5 - 11 triệu đồng/tháng.</p>
-                                    <p>- Căn hộ 3 phòng ngủ, 2 phòng tắm (93-99m²): 12 - 14 triệu đồng/tháng.</p>
-                                    <br/>
-                                    <p>Tiện ích nội khu: Hồ bơi riêng cho từng giai đoạn, trung tâm thương mại, sân thể thao, phòng gym, yoga, vườn Nhật, khu vui chơi trẻ em, thư viện và nhiều tiện ích khác.</p>
-                                    <br/>
-                                    <p>Tình trạng bàn giao: Hoàn thiện cơ bản theo tiêu chuẩn Flora của chủ đầu tư Nam Long.</p>
-                                    <br/>
-                                    <p>Ưu điểm nổi bật:</p>
-                                    <p>- Vị trí chiến lược: Nằm trên trục đại lộ Võ Văn Kiệt, dễ dàng di chuyển đến trung tâm Quận 1 chỉ trong 20 phút.</p>
-                                    <p>- Thiết kế hiện đại: Căn hộ được thiết kế thông minh, tối ưu hóa không gian và ánh sáng tự nhiên.</p>
-                                    <p>- Tiện ích đa dạng: Đáp ứng mọi nhu cầu sống, giải trí và thư giãn của cư dân.</p>
-                                    <br/>
-                                    <p>Liên hệ ngay để biết thêm chi tiết và sắp xếp lịch xem nhà.</p>
+                                <div className="description-content" dangerouslySetInnerHTML={{
+                                    __html: post.description.replace(/<br>/, '<br/>')
+                                }} >
                                 </div>
                             </div>
                             <img src="../../../public/detail-icon/line.png" className="line"/>
                             <div className="post-property">
                                 <h2>Đặc điểm phòng trọ</h2>
                                 <div className="properties">
-                                    <div className="left">
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
-                                        <div className="sub">
-                                            <div className="title">
-                                                <img src="../../../public/detail-icon/dong.png"/>
-                                                <p>Mức giá</p>
-                                            </div>
-                                            <p id="sub-price">8 triệu/tháng</p>
+                                    <div className="sub">
+                                        <div className="title">
+                                            <img src="../../../public/detail-icon/dong.png"/>
+                                            <p>Mức giá</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
-                                        <div className="sub">
-                                            <div className="title">
-                                                <img src="../../../public/detail-icon/area.png"/>
-                                                <p>Diện tích</p>
-                                            </div>
-                                            <p id="sub-area">62m&sup2;</p>
+                                        <p>{priceFormat(post.postDetailDTO.price)} triệu/tháng</p>
+                                    </div>
+                                    <div className="sub">
+                                        <div className="title">
+                                            <img src="../../../public/detail-icon/area.png"/>
+                                            <p>Diện tích</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                        <p>{post.postDetailDTO.area}m&sup2;</p>
+                                    </div>
+                                    {post.postDetailDTO.bedroom !== "" && (
                                         <div className="sub">
                                             <div className="title">
                                                 <img src="../../../public/detail-icon/bedroom.png"/>
                                                 <p>Phòng ngủ</p>
                                             </div>
-                                            <p id="sub-bedroom">2 phòng</p>
+                                            <p>{post.postDetailDTO.bedroom} phòng</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    )}
+                                    {post.postDetailDTO.bathroom !== "" && (
                                         <div className="sub">
                                             <div className="title">
                                                 <img src="../../../public/detail-icon/bathroom.png"/>
                                                 <p>Phòng tắm, vệ sinh</p>
                                             </div>
-                                            <p id="sub-bathroom">2 phòng</p>
+                                            <p>{post.postDetailDTO.bathroom} phòng</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    )}
+                                    {post.postDetailDTO.parking !== "" &&(
                                         <div className="sub">
                                             <div className="title">
                                                 <img src="../../../public/detail-icon/clock.png"/>
-                                                <p>Thời gian dự kiến vào ở</p>
+                                                <p>Chỗ để xe</p>
                                             </div>
-                                            <p id="sub-move-time">Ở ngay</p>
+                                            <p>{post.postDetailDTO.parking} xe</p>
                                         </div>
-                                    </div>
-                                    <div className="right">
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    )}
+                                    {post.postDetailDTO.electric !== "" && (
                                         <div className="sub">
                                             <div className="title">
                                                 <img src="../../../public/detail-icon/electric.png"/>
                                                 <p>Giá điện</p>
                                             </div>
-                                            <p id="electric-price">Theo nhà cung cấp</p>
+                                            <p>{post.postDetailDTO.electric}</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    )}
+                                    {post.postDetailDTO.water !== "" && (
                                         <div className="sub">
                                             <div className="title">
                                                 <img src="../../../public/detail-icon/water.png"/>
                                                 <p>Giá nước</p>
                                             </div>
-                                            <p id="sub-water-price">Theo nhà cung cấp</p>
+                                            <p>{post.postDetailDTO.water}</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    )}
+                                    {post.postDetailDTO.wifi !== "" && (
                                         <div className="sub">
                                             <div className="title">
                                                 <img src="../../../public/detail-icon/wifi.png"/>
                                                 <p>Giá Internet</p>
                                             </div>
-                                            <p id="internet-price">150k/tháng</p>
+                                            <p>{post.postDetailDTO.wifi}</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    )}
+                                    {post.postDetailDTO.security && (
                                         <div className="sub">
                                             <div className="title">
                                                 <img src="../../../public/detail-icon/security.png"/>
                                                 <p>An ninh</p>
                                             </div>
-                                            <p id="sub-security">Camera, PCCC, Bảo vệ</p>
+                                            <p>{post.postDetailDTO.security}</p>
                                         </div>
-                                        <img src="../../../public/detail-icon/line.png" className="line"/>
+                                    )}
+                                    {post.postDetailDTO.furniture && (
                                         <div className="sub">
                                             <div className="title">
                                                 <img src="../../../public/detail-icon/furniture.png"/>
                                                 <p>Nội thất</p>
                                             </div>
-                                            <p id="sub-furniture">Căn bản</p>
+                                            <p>{post.postDetailDTO.furniture}</p>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
                         <div className="report-container">
                             <h1>Báo cáo</h1>
-                            <div className="report-bounding">
-                                <FontAwesomeIcon icon={faXmark} className="close"/>
-                                <div className="report-content">
-                                    <h3>Thông tin sai</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ádasdasdasdfffffffffffffffffffff</p>
-                                </div>
-                                <div className="reporter-container">
-                                    <h3>Người báo cáo</h3>
-                                    <div className="reporter">
-                                        <p>ID: 10</p>
-                                        <p>Tên: Hứa Duy Anh</p>
+                            {reports.map((report, index) => (
+                                <div key={index} className="report-bounding">
+                                    <FontAwesomeIcon icon={faXmark} className="close" onClick={() => handleDeleteReport(report.id)}/>
+                                    <div className="report-content">
+                                        <h3>{report.name}</h3>
+                                        <p>{report.description}</p>
+                                    </div>
+                                    <div className="reporter-container">
+                                        <h3>Người báo cáo</h3>
+                                        <div className="reporter">
+                                            <p>ID: {report.reportCreator.id}</p>
+                                            <p>Tên: {report.reportCreator.name}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="report-bounding">
-                                <FontAwesomeIcon icon={faXmark} className="close"/>
-                                <div className="report-content">
-                                    <h3>Thông tin sai</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ádasdasdasdfffffffffffffffffffff</p>
-                                </div>
-                                <div className="reporter-container">
-                                    <h3>Người báo cáo</h3>
-                                    <div className="reporter">
-                                        <p>ID: 10</p>
-                                        <p>Tên: Hứa Duy Anh</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="report-bounding">
-                                <FontAwesomeIcon icon={faXmark} className="close"/>
-                                <div className="report-content">
-                                    <h3>Thông tin sai</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ádasdasdasdfffffffffffffffffffff</p>
-                                </div>
-                                <div className="reporter-container">
-                                    <h3>Người báo cáo</h3>
-                                    <div className="reporter">
-                                        <p>ID: 10</p>
-                                        <p>Tên: Hứa Duy Anh</p>
-                                    </div>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>

@@ -1,20 +1,21 @@
-package com.example.backend.dto.post;
+package com.example.backend.dto.admin;
 
+import com.example.backend.Enum.PostStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
-public class AdminPostDTO {
+public class AdminPostRow {
+    private long id;
+    private long userId;
+    private String authorName;
     private String title;
-    private String description;
-    private String addressDTO;
-    private List<PostMediaDTO> postMediaDTO;
+    private long reportedTime;
+    private PostStatus postStatus;
     @JsonFormat(pattern = "HH:mm, dd/MM/yyyy")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "HH:mm, dd/MM/yyyy")
     private LocalDateTime updatedAt;
-    private PostDetailDTO postDetailDTO;
 }

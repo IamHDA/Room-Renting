@@ -47,8 +47,6 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
     private TokenService tokenService;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

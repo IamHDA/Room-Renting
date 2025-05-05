@@ -1,10 +1,10 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.post.AdminPostRow;
-import com.example.backend.dto.user.AdminUserRow;
-import com.example.backend.dto.UserReportDTO;
+import com.example.backend.dto.admin.AdminPostResponse;
+import com.example.backend.dto.admin.AdminUserResponse;
+import com.example.backend.dto.admin.UserReportDTO;
 import com.example.backend.dto.filter.AdminPostFilter;
-import com.example.backend.dto.PostReportDTO;
+import com.example.backend.dto.admin.PostReportDTO;
 import com.example.backend.dto.filter.AdminUserFilter;
 import com.example.backend.dto.post.PostStats;
 import com.example.backend.dto.report.ReportStats;
@@ -14,8 +14,6 @@ import com.example.backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -49,28 +47,57 @@ public class AdminController {
     public ResponseEntity<UserStats> getTotalUsers(){
         UserStats userStats = UserStats
                 .builder()
-                .totalUser(adminService.getTotalUser())
-                .totalUserThisMonth( adminService.getTotalUserThisMonth())
-                .totalUserThisDay( adminService.getTotalUserThisDay())
+                .totalUsers(adminService.getTotalUser())
+                .totalUsersThisMonth( adminService.getTotalUserThisMonth())
+                .totalUsersThisDay( adminService.getTotalUserThisDay())
                 .build();
         return ResponseEntity.ok(userStats);
     }
 
     @GetMapping("/postTable")
-    public ResponseEntity<List<AdminPostRow>> getPostTable(@RequestParam String authorName, String sortCondition){
+    public ResponseEntity<AdminPostResponse> getPostTable(
+            @RequestParam(defaultValue = "") String authorName,
+            @RequestParam(defaultValue = "") String sortCondition,
+            @RequestParam(defaultValue = "") String status,
+            @RequestParam(defaultValue = "1") int pageNumber,
+            @RequestParam(defaultValue = "5") int pageSize
+    ){
         return ResponseEntity.ok(adminService.getPostManageList(AdminPostFilter.builder()
-                .authorName(authorName)
-                .sortCondition(sortCondition)
+                        .authorName(authorName)
+                        .sortCondition(sortCondition)
+                        .pageNumber(pageNumber)
+                        .pageSize(pageSize)
+                        .status(status)
                 .build()));
     }
 
     @GetMapping("/userTable")
-    public ResponseEntity<List<AdminUserRow>> getUserTable(@RequestParam String fullName, @RequestParam String phoneNumber, @RequestParam String sortCondition){
+    public ResponseEntity<AdminUserResponse> getUserTable(
+            @RequestParam(defaultValue = "") String fullName,
+            @RequestParam(defaultValue = "") String phoneNumber,
+            @RequestParam(defaultValue = "") String email,
+            @RequestParam(defaultValue = "") String sortCondition,
+            @RequestParam(defaultValue = "") int pageNumber,
+            @RequestParam(defaultValue = "") int pageSize)
+    {
         return ResponseEntity.ok(adminService.getUserManageList(AdminUserFilter.builder()
-                .fullName(fullName)
-                .phoneNumber(phoneNumber)
-                .sortCondition(sortCondition)
+                        .fullName(fullName)
+                        .phoneNumber(phoneNumber)
+                        .sortCondition(sortCondition)
+                        .pageNumber(pageNumber)
+                        .pageSize(pageSize)
+                        .email(email)
                 .build()));
+    }
+
+    @GetMapping("/postsCount")
+    public ResponseEntity<Long> getPostCount(){
+        return ResponseEntity.ok(adminService.getTotalPost());
+    }
+
+    @GetMapping("/usersCount")
+    public ResponseEntity<Long> getUserCount(){
+        return ResponseEntity.ok(adminService.getTotalUser());
     }
 
     @GetMapping("/post/{postId}")
@@ -81,11 +108,6 @@ public class AdminController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<UserReportDTO> getUserReport(@PathVariable long userId){
         return ResponseEntity.ok(adminService.getUserReport(userId));
-    }
-
-    @DeleteMapping("/post/delete/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable long postId){
-        return ResponseEntity.ok(postService.deletePost(postId));
     }
 
     @DeleteMapping("/user/delete/{userId}")

@@ -6,7 +6,7 @@ import lombok.Data;
 @Builder
 @Data
 public class UserStats {
-    private long totalUser;
-    private long totalUserThisMonth;
-    private long totalUserThisDay;
+    private long totalUsers;
+    private long totalUsersThisMonth;
+    private long totalUsersThisDay;
 }

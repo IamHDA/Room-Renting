@@ -9,9 +9,8 @@ import com.example.backend.entity.mongoDB.PostMedia;
 import com.example.backend.entity.mySQL.*;
 import com.example.backend.repository.mongoDB.PostMediaRepository;
 import com.example.backend.repository.mySQL.*;
-import com.example.backend.service.AddressService;
-import com.example.backend.service.PostService;
 import com.example.backend.service.UserService;
+import com.example.backend.service.PostService;
 import com.example.backend.utils.Util;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,6 @@ public class PostServiceImp implements PostService {
     private AddressRepository addressRepo;
     @Autowired
     private UserService userService;
-    @Autowired
-    private AddressService addressService;
     @Autowired
     private WardRepository wardRepo;
     @Autowired
@@ -157,6 +154,7 @@ public class PostServiceImp implements PostService {
                         .electric(createPostDTO.getElectric())
                         .parking(createPostDTO.getParking())
                         .wifi(createPostDTO.getWifi())
+                        .furniture(createPostDTO.getFurniture())
                         .build())
                 .address(address)
                 .createdAt(LocalDateTime.now())

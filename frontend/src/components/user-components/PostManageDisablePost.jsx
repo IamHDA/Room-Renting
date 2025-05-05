@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import {changePostStatus, deletePost, getDisablePostsByUserId} from "../../apiServices/post.js";
-import TablePagination from "../TablePagination.jsx";
+import TablePagination from "./TablePagination.jsx";
 import {getPostDetail} from "../../apiServices/post.js";
 
 const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {

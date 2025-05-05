@@ -1,16 +1,15 @@
 package com.example.backend.service.implement;
 
+import com.example.backend.Enum.UserStatus;
 import com.example.backend.dto.*;
+import com.example.backend.dto.admin.*;
 import com.example.backend.dto.filter.AdminPostFilter;
 import com.example.backend.dto.filter.AdminUserFilter;
-import com.example.backend.dto.post.AdminPostDTO;
-import com.example.backend.dto.post.AdminPostRow;
 import com.example.backend.dto.post.PostDTO;
-import com.example.backend.dto.PostReportDTO;
 import com.example.backend.dto.report.ReportCreator;
 import com.example.backend.dto.report.ReportDTO;
-import com.example.backend.dto.user.AdminUserDTO;
-import com.example.backend.dto.user.AdminUserRow;
+import com.example.backend.dto.admin.AdminUserDTO;
+import com.example.backend.dto.admin.AdminUserRow;
 import com.example.backend.entity.mySQL.User;
 import com.example.backend.repository.mySQL.*;
 import com.example.backend.service.AddressService;
@@ -38,8 +37,6 @@ public class AdminServiceImp implements AdminService {
     @Autowired
     private ReportRepository reportRepo;
     @Autowired
-    private AddressService addressService;
-    @Autowired
     private Util util;
     @Autowired
     private FilterRepository filterRepo;
@@ -62,29 +59,35 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public List<AdminPostRow> getPostManageList(AdminPostFilter filter) {
-        return filterRepo.adminFilterPost(filter)
-                .stream()
-                .map(post -> {
-                    AdminPostRow dto = modelMapper.map(post, AdminPostRow.class);
-                    dto.setUserId(post.getUser().getId());
-                    dto.setAuthorName(post.getUser().getFullName());
-                    dto.setReportedTime(postReportRepo.countByPost(post));
-                    return dto;
-                })
-                .toList();
+    public AdminPostResponse getPostManageList(AdminPostFilter filter) {
+        AdminPostResponse res = new AdminPostResponse();
+        res.setPosts(filterRepo.adminFilterPost(filter)
+                        .stream()
+                        .map(post -> {
+                            AdminPostRow dto = modelMapper.map(post, AdminPostRow.class);
+                            dto.setUserId(post.getUser().getId());
+                            dto.setAuthorName(post.getUser().getFullName());
+                            dto.setReportedTime(postReportRepo.countByPost(post));
+                            return dto;
+                        })
+                    .toList());
+        res.setTotalLength(filterRepo.countAdminPost(filter));
+        return res;
     }
 
     @Override
-    public List<AdminUserRow> getUserManageList(AdminUserFilter filter) {
-        return filterRepo.adminFilterUser(filter)
-                .stream()
-                .map(user -> {
-                    AdminUserRow dto = modelMapper.map(user, AdminUserRow.class);
-                    dto.setReportedTime(userReportRepo.countByUser(user));
-                    return dto;
-                })
-                .toList();
+    public AdminUserResponse getUserManageList(AdminUserFilter filter) {
+        AdminUserResponse res = new AdminUserResponse();
+        res.setUsers(filterRepo.adminFilterUser(filter)
+                    .stream()
+                    .map(user -> {
+                        AdminUserRow dto = modelMapper.map(user, AdminUserRow.class);
+                        dto.setReportedTime(userReportRepo.countByUser(user));
+                        return dto;
+                    })
+                .toList());
+        res.setTotalUsers(filterRepo.countAdminUser(filter));
+        return res;
     }
 
     @Override
@@ -109,6 +112,9 @@ public class AdminServiceImp implements AdminService {
     public UserReportDTO getUserReport(long userId) {
         User user = userRepo.findById(userId);
         AdminUserDTO userDTO = modelMapper.map(userRepo.findById(userId), AdminUserDTO.class);
+        userDTO.setStatus(user.getStatus().getDisplayName());
+        System.out.println("Message Reply" + util.getMessageReplyPercentage(user.getId()));
+        userDTO.setReplyPercentage(util.getMessageReplyPercentage(user.getId()));
         userDTO.setAddressDTO(util.getTextAddress(user.getAddress()));
         List<AccountDTO> accounts = accountRepo.findByUser(user)
                 .stream()
@@ -123,9 +129,9 @@ public class AdminServiceImp implements AdminService {
                 })
                 .toList();
         return UserReportDTO.builder()
-                .user(userDTO)
-                .accounts(accounts)
-                .reportList(reports)
+                    .user(userDTO)
+                    .accounts(accounts)
+                    .reportList(reports)
                 .build();
     }
 

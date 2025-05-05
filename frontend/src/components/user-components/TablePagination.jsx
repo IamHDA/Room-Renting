@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import '../css/Pagination.css';
+import '../../css/Pagination.css';
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faArrowRight} from "@fortawesome/free-solid-svg-icons";

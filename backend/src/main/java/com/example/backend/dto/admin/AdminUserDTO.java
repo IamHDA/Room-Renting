@@ -1,4 +1,4 @@
-package com.example.backend.dto.user;
+package com.example.backend.dto.admin;
 
 import lombok.Data;
 
@@ -10,4 +10,5 @@ public class AdminUserDTO {
     private byte[] backgroundImage;
     private String status;
     private String addressDTO;
+    private int replyPercentage;
 }

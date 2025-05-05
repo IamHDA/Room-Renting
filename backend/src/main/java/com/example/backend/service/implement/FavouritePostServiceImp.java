@@ -9,7 +9,6 @@ import com.example.backend.entity.mySQL.User;
 import com.example.backend.repository.mongoDB.PostMediaRepository;
 import com.example.backend.repository.mySQL.FavouritePostRepository;
 import com.example.backend.repository.mySQL.PostRepository;
-import com.example.backend.service.AddressService;
 import com.example.backend.service.FavouritePostService;
 import com.example.backend.service.UserService;
 import com.example.backend.utils.Util;

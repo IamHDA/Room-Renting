@@ -4,7 +4,7 @@ import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import { getEnablePostsByUserId, changePostStatus } from "../../apiServices/post.js";
 import { getPostDetail } from "../../apiServices/post.js";
-import TablePagination from "../TablePagination.jsx";
+import TablePagination from "./TablePagination.jsx";
 
 const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
     const [posts, setPosts] = useState([]);

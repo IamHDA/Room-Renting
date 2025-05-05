@@ -40,7 +40,7 @@
 }
 
 .post-create-main-content .stand-line{
-    height: 1280px;
+    height: 1200px;
 }
 
 .post-create-main-content .left{
@@ -63,8 +63,12 @@
 
 .post-media-grid{
     display: grid;
+    max-height: 300px;
+    width: 500px;
+    padding-top: 10px;
+    overflow-y: auto;
     grid-template-columns: repeat(5, 95px);
-    grid-template-rows: repeat(5, 95px);
+    grid-template-rows: repeat(auto-fit, 95px);
     row-gap: 5px;
 }
 
@@ -219,7 +223,7 @@
 }
 
 .price-area .post-price-area input, .title-description input, .post-bedroom-electric input, .post-bathroom-water input, .post-parking-internet input, .post-security-furniture input, .edit-title-description input{
-    font-size: 25px;
+    font-size: 22px;
     border: none;
     outline: none;
     width: 100%;

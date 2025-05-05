@@ -8,5 +8,8 @@ import lombok.Data;
 public class AdminUserFilter {
     private String fullName;
     private String phoneNumber;
+    private String email;
     private String sortCondition;
+    private int pageNumber;
+    private int pageSize;
 }

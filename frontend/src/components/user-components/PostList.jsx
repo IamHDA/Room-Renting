@@ -1,14 +1,14 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/user-css/PostList.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faAngleDown, faAngleRight, faHeart as redHeart, faLocationDot} from '@fortawesome/free-solid-svg-icons';
+import {faHeart as redHeart, faLocationDot} from '@fortawesome/free-solid-svg-icons';
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {getPostsByCriteria} from '../../apiServices/post.js';
 import {getCities, getDistrictsByCity} from '../../apiServices/address.js';
 import FavouritePostContext from "../../contexts/FavouritePostContext.jsx";
 import {faHeart as normalHeart} from "@fortawesome/free-regular-svg-icons";
 import AuthContext from "../../contexts/AuthContext.jsx";
-import BackendPaginationUI from "../BackendPaginationUI.jsx";
+import BackendPaginationUI from "./BackendPaginationUI.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {addressFormat} from "../../utils/format.js";
 
@@ -50,6 +50,7 @@ const MyComponent = () => {
         { label: "Không có nội thất", value: "Không có" }
     ]
      const sortOptions  = [
+         { label: "Thông thường", value: "normal" },
          { label: "Giá tăng dần", value: "price asc" },
          { label: "Giá giảm dần", value: "price desc" },
          { label: "Diện tích tăng dần", value: "area asc" },
@@ -98,7 +99,7 @@ const MyComponent = () => {
     }, [location.search]);
 
     const updateSearchParams = (listParam) => {
-        if(listParam[0].param !== "pageNumber") deleteSearchParams("pageNumber");
+        if(searchParams.get("pageNumber") === "1") deleteSearchParams("pageNumber");
         listParam.map((item) => {
             searchParams.set(item.param, item.value);
         })
@@ -153,10 +154,10 @@ const MyComponent = () => {
     }
 
     const handlePriceParam = (value) => {
-        if (selectedFurniture === value) {
-            setSelectedFurniture("");
-            localStorage.removeItem("selectedFurniture");
-            deleteSearchParams("furniture");
+        if (selectedPrice === value) {
+            setSelectedPrice("");
+            localStorage.removeItem("selectedPrice");
+            deleteSearchParams("price");
         }else{
             setSelectedPrice(value);
             let minPrice = 0;
@@ -254,6 +255,7 @@ const MyComponent = () => {
                             <select
                                 className="criteria"
                                 value={selectedPrice}
+                                onChange={(e) => handlePriceParam(e.target.value)}
                             >
                                 <option value="" hidden>
                                     {selectedPrice
@@ -264,7 +266,6 @@ const MyComponent = () => {
                                     <option
                                         value={option.value}
                                         key={option.value}
-                                        onClick={() => handlePriceParam(option.value)}
                                     >
                                         {option.label}
                                     </option>
@@ -273,6 +274,7 @@ const MyComponent = () => {
                         <select
                             className="criteria"
                             value={selectedArea}
+                            onChange={(e) => handleAreaParam(e.target.value)}
                         >
                             <option value="" hidden>
                                 {selectedArea
@@ -283,7 +285,6 @@ const MyComponent = () => {
                                 <option
                                     value={option.value}
                                     key={option.value}
-                                    onClick={() => handleAreaParam(option.value)}
                                 >
                                     {option.label}
                                 </option>
@@ -292,6 +293,7 @@ const MyComponent = () => {
                         <select
                             className="criteria"
                             value={selectedFurniture}
+                            onChange={(e) => handleFurnitureParam(e.target.value)}
                         >
                             <option value="" hidden>
                                 {selectedFurniture
@@ -302,7 +304,6 @@ const MyComponent = () => {
                                 <option
                                     value={option.value}
                                     key={option.value}
-                                    onClick={() => handleFurnitureParam(option.value)}
                                 >
                                     {option.label}
                                 </option>
@@ -316,28 +317,26 @@ const MyComponent = () => {
                     <select
                         className="select"
                         value={selectedSortCondition}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if(value === "normal") {
+                                setSelectedSortCondition(value);
+                                localStorage.removeItem("selectedSortCondition");
+                                deleteSearchParams("sortCondition");
+                            }else{
+                                setSelectedSortCondition(value);
+                                localStorage.setItem("selectedSortCondition", value);
+                                updateSearchParams([{
+                                    param: "sortCondition",
+                                    value: value
+                                }])
+                            }
+                        }}
                     >
-                        <option value="" hidden>
-                            {selectedSortCondition
-                                ? (sortOptions.find(opt => opt.value === selectedSortCondition)?.label || "Sắp xếp")
-                                : "Sắp xếp"}
-                        </option>
                         {sortOptions.map(option => (
                             <option
                                 value={option.value}
                                 key={option.value}
-                                onClick={() => {
-                                    if (selectedSortCondition === option.value) {
-                                        setSelectedSortCondition("");
-                                        localStorage.removeItem("selectedSortCondition");
-                                        deleteSearchParams("sortCondition");
-                                    }else {
-                                        setSelectedSortCondition(option.value);
-                                        localStorage.setItem("selectedSortCondition", option.value);
-                                        updateSearchParams([{ param: "sortCondition", value: option.value
-                                        }]);
-                                    }
-                                }}
                             >
                                 {option.label}
                             </option>
@@ -384,7 +383,7 @@ const MyComponent = () => {
                         </Link>
                     ))}
                 </div>
-                <BackendPaginationUI currentPage={searchParams.get("pageNumber") ? Number(searchParams.get("pageNumber")) : 1} updateSearchParams={updateSearchParams} deleteSearchParams={deleteSearchParams} totalLength={totalLength.current}/>
+                <BackendPaginationUI currentPage={searchParams.get("pageNumber") ? Number(searchParams.get("pageNumber")) : 1} updateSearchParams={updateSearchParams} deleteSearchParams={deleteSearchParams} totalLength={totalLength.current} pageSize={4}/>
             </div>
             <div className="list-container-right">
                 <div className="side-criteria">

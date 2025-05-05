@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react';
-import "../css/Pagination.css";
+import "../../css/Pagination.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 
-const MyComponent = ({totalLength, currentPage, updateSearchParams, deleteSearchParams}) => {
-
+const MyComponent = ({totalLength, currentPage, updateSearchParams, deleteSearchParams, pageSize}) => {
     useEffect(() => {
         if(currentPage === 1) deleteSearchParams("pageNumber");
+        console.log(currentPage);
     }, [currentPage])
 
     return (
@@ -26,7 +26,7 @@ const MyComponent = ({totalLength, currentPage, updateSearchParams, deleteSearch
                     <FontAwesomeIcon icon={faArrowLeft} style={{fontSize: '20px'}} />
                 </button>
             )}
-            {Array.from({length: Math.ceil(totalLength/4)}, (_, i) => (
+            {Array.from({length: Math.ceil(totalLength/pageSize)}, (_, i) => (
                 <button
                     key={i}
                     className={`page-index ${currentPage === i + 1 ? "active" : "disable"}`}
@@ -42,7 +42,7 @@ const MyComponent = ({totalLength, currentPage, updateSearchParams, deleteSearch
                     {i + 1}
                 </button>
             ))}
-            {currentPage < Math.ceil(totalLength/4) && (
+            {currentPage < Math.ceil(totalLength/pageSize) && (
                 <button
                     className="icon-bounding"
                     onClick={() => updateSearchParams([{

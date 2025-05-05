@@ -1,5 +1,6 @@
 package com.example.backend.dto.user;
 
+import com.example.backend.dto.TotalRating;
 import lombok.Data;
 
 @Data
@@ -11,5 +12,6 @@ public class UserProfile {
     private byte[] backgroundImage;
     private String status;
     private int joinTime;
+    private TotalRating totalRating;
     private String addressDTO;
 }

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import '../../css/user-css/SavedPosts.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
-import Pagination from "../PagePagination.jsx";
+import Pagination from "./PagePagination.jsx";
 import {getFavouritePostByUser, removeFromFavourite} from "../../apiServices/favouritePost.js";
 import SavedPostList from "../../dataList/SavedPostList.jsx";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";

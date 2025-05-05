@@ -52,12 +52,6 @@ const MyComponent = () => {
         fetchPost();
     }, [])
 
-    // useEffect(() => {
-    //     if(fullImage === false){
-    //         swiperRef1.current = null;
-    //     }
-    // },[fullImage])
-
     const nextMedia = (index) => {
         const tmp = index + 1;
         if(tmp === totalLength) setMainMedia({index: 0, type: "IMAGE"});

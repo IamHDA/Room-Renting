@@ -14,4 +14,5 @@ public class CreatePostDTO {
     private String electric;
     private String parking;
     private String wifi;
+    private String furniture;
 }

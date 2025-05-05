@@ -1,4 +1,4 @@
-package com.example.backend.dto.user;
+package com.example.backend.dto.admin;
 
 import com.example.backend.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;

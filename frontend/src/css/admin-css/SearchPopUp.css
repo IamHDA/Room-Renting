@@ -1,0 +1,11 @@
+.search-popup{
+    padding: 10px;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border-radius: 5px;
+    display: inline-block;
+    z-index: 100;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.7);
+}

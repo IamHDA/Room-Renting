@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Pagination from '../TablePagination.jsx';
+import Pagination from './TablePagination.jsx';
 import {getDisablePostsByUserId} from "../../apiServices/post.js";
 
 const MyComponent = ({userId, setDisablePostLength}) => {

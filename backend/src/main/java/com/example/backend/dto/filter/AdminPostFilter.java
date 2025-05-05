@@ -8,4 +8,7 @@ import lombok.Data;
 public class AdminPostFilter {
     private String authorName;
     private String sortCondition;
+    private String status;
+    private int pageNumber;
+    private int pageSize;
 }

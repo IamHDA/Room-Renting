@@ -1,10 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import '../../css/admin-css/SideBar.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFlag, faReceipt, faRightFromBracket, faSquarePollVertical, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faReceipt, faRightFromBracket, faSquarePollVertical, faUser} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
+import AuthContext from "../../contexts/AuthContext.jsx";
 
 const MyComponent = () => {
+    const {setUser} = useContext(AuthContext);
+
     return (
         <div className="side-bar">
             <div className="page-title">
@@ -24,7 +27,10 @@ const MyComponent = () => {
                     <FontAwesomeIcon icon={faUser} />
                     <p>Quản lý người dùng</p>
                 </Link>
-                <Link to="/" id="function-4" className="side-bar-function">
+                <Link to="/" id="function-4" className="side-bar-function" onClick={() => {
+                    localStorage.clear();
+                    setUser(null);
+                }}>
                     <FontAwesomeIcon icon={faRightFromBracket}  flip="horizontal"/>
                     <p>Đăng xuất</p>
                 </Link>

@@ -11,6 +11,7 @@ import {getUserProfile} from "../../apiServices/user.js";
 import {getImageMime} from "../../utils/format.js";
 import { changeAvatar, changeBackgroundImage} from "../../apiServices/user.js";
 import { currentUser } from "../../apiServices/user.js";
+import {rateUser, changeRate, getUserRating} from "../../apiServices/rating.js";
 import {reportUser} from "../../apiServices/report.js";
 
 const MyComponent = () => {
@@ -44,7 +45,22 @@ const MyComponent = () => {
             }
         }
         fetchUser();
-    }, [changeImage, userId]);
+    }, [changeImage, userId, selectedStar]);
+
+    useEffect(() => {
+        const fetchRating = async () => {
+            try {
+                if(user.id !== userId){
+                    const response = await getUserRating(user.id, userId);
+                    setSelectedStar(response);
+                    console.log(response);
+                }
+            }catch(err) {
+                console.error(err);
+            }
+        }
+        if(user !== null) fetchRating();
+    }, [user])
 
     const toggleLeftLine = () => {
         setIsLeft(true);
@@ -79,6 +95,29 @@ const MyComponent = () => {
             console.error(err);
         }
         setChangeImage(prev => !prev);
+    }
+
+    const handleRateUser = async (reviewedId, rate) => {
+        console.log(rate);
+        try{
+            if(selectedStar > 0){
+                const response = await rateUser(user.id, reviewedId, rate);
+                if(response === "User rated successfully"){
+                    alert("Đánh giá người dùng thành công");
+                    setSelectedStar(rate);
+                    setOnReview(false);
+                }
+            }else{
+                const response = await changeRate(user.id, reviewedId, rate);
+                if(response === "User rated successfully"){
+                    alert("Đánh giá người dùng thành công");
+                    setSelectedStar(rate);
+                    setOnReview(false);
+                }
+            }
+        }catch (e){
+            console.log(e);
+        }
     }
 
     return (
@@ -227,13 +266,14 @@ const MyComponent = () => {
                             )}
                             <div className="user-rating">
                                 <div className="rating-star">
-                                    <FontAwesomeIcon icon={faStarRegular} id="star-1"/>
-                                    <FontAwesomeIcon icon={faStarRegular} id="star-2"/>
-                                    <FontAwesomeIcon icon={faStarRegular} id="star-3"/>
-                                    <FontAwesomeIcon icon={faStarRegular} id="star-4"/>
-                                    <FontAwesomeIcon icon={faStarRegular} id="star-5"/>
+                                    {[1, 2, 3, 4, 5].map(star => (
+                                        <FontAwesomeIcon
+                                            key={star}
+                                            icon={star <= userProfile.totalRating.totalRating ? faStarSolid : faStarRegular}
+                                        />
+                                    ))}
                                 </div>
-                                <p id="rating-count">(n)</p>
+                                <p id="rating-count">({userProfile.totalRating.numberOfRating})</p>
                             </div>
                             {userProfile.id === user.id ?
                                 <Link to="/personalInformation" className="change-personal-information">
@@ -245,12 +285,12 @@ const MyComponent = () => {
                                             <p >Đánh giá người dùng</p>
                                         </button>
                                         <div className={onReview ? "review-star" : "review-star-js"} onClick={toggleOnReview}>
-                                            {[1, 2, 3, 4, 5].map((star) => (
+                                            {[1, 2, 3, 4, 5].map(star => (
                                                 <FontAwesomeIcon
                                                     key={star}
                                                     icon={star <= selectedStar ? faStarSolid : faStarRegular}
                                                     className={star <= selectedStar ? "selected-star" : ""}
-                                                    onClick={() => setSelectedStar(star)}
+                                                    onClick={() => handleRateUser(userProfile.id, star)}
                                                 />
                                             ))}
                                         </div>

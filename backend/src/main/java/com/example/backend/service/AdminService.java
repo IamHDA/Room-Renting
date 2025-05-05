@@ -1,13 +1,11 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.post.AdminPostRow;
-import com.example.backend.dto.user.AdminUserRow;
-import com.example.backend.dto.UserReportDTO;
+import com.example.backend.dto.admin.AdminPostResponse;
+import com.example.backend.dto.admin.AdminUserResponse;
+import com.example.backend.dto.admin.UserReportDTO;
 import com.example.backend.dto.filter.AdminPostFilter;
-import com.example.backend.dto.PostReportDTO;
+import com.example.backend.dto.admin.PostReportDTO;
 import com.example.backend.dto.filter.AdminUserFilter;
-
-import java.util.List;
 
 public interface AdminService {
     long getTotalUser();
@@ -19,8 +17,8 @@ public interface AdminService {
     long getTotalReport();
     long getTotalReportThisMonth();
     long getTotalReportThisDay();
-    List<AdminPostRow> getPostManageList(AdminPostFilter filter);
-    List<AdminUserRow> getUserManageList(AdminUserFilter filter);
+    AdminPostResponse getPostManageList(AdminPostFilter filter);
+    AdminUserResponse getUserManageList(AdminUserFilter filter);
     PostReportDTO getPostReport(long postId);
     UserReportDTO getUserReport(long userId);
     String deleteReport(long reportId);
