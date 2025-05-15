@@ -9,7 +9,7 @@ export const register = async (identifier, password, fullName) => {
 }
 
 export const refreshToken = async () => {
-    return await request.post('authenticate/refresh-token', {}, {
+    return await request.post('authenticate/refreshToken', {}, {
         headers: {
             Authorization: "Bearer " + localStorage.getItem("refreshToken"),
         }

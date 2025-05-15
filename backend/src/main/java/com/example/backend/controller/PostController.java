@@ -3,12 +3,18 @@ package com.example.backend.controller;
 import com.example.backend.dto.filter.PostFilter;
 import com.example.backend.dto.post.*;
 import com.example.backend.service.PostService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.shaded.gson.Gson;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -67,14 +73,36 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsByCriteria(filter));
     }
 
-    @RequestMapping("postDetail/findById/{id}")
+    @GetMapping("postDetail/findById/{id}")
     public ResponseEntity<PostDetailDTO> getPostDetailById(@PathVariable long id){
         return ResponseEntity.ok(postService.getPostDetail(id));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<String> postCreate(@RequestPart(name = "post") PostCreateRequest postCreateRequest, @RequestPart(name = "file") List<MultipartFile> files) throws IOException {
-        return ResponseEntity.ok(postService.createPostWithRollBack(postCreateRequest.getAddressDTO(), postCreateRequest.getCreatePostDTO(), files));
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> postCreate(
+            @Parameter(
+                    required = true,
+                    schema = @Schema(implementation = PostCreateRequest.class)
+            )
+            @RequestPart("post")
+            String postCreateRequest,
+            @Parameter(
+                    description = "Danh sách file ảnh",
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            array = @ArraySchema(
+                                    schema = @Schema(type = "string", format = "binary")
+                            )
+                    )
+            )
+            @RequestPart("files")
+            List<MultipartFile> files) {
+        Gson gson = new Gson();
+        PostCreateRequest postBody = gson.fromJson(postCreateRequest, PostCreateRequest.class);
+        return ResponseEntity.ok(postService.createPostWithRollBack(
+                postBody.getAddressDTO(),
+                postBody.getCreatePostDTO(),
+                files));
     }
 
     @PutMapping("/changeStatus")

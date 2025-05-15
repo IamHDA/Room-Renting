@@ -214,17 +214,27 @@ public class FilterRepository {
         Join<Ward, District> district = wardRoot.join("district", JoinType.LEFT);
         Join<District, City> city = district.join("city", JoinType.LEFT);
 
-        Predicate cityPredicate = cb.equal(city.get("name"), cityName);
+        Predicate cityPredicate = cb.equal(cb.lower(city.get("name")), cityName.toLowerCase());
 
-        List<Predicate> keywordPredicates = new ArrayList<>();
+        List<Predicate> predicates1 = new ArrayList<>();
+        predicates1.add(cb.equal(cb.lower(district.get("name")), keyword.toLowerCase()));
+        predicates1.add(cb.equal(cb.lower(wardRoot.get("name")), keyword.toLowerCase()));
+
+        cq.where(cb.and(cityPredicate, cb.or(predicates1.toArray(new Predicate[0]))));
+        TypedQuery<Ward> exactAddress = entityManager.createQuery(cq);
+        List<Ward> res = exactAddress.getResultList();
+        if(!res.isEmpty()) return res;
+
+        List<Predicate> predicates2 = new ArrayList<>();
         String[] words = keyword.toLowerCase().split("[,.\\s]+");
         for(String word : words) {
-            keywordPredicates.add(cb.like(cb.lower(district.get("name")), "%" + word + "%"));
-            keywordPredicates.add(cb.like(cb.lower(wardRoot.get("name")), "%" + word + "%"));
+            predicates2.add(cb.like(cb.lower(district.get("name")), "%" + word + "%"));
+            predicates2.add(cb.like(cb.lower(wardRoot.get("name")), "%" + word + "%"));
         }
 
-        cq.where(cb.and(cityPredicate, cb.or(keywordPredicates.toArray(new Predicate[0]))));
-        TypedQuery<Ward> query = entityManager.createQuery(cq);
-        return query.getResultList();
+        cq.where(cb.and(cityPredicate, cb.or(predicates2.toArray(new Predicate[0]))));
+        TypedQuery<Ward> fuzzyAddress = entityManager.createQuery(cq);
+        return fuzzyAddress.getResultList();
     }
+
 }

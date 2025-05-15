@@ -16,7 +16,7 @@ export const getWardsByDistrict = async (district) => {
     });
 }
 
-export const getAvailableAddress = async (keyword, cityName) => {
+export const searchAddress = async (keyword, cityName) => {
     return await request.get('address/search', {
         params: {
             keyword, cityName

@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     @Autowired
     private AdminService adminService;
-    @Autowired
-    private PostService postService;
 
     @GetMapping("/totalPosts")
     public ResponseEntity<PostStats> getTotalPosts(){

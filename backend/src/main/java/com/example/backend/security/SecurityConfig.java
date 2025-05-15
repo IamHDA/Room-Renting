@@ -28,10 +28,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig{
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -72,11 +73,16 @@ public class SecurityConfig {
                                 "/address/cities",
                                 "/address/districts/**",
                                 "/ws/**",
-                                "/account/existed"
+                                "/account/existed",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/webjars/**",
+                                "/swagger-resources/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/admin/**"
-                        ).hasAuthority(Role.ADMIN.name())
+                        ).hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .oauth2Login(oauth -> oauth
                         .successHandler(customOauth2SuccessHandler)
@@ -84,7 +90,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(accessDeniedHandler))
                 .logout(customizer -> customizer
@@ -111,7 +116,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource customCorsConfiguration() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://100.64.40.44:5173"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173" , "http://100.114.40.116:5173", "http://100.114.40.116:8080"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

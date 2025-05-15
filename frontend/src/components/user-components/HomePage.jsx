@@ -1,21 +1,52 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faLocationDot, faAngleDown, faMagnifyingGlass, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
+import {faLocationDot, faMagnifyingGlass, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 import {faHeart as redHeart } from "@fortawesome/free-solid-svg-icons";
 import {faHeart as normalHeart } from "@fortawesome/free-regular-svg-icons";
 import '../../css/user-css/HomePage.css';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {getNewPosts} from '../../apiServices/post.js';
 import AuthContext from "../../contexts/AuthContext.jsx";
 import {priceFormat} from "../../utils/format.js";
 import FavouritePostContext from "../../contexts/FavouritePostContext.jsx";
+import {useDebounce} from "../../hooks/useDebounce.js";
+import {searchAddress} from "../../apiServices/address.js";
 
 
 const MyComponent = () => {
+    const searchParamRef = useRef(new URLSearchParams());
+    const navigate = useNavigate();
     const [newPosts, setNewPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const {user} = useContext(AuthContext);
+    const [search, setSearch] = useState("");
+    const searchDebounce = useDebounce(search, 500);
+    const [addressesDropdown, setAddressesDropdown] = useState(false);
+    const [searchResult, setSearchResult] = useState([]);
     const { heartButtonHandle, favouritePostIds } = useContext(FavouritePostContext);
+    const cityRef = useRef("Hà Nội");
+    const dropDownRef = useRef(null);
+    const areaOptions = [
+        { label: "Dưới 20 m²", value: "0-20" },
+        { label: "20 - 30 m²", value: "20-30" },
+        { label: "30 - 40 m²", value: "30-40" },
+        { label: "40 - 50 m²", value: "40-50" },
+        { label: "Trên 50 m²", value: "50" },
+    ];
+    const priceOptions = [
+        { label: "Dưới 1 triệu", value: "0-1"},
+        { label: "Giá 1 - 3 triệu", value: "1-3"},
+        { label: "Giá 3 - 5 triệu", value: "3-5"},
+        { label: "Giá 5 - 7 triệu", value: "5-7"},
+        { label: "Giá 7 - 9 triệu", value: "7-9"},
+        { label: "Trên 9 triệu", value: "9"}
+    ]
+    const furnitureOptions = [
+        { label: "Nội thất cao cấp", value: "Cap cấp" },
+        { label: "Nội thất đầy đủ", value: "Đầy đủ" },
+        { label: "Không có nội thất", value: "Không có" }
+    ]
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,31 +66,192 @@ const MyComponent = () => {
         fetchData();
     }, [user]);
 
+    useEffect(() => {
+        const fetchAddress = async () => {
+            try {
+                const response = await searchAddress(search, cityRef.current);
+                setSearchResult(response);
+                searchParamRef.current.set("city", "Hà Nội");
+            }catch (e){
+                console.log(e);
+            }
+        }
+        setAddressesDropdown(search !== "");
+        fetchAddress();
+    }, [searchDebounce]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropDownRef.current && !dropDownRef.current.contains(event.target)) {
+                setAddressesDropdown(false);
+            }
+        };
+
+        if (addressesDropdown) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [addressesDropdown]);
+
+    const showAddress = (address) => {
+        let res = "";
+        if(address.detail) res += address.detail + ", ";
+        if(address.wardName) res += address.wardName + ", ";
+        if(address.districtName) res += address.districtName + ", ";
+        if(address.cityName) res += address.cityName;
+        return res;
+    }
+
+    const handleOptions = (options) => {
+        options.forEach((item) => {
+            if (item.value !== "") {
+                searchParamRef.current.set(item.name, item.value);
+            } else {
+                searchParamRef.current.delete(item.name);
+            }
+        });
+    }
+
     return (
         <div>
             <div className="search-container">
                 <div className="search-bounding">
                     <div className="upper">
-                        <div className="city-selector">
-                            <FontAwesomeIcon icon={faLocationDot} className="location-icon"/>
-                            <p>Thành phố</p>
-                            <FontAwesomeIcon icon={faAngleDown} className="arrow-down-icon"/>
-                            <img src="../../../public/homePage-icon/pipe.png" className="pipe"/>
-                        </div>
+                        <FontAwesomeIcon icon={faLocationDot} className="location-icon"/>
+                        <select className="city-selector" onChange={(e) => {
+                            cityRef.current = e.target.value;
+                            searchParamRef.current.set("city", e.target.value);
+                        }}>
+                            <option>Hà Nội</option>
+                            <option>Hồ Chí Minh</option>
+                        </select>
+                        <img src="../../../public/homePage-icon/pipe.png" className="pipe"/>
                         <div className="search">
                             <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon"/>
-                            <input className="search-input" type="text" placeholder="Nhập địa điểm. Ví dụ: Đại Kim, Hoàng Mai"/>
+                            <input
+                                className="search-input"
+                                type="text"
+                                placeholder="Nhập địa điểm. Ví dụ: Đại Kim, Hoàng Mai"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                            {addressesDropdown && (
+                                <div
+                                    ref={dropDownRef}
+                                    style={{
+                                        position: "absolute",
+                                        top: "90%",
+                                        left: "0",
+                                        right: "0",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        padding: "20px",
+                                        maxHeight: "200px",
+                                        overflowY: "auto",
+                                        zIndex: "100",
+                                        backgroundColor: "white",
+                                        borderBottomRightRadius: "10px",
+                                        borderBottomLeftRadius: "10px",
+                                    }}
+                                >
+                                    {searchResult.map((address, index) => (
+                                        <div
+                                            key={index}
+                                            className="address-choice"
+                                        >
+                                            <FontAwesomeIcon icon={faLocationDot} />
+                                            <p onClick={() => {
+                                                searchParamRef.current.set("ward", address.wardName);
+                                                searchParamRef.current.set("district", address.districtName);
+                                                searchParamRef.current.set("city", address.cityName);
+                                                setSearch(showAddress(address));
+                                                setAddressesDropdown(false);
+                                            }}
+                                            >
+                                                {showAddress(address)}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                        <div className="search-button">Tìm kiếm</div>
+                        <div
+                            className="search-button"
+                            onClick={() => {
+                                navigate(`/list?${searchParamRef.current.toString()}`);
+                            }}
+                        >
+                            Tìm kiếm
+                        </div>
                     </div>
                     <div className="lower">
                         <div className="price">
-                            <p>Mức giá</p>
-                            <FontAwesomeIcon icon={faAngleDown} className="arrow-down-icon"/>
+                            <select
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    const values = value.split("-");
+                                    localStorage.setItem("selectedPrice", value);
+                                    handleOptions([
+                                        {name: "minPrice", value: values[0]},
+                                        {name: "maxPrice", value: values[1]},
+                                    ])}
+                                }
+                            >
+                                <option hidden value="">Mức giá</option>
+                                {priceOptions.map((option, index) => (
+                                    <option
+                                        key={index}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div className="area">
-                            <p>Diện tích</p>
-                            <FontAwesomeIcon icon={faAngleDown} className="arrow-down-icon"/>
+                            <select
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    const values = value.split("-");
+                                    localStorage.setItem("selectedArea", value);
+                                    handleOptions([
+                                        {name: "minArea", value: values[0]},
+                                        {name: "maxArea", value: values[1]},
+                                    ])}
+                                }
+                            >
+                                <option hidden value="">Diện tích</option>
+                                {areaOptions.map((option, index) => (
+                                    <option
+                                        key={index}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="furniture">
+                            <select
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    localStorage.setItem("selectedFurniture", value);
+                                    handleOptions([{name: "furniture", value: value}])
+                                }}
+                            >
+                                <option hidden value="">Nội thất</option>
+                                {furnitureOptions.map((option, index) => (
+                                    <option
+                                        key={index}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                 </div>

@@ -15,4 +15,5 @@ public class CreatePostDTO {
     private String parking;
     private String wifi;
     private String furniture;
+    private String security;
 }

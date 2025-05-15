@@ -30,7 +30,7 @@ request.interceptors.response.use(
                 return new Promise(resolve => {
                     failedRequestsQueue.push(newToken => {
                         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
-                        resolve(axios(originalRequest));
+                        resolve(request(originalRequest));
                     });
                 });
             }

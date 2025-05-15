@@ -50,7 +50,7 @@ const MyComponent = () => {
         { label: "Không có nội thất", value: "Không có" }
     ]
      const sortOptions  = [
-         { label: "Thông thường", value: "normal" },
+         { label: "Tin mới nhất", value: "normal" },
          { label: "Giá tăng dần", value: "price asc" },
          { label: "Giá giảm dần", value: "price desc" },
          { label: "Diện tích tăng dần", value: "area asc" },

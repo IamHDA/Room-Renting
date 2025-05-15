@@ -141,26 +141,17 @@ public class PostServiceImp implements PostService {
             tmp.setWard(ward);
             address = addressRepo.save(tmp);
         }
-        Post post = postRepo.save(Post.builder()
-                .title(createPostDTO.getTitle())
-                .description(createPostDTO.getDescription())
-                .user(userService.getCurrentUser())
-                .postDetail(PostDetail.builder()
-                        .area(createPostDTO.getArea())
-                        .price(createPostDTO.getPrice())
-                        .water(createPostDTO.getWater())
-                        .bedroom(createPostDTO.getBedroom())
-                        .bathroom(createPostDTO.getBathroom())
-                        .electric(createPostDTO.getElectric())
-                        .parking(createPostDTO.getParking())
-                        .wifi(createPostDTO.getWifi())
-                        .furniture(createPostDTO.getFurniture())
-                        .build())
-                .address(address)
-                .createdAt(LocalDateTime.now())
+        PostDetail postDetail = modelMapper.map(createPostDTO, PostDetail.class);
+        Post post = Post.builder()
                 .status(PostStatus.ENABLED)
-                .build());
-        return post.getId();
+                .createdAt(LocalDateTime.now())
+                .user(userService.getCurrentUser())
+                .address(address)
+                .description(createPostDTO.getDescription())
+                .postDetail(postDetail)
+                .title(createPostDTO.getTitle())
+                .build();
+        return postRepo.save(post).getId();
     }
 
     @Override
@@ -184,19 +175,8 @@ public class PostServiceImp implements PostService {
     @Override
     public String changePostInformation(ChangePostInformation changePostInformation) {
         Post post = postRepo.findById(changePostInformation.getId()).orElse(null);
-        PostDetail postDetail = PostDetail.builder()
-                        .id(post.getPostDetail().getId())
-                        .price(changePostInformation.getPostDetailDTO().getPrice())
-                        .area(changePostInformation.getPostDetailDTO().getArea())
-                        .bathroom(changePostInformation.getPostDetailDTO().getBathroom())
-                        .bedroom(changePostInformation.getPostDetailDTO().getBedroom())
-                        .electric(changePostInformation.getPostDetailDTO().getElectric())
-                        .parking(changePostInformation.getPostDetailDTO().getParking())
-                        .water(changePostInformation.getPostDetailDTO().getWater())
-                        .wifi(changePostInformation.getPostDetailDTO().getWifi())
-                        .security(changePostInformation.getPostDetailDTO().getSecurity())
-                        .furniture(changePostInformation.getPostDetailDTO().getFurniture())
-                        .build();
+        PostDetail postDetail = modelMapper.map(changePostInformation, PostDetail.class);
+        postDetail.setId(post.getPostDetail().getId());
         post.setPostDetail(postDetail);
         post.setTitle(changePostInformation.getTitle());
         post.setDescription(changePostInformation.getDescription());

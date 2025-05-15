@@ -28,17 +28,36 @@
     border-radius: 8px;
     padding: 10px 15px 10px 15px;
     cursor: pointer;
+    position: relative;
 }
 
-.city-selector{
+.address-choice{
+    display: flex;
+    gap: 10px;
+    font-size: 22px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    transition: 0.2s ease;
+    cursor: pointer;
+}
+
+.address-choice:hover{
+    color: #0078df;
+}
+
+select{
     display: flex;
     align-items: center;
     gap: 20px;
+    outline: none;
+    font-size: 24px;
+    border: none;
+    background-color: inherit;
 }
 
 .location-icon{
-    height: 35px;
-    width: 35px;
+    height: 30px;
+    width: 30px;
 }
 
 .city-selector p{
@@ -64,6 +83,7 @@
 .search-icon{
     height: 35px;
     width: 35px;
+
 }
 
 .search-input{
@@ -92,12 +112,11 @@
     gap: 20px;
 }
 
-.price, .area{
+.price, .area, .furniture{
     display: flex;
     gap: 200px;
     padding: 7px 20px 7px 20px;
-    border: solid 2px;
-    border-color: white;
+    border: 2px solid white;
     border-radius: 7px;
     cursor: pointer;
 }
