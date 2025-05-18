@@ -516,9 +516,9 @@ const MyComponent = () => {
                         }
                         <div className="post-manage-main-content">
                             <div className="switch-posts">
-                                <p className={isVisiblePosts ? "visible-posts show" : "visible-posts"} onClick={() => setIsVisiblePosts(true)}>Bài đăng đang hiển thị</p>
+                                <p className={isVisiblePosts ? "visible-posts show" : "visible-posts"} onClick={() => setIsVisiblePosts(true)}>Tin đăng đang hiển thị</p>
                                 <img src="../../../public/post-manage-icon/stand-line.png" className="stand-line" style={{height: "60px"}}/>
-                                <p className={!isVisiblePosts ? "invisible-posts show" : "invisible-posts"} onClick={() => setIsVisiblePosts(false)}>Bài đăng đã ẩn</p>
+                                <p className={!isVisiblePosts ? "invisible-posts show" : "invisible-posts"} onClick={() => setIsVisiblePosts(false)}>Tin đăng đã ẩn</p>
                             </div>
                             <img src="../../../public/post-manage-icon/line.png" className="line"/>
                             {isVisiblePosts ?

@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -35,6 +37,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionDetail> methodArgumentNotValidException(MethodArgumentNotValidException e){
         ExceptionDetail exceptionDetail = new ExceptionDetail();
         exceptionDetail.setName("methodArgumentNotValidException");
+        exceptionDetail.setDetail(e.getMessage());
+        exceptionDetail.setTime(LocalDateTime.now());
+        return new ResponseEntity<>(exceptionDetail, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ExceptionDetail> ioException(MaxUploadSizeExceededException e){
+        ExceptionDetail exceptionDetail = new ExceptionDetail();
+        exceptionDetail.setName("fileTooBigException");
         exceptionDetail.setDetail(e.getMessage());
         exceptionDetail.setTime(LocalDateTime.now());
         return new ResponseEntity<>(exceptionDetail, HttpStatus.BAD_REQUEST);

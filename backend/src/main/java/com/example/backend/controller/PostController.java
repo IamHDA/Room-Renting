@@ -81,7 +81,6 @@ public class PostController {
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> postCreate(
             @Parameter(
-                    required = true,
                     schema = @Schema(implementation = PostCreateRequest.class)
             )
             @RequestPart("post")
