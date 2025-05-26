@@ -74,7 +74,7 @@ const MyComponent = () => {
                         </div>
                     ) : (
                         <>
-                            <h1 className="title">Tin đăng đã lưu (0/100)</h1>
+                            <h1 className="title">Tin đăng đã lưu ({posts.length}/100)</h1>
                             {posts.length > 0 && (
                                 <div className="saved-posts-container">
                                     {posts.slice(startIndex, endIndex).map((post, index) => (

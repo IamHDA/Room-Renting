@@ -324,7 +324,6 @@ const MyComponent = () => {
                                     </div>
                                     {(user === null || post.postCreator.id !== user.id) && (
                                         <div className="post-detail-function">
-                                            <img src="../../../public/detail-icon/share.png" className="share"/>
                                             <img src="../../../public/detail-icon/alert.png" className="report" onClick={() => {
                                                 if(!user) alert("Đăng nhập để sử dụng chức năng này!")
                                                 else setReportPopup(true);

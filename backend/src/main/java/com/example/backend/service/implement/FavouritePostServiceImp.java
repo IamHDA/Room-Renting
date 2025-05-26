@@ -39,6 +39,10 @@ public class FavouritePostServiceImp implements FavouritePostService {
     @Override
     public String addToFavourite(long postId){
         User user = userService.getCurrentUser();
+        int numberOfFavouritePost = favouritePostRepo.countByUser(user);
+        if(numberOfFavouritePost == 101){
+            return "Too much post";
+        }
         Post post = postRepo.findById(postId).orElse(null);
         FavouritePost favouritePost = new FavouritePost(post, user);
         favouritePostRepo.save(favouritePost);

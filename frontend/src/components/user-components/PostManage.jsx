@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import '../../css/user-css/PostManage.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -10,16 +10,17 @@ import {
     faX,
     faXmark, faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import * as postManageService from "../../apiServices/post.js";
+import * as postService from "../../apiServices/post.js";
 import AddressContext from "../../contexts/AddressContext.jsx";
 import PostManageEnablePost from "./PostManageEnablePost.jsx";
 import PostManageDisablePost from "./PostManageDisablePost.jsx";
+import AuthContext from "../../contexts/AuthContext.jsx";
 
 const MyComponent = () => {
+    const {user} = useContext(AuthContext);
     const {allCities, allDistricts, allWards, fetchDistrictsByCity, fetchWardsByDistrict, setAllWards, setAllDistricts} = useContext(AddressContext);
     const location = useLocation();
     const isPost = location.state?.toManage;
-    const userId = location.state?.userId;
     const [isSelected, setIsSelected] = useState(isPost);
     const [pickAddressPopUp, setPickAddressPopUp] = useState(false);
     const [pickAddress, setPickAddress] = useState(2);
@@ -30,6 +31,11 @@ const MyComponent = () => {
     const [imageList, setImageList] = useState([]);
     const [videoList, setVideoList] = useState([]);
     const [currentEditingPost, setCurrentEditingPost] = useState(null);
+
+    useEffect(() => {
+        const isManagePost = JSON.parse(localStorage.getItem("manage-post"));
+        if(isManagePost) setIsSelected(isManagePost);
+    }, [user])
 
     const togglePickAddress = async (num) => {
         if(pickAddress === num) setPickAddress(2);
@@ -54,21 +60,61 @@ const MyComponent = () => {
 
     const handleFurnitureOption = (e) => {
         e.stopPropagation();
+        setCurrentEditingPost({
+            ...currentEditingPost,
+            postDetail: {
+                ...currentEditingPost.postDetail,
+                furniture: e.target.innerText
+            }
+        })
         setSelectedFurniture(e.target.innerText);
         setShowFurnitureOption(false);
-        console.log(selectedFurniture);
     }
+
+    const handleEditPost = async () => {
+        try {
+            const data = {
+                title: currentEditingPost.post.title,
+                description: currentEditingPost.post.description,
+                postDetailDTO:{
+                    price: currentEditingPost.postDetail.price,
+                    area: currentEditingPost.postDetail.area,
+                    bedroom: currentEditingPost.postDetail.bedroom,
+                    bathroom: currentEditingPost.postDetail.bathroom,
+                    water: currentEditingPost.postDetail.water,
+                    electric: currentEditingPost.postDetail.electric,
+                    parking: currentEditingPost.postDetail.parking,
+                    wifi: currentEditingPost.postDetail.wifi,
+                    security: currentEditingPost.postDetail.security,
+                }
+            };
+            console.log(data);
+            const response = await postService.changePostInformation(currentEditingPost.post.id, data);
+            if(response !== "Post updated successfully!"){
+                alert("Có lỗi xảy ra");
+            }else{
+                window.location.reload();
+            }
+        }catch(e){
+            console.log(e);
+        }
+    }
+
+    const isNumeric = (str) => /^-?\d+(\.\d+)?$/.test(str);
 
     const handleSubmitPostButton = async () => {
         const title = document.getElementById("post-create-title").value;
         const area = document.getElementById("post-create-area").value;
         const address = document.getElementById("show-address").value;
+        const price = document.getElementById("post-create-price").value.replace(/,/g, ".");
         const images = imageList;
         const videos = videoList;
         const imagesLength = images.length;
         const videosLength = videos.length;
-        if(imagesLength < 3) alert("Đăng ít nhất 3 ảnh");
-        else if(title === "" || area === "" || address === "") alert("Vui lòng điền những thông tin quan trọng")
+        if(!isNumeric(area) || area > Number(area) > 100) alert("Diện tích không hợp lệ");
+        else if(!isNumeric || Number(price) < 1 || Number(price) > 100) alert("Giá không hợp lệ");
+        else if(imagesLength < 3) alert("Đăng ít nhất 3 ảnh");
+        else if(title === "" || area === "" || address === "") alert("Vui lòng điền những thông tin cần thiết")
         else{
             const formData = new FormData();
             for(const file of images){
@@ -87,7 +133,6 @@ const MyComponent = () => {
                 createPostDTO: {
                     title : title,
                     description : document.getElementById("post-create-description").value,
-                    price : document.getElementById("post-create-price").value.replace(/,/g, "."),
                     area : area,
                     bedroom : document.getElementById("post-create-bedroom").value,
                     bathroom : document.getElementById("post-create-bathroom").value,
@@ -103,7 +148,7 @@ const MyComponent = () => {
                 type: 'application/json'
             });
             formData.append("post", jsonBlob);
-            const response = await postManageService.createPost(formData);
+            const response = await postService.createPost(formData);
             if (response === "Post created successfully"){
                 alert("Đã đăng thành công");
                 window.location.reload();
@@ -114,13 +159,19 @@ const MyComponent = () => {
         }
     }
 
-    return (
+    return user && (
         <div className="post-manage-body">
             { (pickAddressPopUp || editPost) && <div className="curtain"></div>}
             <div className="post-manage-container">
                 <div className="switcher">
-                    <button className={!isSelected ? "is-selected" : ""} onClick={() => setIsSelected(false)}>Đăng tin</button>
-                    <button className={isSelected ? "is-selected" : ""} onClick={() => setIsSelected(true)}>Quản lý tin</button>
+                    <button className={!isSelected ? "is-selected" : ""} onClick={() => {
+                        localStorage.setItem("manage-post", JSON.stringify(false));
+                        setIsSelected(false);
+                    }}>Đăng tin</button>
+                    <button className={isSelected ? "is-selected" : ""} onClick={() => {
+                        localStorage.setItem("manage-post", JSON.stringify(true));
+                        setIsSelected(true);
+                    }}>Quản lý tin</button>
                 </div>
                 {!isSelected ? (
                     <>
@@ -398,14 +449,33 @@ const MyComponent = () => {
                                                             <input
                                                                 id="post-edit-price"
                                                                 value={currentEditingPost.postDetail.price}
-                                                                type="text"/>
+                                                                type="text"
+                                                                onChange={(e) =>
+                                                                    setCurrentEditingPost({
+                                                                        ...currentEditingPost,
+                                                                        postDetail: {
+                                                                            ...currentEditingPost.postDetail,
+                                                                            price: e.target.value.replace(/,/g, ".")
+                                                                        }
+                                                                    })}
+                                                            />
                                                         </div>
                                                         <div className="container">
                                                             <p>Diện tích</p>
                                                             <input
                                                                 id="post-edit-area"
                                                                 value={currentEditingPost.postDetail.area}
-                                                                type="text"/>
+                                                                type="text"
+                                                                onChange={(e) =>
+                                                                    setCurrentEditingPost({
+                                                                        ...currentEditingPost,
+                                                                        postDetail: {
+                                                                            ...currentEditingPost.postDetail,
+                                                                            area: e.target.value.replace(/,/g, ".")
+                                                                        }
+                                                                    })
+                                                                }
+                                                            />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -417,14 +487,35 @@ const MyComponent = () => {
                                                     <input
                                                         id="post-edit-title"
                                                         value={currentEditingPost.post.title}
-                                                        type="text"/>
+                                                        type="text"
+                                                        onChange={(e) => {
+                                                            const data = e.target.value;
+                                                            if(data.length < 10){
+                                                                alert("Tiêu đề quá ngắn");
+                                                                return;
+                                                            }
+                                                            setCurrentEditingPost({
+                                                                ...currentEditingPost,
+                                                                title: data
+                                                            });
+                                                        }}
+                                                    />
                                                 </div>
                                                 <div className="container">
                                                     <p>Mô tả</p>
                                                     <textarea
                                                         id="post-edit-description"
-                                                        value={currentEditingPost.post.description.replace(/<br\s*\/?>/gi, '\n')}>
-                                                    </textarea>
+                                                        value={currentEditingPost.post.description.replace(/<br\s*\/?>/gi, '\n')}
+                                                        onChange={(e) =>
+                                                            setCurrentEditingPost({
+                                                                ...currentEditingPost,
+                                                                post: {
+                                                                    ...currentEditingPost.post,
+                                                                    description: e.target.value.replace(/<br\s*\/?>/gi, '\n')
+                                                                }
+                                                            })
+                                                        }
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -437,14 +528,39 @@ const MyComponent = () => {
                                                         <input
                                                             id="post-edit-bedroom"
                                                             value={currentEditingPost.postDetail.bedroom}
-                                                            type="text"/>
+                                                            type="text"
+                                                            onChange={(e) => {
+                                                                const data = e.target.value;
+                                                                if(!isNumeric(data) && Number(data) < 0){
+                                                                    alert("Dữ liệu không hợp lệ");
+                                                                    return;
+                                                                }
+                                                                setCurrentEditingPost({
+                                                                    ...currentEditingPost,
+                                                                    postDetail: {
+                                                                        ...currentEditingPost.postDetail,
+                                                                        bedroom: data
+                                                                    }
+                                                                });
+                                                            }}
+                                                        />
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá điện</p>
                                                         <input
                                                             id="post-edit-electric"
                                                             value={currentEditingPost.postDetail.electric}
-                                                            type="text"/>
+                                                            type="text"
+                                                            onChange={(e) => {
+                                                                setCurrentEditingPost({
+                                                                    ...currentEditingPost,
+                                                                    postDetail: {
+                                                                        ...currentEditingPost.postDetail,
+                                                                        electric: e.target.value
+                                                                    }
+                                                                })
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
                                                 <div className="post-bathroom-water">
@@ -453,14 +569,39 @@ const MyComponent = () => {
                                                         <input
                                                             id="post-edit-bathroom"
                                                             value={currentEditingPost.postDetail.bathroom}
-                                                            type="text"/>
+                                                            type="text"
+                                                            onChange={(e) => {
+                                                                const data = e.target.value;
+                                                                if(!isNumeric(data) || Number(data) < 0){
+                                                                    alert("Dữ liệu không hợp lệ");
+                                                                    return;
+                                                                }
+                                                                setCurrentEditingPost({
+                                                                    ...currentEditingPost,
+                                                                    postDetail: {
+                                                                        ...currentEditingPost.postDetail,
+                                                                        bathroom: e.target.value
+                                                                    }
+                                                                })
+                                                            }}
+                                                        />
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá nước</p>
                                                         <input
                                                             id="post-edit-water"
                                                             value={currentEditingPost.postDetail.water}
-                                                            type="text"/>
+                                                            type="text"
+                                                            onChange={(e) =>
+                                                                setCurrentEditingPost({
+                                                                    ...currentEditingPost,
+                                                                    postDetail: {
+                                                                        ...currentEditingPost.postDetail,
+                                                                        water: e.target.value
+                                                                    }
+                                                                })
+                                                            }
+                                                        />
                                                     </div>
                                                 </div>
                                                 <div className="post-parking-internet">
@@ -469,14 +610,34 @@ const MyComponent = () => {
                                                         <input
                                                             id="post-create-parking"
                                                             value={currentEditingPost.postDetail.parking}
-                                                            type="text"/>
+                                                            type="text"
+                                                            onChange={(e) =>
+                                                                setCurrentEditingPost({
+                                                                    ...currentEditingPost,
+                                                                    postDetail: {
+                                                                        ...currentEditingPost.postDetail,
+                                                                        parking: e.target.value
+                                                                    }
+                                                                })
+                                                            }
+                                                        />
                                                     </div>
                                                     <div className="container">
                                                         <p>Giá Internet</p>
                                                         <input
                                                             id="post-create-internet"
                                                             value={currentEditingPost.postDetail.wifi}
-                                                            type="text"/>
+                                                            type="text"
+                                                            onChange={(e) =>
+                                                                setCurrentEditingPost({
+                                                                    ...currentEditingPost,
+                                                                    postDetail: {
+                                                                        ...currentEditingPost.postDetail,
+                                                                        wifi: e.target.value
+                                                                    }
+                                                                })
+                                                            }
+                                                        />
                                                     </div>
                                                 </div>
                                                 <div className="post-security-furniture">
@@ -485,7 +646,17 @@ const MyComponent = () => {
                                                         <input
                                                             id="post-edit-security"
                                                             value={currentEditingPost.security}
-                                                            type="text"/>
+                                                            type="text"
+                                                            onChange={(e) =>
+                                                                setCurrentEditingPost({
+                                                                    ...currentEditingPost,
+                                                                    postDetail: {
+                                                                        ...currentEditingPost.postDetail,
+                                                                        security: e.target.value
+                                                                    }
+                                                                })
+                                                            }
+                                                        />
                                                     </div>
                                                     <div className="container" onClick={() => setShowFurnitureOption(prev => !prev)}>
                                                         <p>Nội thất</p>
@@ -506,7 +677,7 @@ const MyComponent = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button className="submit-edit-button" onClick={() => setEditPost(false)}>
+                                            <button className="submit-edit-button" onClick={handleEditPost}>
                                                 Xác nhận
                                             </button>
                                         </div>
@@ -522,8 +693,8 @@ const MyComponent = () => {
                             </div>
                             <img src="../../../public/post-manage-icon/line.png" className="line"/>
                             {isVisiblePosts ?
-                                <PostManageEnablePost setEditPost={setEditPost} setCurrentEditingPost={setCurrentEditingPost} userId={userId}/> :
-                                <PostManageDisablePost setEditPost={setEditPost} setCurrentEditingPost={setCurrentEditingPost} userId={userId}/>
+                                <PostManageEnablePost setEditPost={setEditPost} setCurrentEditingPost={setCurrentEditingPost} userId={user.id}/> :
+                                <PostManageDisablePost setEditPost={setEditPost} setCurrentEditingPost={setCurrentEditingPost} userId={user.id}/>
                             }
                         </div>
                     </>

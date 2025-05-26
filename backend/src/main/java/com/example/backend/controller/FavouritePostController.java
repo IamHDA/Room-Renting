@@ -14,7 +14,7 @@ public class FavouritePostController {
     @Autowired
     private FavouritePostService favouritePostService;
 
-    @GetMapping("/getFavPostIdByUser")
+    @GetMapping("/getFavPostIdsByUser")
     public ResponseEntity<List<Long>> getFavouritePostsIdByUser() {
         return ResponseEntity.ok(favouritePostService.getFavouritePostsIdByUser());
     }

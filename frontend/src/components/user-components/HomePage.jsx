@@ -76,7 +76,6 @@ const MyComponent = () => {
                 console.log(e);
             }
         }
-        setAddressesDropdown(search !== "");
         fetchAddress();
     }, [searchDebounce]);
 
@@ -136,6 +135,7 @@ const MyComponent = () => {
                                 type="text"
                                 placeholder="Nhập địa điểm. Ví dụ: Đại Kim, Hoàng Mai"
                                 value={search}
+                                onClick={() => setAddressesDropdown(true)}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                             {addressesDropdown && (
@@ -167,8 +167,8 @@ const MyComponent = () => {
                                                 searchParamRef.current.set("ward", address.wardName);
                                                 searchParamRef.current.set("district", address.districtName);
                                                 searchParamRef.current.set("city", address.cityName);
-                                                setSearch(showAddress(address));
                                                 setAddressesDropdown(false);
+                                                setSearch(showAddress(address));
                                             }}
                                             >
                                                 {showAddress(address)}

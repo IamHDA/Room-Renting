@@ -16,6 +16,7 @@ import java.util.List;
 @Repository
 public interface FavouritePostRepository extends JpaRepository<FavouritePost, FavouritePostId> {
     List<FavouritePost> findByUser(User user);
+    int countByUser(User user);
     void deleteByPost_IdAndUser(long id, User user);
     List<FavouritePost> findByUserOrderByCreatedAtDesc(User user);
     List<FavouritePost> findByUserOrderByCreatedAtAsc(User user);

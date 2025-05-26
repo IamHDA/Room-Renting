@@ -21,7 +21,7 @@ const MyComponent = () => {
                 </Link>
                 <Link to="/admin/postManage" id="function-2" className="side-bar-function">
                     <FontAwesomeIcon icon={faReceipt} />
-                    <p>Quản lý bài đăng</p>
+                    <p>Quản lý tin đăng</p>
                 </Link>
                 <Link to="/admin/accountManage" id="function-3" className="side-bar-function">
                     <FontAwesomeIcon icon={faUser} />

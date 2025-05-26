@@ -30,7 +30,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
             disconnectStomp();
             setUser(null);
             setIsOpen(false);
-            navigate("/")
+            navigate("/");
             return response;
         }catch(e){
             console.log(e);

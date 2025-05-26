@@ -1,5 +1,6 @@
 package com.example.backend.dto.user;
 
+import com.example.backend.Enum.Role;
 import com.example.backend.Enum.UserStatus;
 import lombok.Data;
 
@@ -9,4 +10,5 @@ public class UserHeader {
     private String fullName;
     private byte[] avatar;
     private UserStatus status;
+    private Role role;
 }

@@ -107,13 +107,18 @@ public class UserServiceImp implements UserService {
 
     @Override
     public String changePersonalInformation(UserPersonalInformation information){
-        User currentUser = getCurrentUser();
-        if(information.getAddressText().isEmpty()){
+        User currentUser = getCurrentUser();;
+        System.out.println(information.getAddressText());
+        if(!information.getAddressText().isEmpty()){
             String[] addressText = new String[] {"", "", "", ""};
+            System.out.println(information.getAddressText());
             addressText = information.getAddressText().split(", ");
+            System.out.println(addressText);
             Ward ward = wardRepo.findByName(addressText[2]);
             Address address = currentUser.getAddress() == null ? new Address() : currentUser.getAddress();
-            address.setDetail(addressText[3]);
+            if(addressText.length == 4){
+                address.setDetail(addressText[3]);
+            }
             address.setWard(ward);
             currentUser.setAddress(address);
         }

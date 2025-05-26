@@ -4,12 +4,12 @@ export const getCities = async () => {
     return await request.get('address/cities', {});
 }
 
-export const getDistrictsByCity = async (city) => {
-    return await request.get('address/districts/' + city, {});
+export const getDistrictsByCity = async (cityId) => {
+    return await request.get('address/districts/' + cityId, {});
 }
 
-export const getWardsByDistrict = async (district) => {
-    return await request.get('address/wards/' + district, {
+export const getWardsByDistrict = async (districtId) => {
+    return await request.get('address/wards/' + districtId, {
         headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),
         }

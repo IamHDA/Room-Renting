@@ -10,6 +10,7 @@ import Pagination from "../admin-components/Pagination.jsx";
 import SearchIcon from "./SearchIcon.jsx";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {priceFormat} from "../../utils/format.js";
+import NoDataFound from "../NoDataFound.jsx";
 
 const MyComponent = () => {
     const [isSelected, setIsSelected] = useState(false);
@@ -203,8 +204,7 @@ const MyComponent = () => {
                                 paddingTop: "20px",
                                 backgroundColor: "#fff"
                             }}>
-                                <img src="../../../public/no-data.png" alt="No data" style={{width: "80px", height: "80px", opacity: 0.5}} />
-                                <p style={{marginTop: "10px", color: "#888"}}>Không có dữ liệu</p>
+                                <NoDataFound/>
                             </td>
                         </tr>
                     )}

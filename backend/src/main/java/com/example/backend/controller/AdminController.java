@@ -88,16 +88,6 @@ public class AdminController {
                 .build()));
     }
 
-    @GetMapping("/postsCount")
-    public ResponseEntity<Long> getPostCount(){
-        return ResponseEntity.ok(adminService.getTotalPost());
-    }
-
-    @GetMapping("/usersCount")
-    public ResponseEntity<Long> getUserCount(){
-        return ResponseEntity.ok(adminService.getTotalUser());
-    }
-
     @GetMapping("/post/{postId}")
     public ResponseEntity<PostReportDTO> getPostReport(@PathVariable long postId){
         return ResponseEntity.ok(adminService.getPostReport(postId));

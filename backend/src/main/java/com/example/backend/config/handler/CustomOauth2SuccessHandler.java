@@ -21,6 +21,7 @@ import com.example.backend.utils.Util;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -48,6 +50,12 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Transactional
+    public void updateUserStatusOnline(User user) {
+        user.setStatus(UserStatus.ONLINE);
+        userRepo.save(user);
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
@@ -56,38 +64,34 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
         String email = oauth2User.getAttributes().get("email").toString();
         String name = oauth2User.getAttributes().get("name").toString();
         String provider = authToken.getAuthorizedClientRegistrationId();
-        Account account = accountRepo.findByIdentifier(email).orElse(null);
-        if(account == null){
-            User user = User.builder()
-                    .createdAt(LocalDateTime.now())
-                    .email(email)
-                    .fullName(name)
-                    .role(Role.USER)
-                    .status(UserStatus.ONLINE)
-                    .build();
-            userService.addDefaultProfileImage(user);
-            userRepo.save(user);
-            account = new Account();
-            account.setIdentifier(email);
-            account.setProvider(Provider.valueOf(provider.toUpperCase()));
-            account.setUser(user);
-            account = accountRepo.save(account);
-        }
-        account.getUser().setStatus(UserStatus.ONLINE);
-        userRepo.save(account.getUser());
-        tokenService.disableOldTokens(account);
+        Account account = accountRepo.findByIdentifier(email).orElseGet(() -> {
+            User user = new User();
+            user.setEmail(email);
+            user.setFullName(name);
+            user.setRole(Role.USER);
+            user.setStatus(UserStatus.ONLINE);
+            user.setCreatedAt(LocalDateTime.now());
+            user = userRepo.save(user);
+
+            Account tmp = new Account();
+            tmp.setIdentifier(email);
+            tmp.setProvider(Provider.valueOf(provider.toUpperCase()));
+            tmp.setUser(user);
+            return accountRepo.save(tmp);
+        });
+        updateUserStatusOnline(account.getUser());
         String accessToken = jwtTokenProvider.generateAccessToken(account);
         String refreshToken = jwtTokenProvider.generateRefreshToken(account);
         tokenService.saveAccountToken(accessToken, refreshToken, account);
+        tokenService.disableOldTokens(account);
 
         String html = "<script>" +
-                "window.opener.postMessage({" +
-                "accessToken: '" + accessToken + "'," +
-                "refreshToken: '" + refreshToken + "'" +
-                "}, '*');" +
-                "window.close();" +
-                "</script>";
-
+            "window.opener.postMessage({" +
+            "accessToken: '" + accessToken + "'," +
+            "refreshToken: '" + refreshToken + "'" +
+            "}, '*');" +
+            "window.close();" +
+            "</script>";
         response.setContentType("text/html");
         response.getWriter().write(html);
     }

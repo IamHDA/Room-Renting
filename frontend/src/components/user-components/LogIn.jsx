@@ -4,7 +4,7 @@ import * as authService from '../../apiServices/authentication.js';
 import * as userService from '../../apiServices/user.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {AuthContext} from '../../contexts/AuthContext.jsx';
+import AuthContext from '../../contexts/AuthContext.jsx';
 import SockJSContext from "../../contexts/SockJSContext.jsx";
 import {useNavigate} from "react-router-dom";
 
@@ -43,7 +43,7 @@ const MyComponent = ({handleSignInPopUp}) => {
                         destination: "/app/user.connect",
                         body: JSON.stringify(user.id)
                     })
-                    if(user.fullName === "Admin") navigate("/admin/statistic");
+                    if(user.role === "Admin") navigate("/admin/statistic");
                     localStorage.setItem('user', JSON.stringify(user));
                     setUser(user);
                     handleSignInPopUp();
@@ -64,10 +64,9 @@ const MyComponent = ({handleSignInPopUp}) => {
             `${provider} Login`,
             'width=500,height=600'
         );
-
+        console.log("DSFDSFDS1");
         const messageListener = async (event) => {
             if (event.origin !== "http://localhost:8080") return;
-
             const { accessToken, refreshToken } = event.data;
             if (accessToken && refreshToken) {
                 localStorage.setItem("accessToken", accessToken);

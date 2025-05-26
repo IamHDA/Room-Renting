@@ -86,7 +86,7 @@ public class Util {
         Ward addressWard = address.getWard();
         District addressDistrict = addressWard.getDistrict();
         City addressCity = addressDistrict.getCity();
-        return (addressDetail.isBlank() ? "" : (addressDetail + ", ")) + addressWard.getName() + ", " + addressDistrict.getName() + ", " + addressCity.getName();
+        return (addressDetail == null ? "" : (addressDetail + ", ")) + addressWard.getName() + ", " + addressDistrict.getName() + ", " + addressCity.getName();
     }
 
     public void deleteFile(String filePath) throws IOException {

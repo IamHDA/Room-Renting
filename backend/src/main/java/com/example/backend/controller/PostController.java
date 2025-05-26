@@ -109,9 +109,9 @@ public class PostController {
         return ResponseEntity.ok(postService.changePostStatus(postId, status));
     }
 
-    @PutMapping("/changeInformation")
-    public ResponseEntity<String> changePostInformation(@RequestBody ChangePostInformation changePostInformation){
-        return ResponseEntity.ok(postService.changePostInformation(changePostInformation));
+    @PutMapping("/changeInformation/{postId}")
+    public ResponseEntity<String> changePostInformation(@PathVariable long postId ,@RequestBody ChangePostInformation changePostInformation){
+        return ResponseEntity.ok(postService.changePostInformation(postId, changePostInformation));
     }
 
     @DeleteMapping("/delete/{postId}")

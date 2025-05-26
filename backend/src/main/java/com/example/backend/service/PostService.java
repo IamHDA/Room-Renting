@@ -19,5 +19,5 @@ public interface PostService {
     long createPost(AddressDTO addressDTO, CreatePostDTO createPostDTO);
     String changePostStatus(long postId, String status);
     String deletePost(long postId);
-    String changePostInformation(ChangePostInformation changePostInformation);
+    String changePostInformation(long postId, ChangePostInformation changePostInformation);
 }

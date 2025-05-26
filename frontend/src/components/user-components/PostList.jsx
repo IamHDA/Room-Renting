@@ -11,6 +11,7 @@ import AuthContext from "../../contexts/AuthContext.jsx";
 import BackendPaginationUI from "./BackendPaginationUI.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {addressFormat} from "../../utils/format.js";
+import NoDataFound from "../NoDataFound.jsx";
 
 const MyComponent = () => {
     const location = useLocation();
@@ -344,7 +345,7 @@ const MyComponent = () => {
                     </select>
                 </div>
                 <div className="list-posts-container">
-                    {posts && posts.map((post, index) => (
+                    {posts && (posts.length > 0 ? posts.map((post, index) => (
                         <Link to={`/detail/${post.id}`} key={index} className="list-post">
                             <img src={post.thumbnailURL}/>
                             <div className="list-post-information">
@@ -381,6 +382,10 @@ const MyComponent = () => {
                                 </div>
                             </div>
                         </Link>
+                    )) : (
+                        <div className="no-data-found-container">
+                            <NoDataFound/>
+                        </div>
                     ))}
                 </div>
                 <BackendPaginationUI currentPage={searchParams.get("pageNumber") ? Number(searchParams.get("pageNumber")) : 1} updateSearchParams={updateSearchParams} deleteSearchParams={deleteSearchParams} totalLength={totalLength.current} pageSize={4}/>

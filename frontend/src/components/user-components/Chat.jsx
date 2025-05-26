@@ -18,6 +18,7 @@ import SockJSContext from "../../contexts/SockJSContext.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 
 const MyComponent = () => {
+
     const { user } = useContext(AuthContext);
     const { setUpStompClient, disconnectStomp, stompClientRef } = useContext(SockJSContext);
     const {chatId} = useParams();
@@ -38,7 +39,6 @@ const MyComponent = () => {
     const debounceSearch = useDebounce(searchText, 500);
     const [chatRoomsFromSearch, setChatRoomsFromSearch] = useState([]);
     const [deleteChatRoomId, setDeleteChatRoomId] = useState([]);
-    const [currentChatMediaList, setCurrentChatMediaList] = useState([]);
     const [deleteChatRoom, setDeleteChatRoom] = useState(false);
 
     useEffect(() => {
@@ -93,7 +93,6 @@ const MyComponent = () => {
         if (messageEndRef.current) {
             messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-        if(messages.mediaList) setCurrentChatMediaList([...messages.mediaList]);
     }, [messages]);
 
     useEffect(() => {
@@ -318,7 +317,7 @@ const MyComponent = () => {
                                     <img src={`${chatRoomPost.thumbnailUrl}`} className="chat-post-img"/>
                                 </div>
                             )}
-                            {chatRooms.length > 0 && chatRooms.map((chatRoom, index) => (
+                            {chatRooms.length > 0 ? chatRooms.map((chatRoom, index) => (
                                 <div className={`chat-room-bounding ${chatRoom.lastMessage.status === "UNSEEN" ? "unSeen" : ""} ${chatRoom.chatId === chatId ? "is-selected" : ""}`}
                                      key={index}
                                      onClick={(e) => {
@@ -364,7 +363,11 @@ const MyComponent = () => {
                                         </div>
                                     }
                                 </div>
-                            ))}
+                            )) : ((!virtualChatRoom && (
+                                <div className="no-data-container">
+                                    <h3>Bạn chưa có tin nhắn nào</h3>
+                                </div>
+                            )))}
                         </div>
                     ) : (
                         <div
@@ -413,7 +416,7 @@ const MyComponent = () => {
                 {recipientRef.current && (
                     <div className="right">
                         <div className="chat-header">
-                            <Link to={`/account/${recipientRef.id}`} className="opponent">
+                            <Link to={`/account/${recipientRef.current.id}`} className="opponent">
                                 <div className="img-container">
                                     <img src={`data:${getImageMime(recipientRef.current.avatar)};base64,${recipientRef.current.avatar}`} className="opponent-img"/>
                                 </div>

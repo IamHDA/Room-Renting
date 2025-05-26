@@ -173,9 +173,9 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public String changePostInformation(ChangePostInformation changePostInformation) {
-        Post post = postRepo.findById(changePostInformation.getId()).orElse(null);
-        PostDetail postDetail = modelMapper.map(changePostInformation, PostDetail.class);
+    public String changePostInformation(long postId, ChangePostInformation changePostInformation) {
+        Post post = postRepo.findById(postId).orElse(null);
+        PostDetail postDetail = modelMapper.map(changePostInformation.getPostDetailDTO(), PostDetail.class);
         postDetail.setId(post.getPostDetail().getId());
         post.setPostDetail(postDetail);
         post.setTitle(changePostInformation.getTitle());

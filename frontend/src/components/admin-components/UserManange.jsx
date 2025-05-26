@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import '../../css/admin-css/index.css';
 import '../../css/admin-css/AccountManage.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,8 +13,11 @@ import SortIcon from "./SortIcon.jsx";
 import SearchIcon from "./SearchIcon.jsx";
 import {getUsers, deleteUser, getUserReport, deleteReport} from "../../apiServices/admin.js";
 import {getImageMime} from "../../utils/format.js";
+import AuthContext from "../../contexts/AuthContext.jsx";
+import NoDataFound from "../NoDataFound.jsx";
 
 const MyComponent = () => {
+    const {user} = useContext(AuthContext);
     const [isSelected, setIsSelected] = useState(false);
     const [sortCondition, setSortCondition] = useState("");
     const [pageNumber, setPageNumber] = useState(1);
@@ -24,7 +27,7 @@ const MyComponent = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const totalUsersNumberRef = React.useRef(0);
     const [users, setUsers] = useState([]);
-    const [user, setUser] = useState(null);
+    const [userInformation, setUserInformation] = useState(null);
     const [reports, setReports] = useState([]);
     const [accounts, setAccounts] = useState([]);
 
@@ -60,7 +63,7 @@ const MyComponent = () => {
     const handleGetUserReport = async (userId) => {
         try {
             const response = await getUserReport(userId);
-            setUser(response.user);
+            setUserInformation(response.user);
             setReports(response.reportList);
             setAccounts(response.accounts);
             setIsSelected(true);
@@ -159,16 +162,16 @@ const MyComponent = () => {
                 </tr>
                 </thead>
                 <tbody>
-                    {users.length > 0 ? users.map((user, index) => (
-                        <tr key={index} onClick={() => handleGetUserReport(user.id)}>
+                    {users.length > 0 ? users.map((data, index) => (
+                        <tr key={index} onClick={() => handleGetUserReport(data.id)}>
                             <td className="stt">{pageSize % (pageNumber * pageSize) + 1 + index}</td>
-                            <td className="id">{user.id}</td>
-                            <td>{user.fullName}</td>
-                            <td>{user.email}</td>
-                            <td>{user.phoneNumber}</td>
-                            <td>{user.reportedTime}</td>
-                            <td>{user.role === "USER" ? "Người dùng" : "Quản trị viên"}</td>
-                            <td>{user.createdAt}</td>
+                            <td className="id">{data.id}</td>
+                            <td>{data.fullName}</td>
+                            <td>{data.email}</td>
+                            <td>{data.phoneNumber}</td>
+                            <td>{data.reportedTime}</td>
+                            <td>{data.role === "User" ? "Người dùng" : "Quản trị viên"}</td>
+                            <td>{data.createdAt}</td>
                             <td className="delete" onClick={(e) => {
                                 e.stopPropagation();
                                 handleDeleteUser(user.id);
@@ -182,8 +185,7 @@ const MyComponent = () => {
                                 paddingTop: "20px",
                                 backgroundColor: "#fff"
                             }}>
-                                <img src="../../../public/no-data.png" alt="No data" style={{width: "80px", height: "80px", opacity: 0.5}} />
-                                <p style={{marginTop: "10px", color: "#888"}}>Không có dữ liệu</p>
+                                <NoDataFound/>
                             </td>
                         </tr>
                     )}
@@ -202,15 +204,15 @@ const MyComponent = () => {
                         <FontAwesomeIcon icon={faXmark} className="close" onClick={() => setIsSelected(false)}/>
                         <div className="user-page-profile">
                             <div className="user-avatar-background">
-                                <img src={`data:${getImageMime(user.backgroundImage)};base64,${user.backgroundImage}`} id="user-background-img"/>
+                                <img src={`data:${getImageMime(userInformation.backgroundImage)};base64,${userInformation.backgroundImage}`} id="user-background-img"/>
                                 <div className="user-avatar-container-rel">
                                     <div className="user-avatar-container">
-                                        <img src={`data:${getImageMime(user.avatar)};base64,${user.avatar}`} id="user-avatar-img"/>
+                                        <img src={`data:${getImageMime(userInformation.avatar)};base64,${userInformation.avatar}`} id="user-avatar-img"/>
                                     </div>
                                 </div>
                             </div>
                             <div className="user-lower-information">
-                                <h2 id="user-page-username">{user.fullName}</h2>
+                                <h2 id="user-page-username">{userInformation.fullName}</h2>
                                 <div className="user-rating">
                                     <div className="rating-star">
                                         <FontAwesomeIcon icon={faStarRegular} id="star-1"/>
@@ -224,17 +226,17 @@ const MyComponent = () => {
                                 <div className="sub-bounding">
                                     <FontAwesomeIcon icon={faSignal} />
                                     <p className="title">Trạng thái:</p>
-                                    <p>{user.status}</p>
+                                    <p>{userInformation.status}</p>
                                 </div>
                                 <div className="sub-bounding">
                                     <FontAwesomeIcon icon={faMessage}/>
                                     <p className="title">Phản hồi chat:</p>
-                                    <p>{user.replyPercentage ? user.replyPercentage + "%" : "Chưa có thông tin"}</p>
+                                    <p>{userInformation.replyPercentage ? userInformation.replyPercentage + "%" : "Chưa có thông tin"}</p>
                                 </div>
                                 <div className="sub-bounding">
                                     <FontAwesomeIcon icon={faCompass} />
                                     <p className="title">Địa chỉ:</p>
-                                    <p>{user.addressDTO ? user.addressDTO : "Chưa cung cấp"}</p>
+                                    <p>{userInformation.addressDTO ? userInformation.addressDTO : "Chưa cung cấp"}</p>
                                 </div>
                             </div>
                         </div>

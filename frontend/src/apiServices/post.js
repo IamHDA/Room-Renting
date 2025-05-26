@@ -50,6 +50,15 @@ export const changePostStatus = async (status, postId) => {
     })
 }
 
+export const changePostInformation = async (postId, changePostInformation) => {
+    console.log(changePostInformation);
+    return await request.put("post/changeInformation/" + postId, changePostInformation, {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+        }
+    })
+}
+
 export const deletePost = async (postId) => {
     return await request.remove("post/delete/" + postId);
 }

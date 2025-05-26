@@ -22,9 +22,8 @@ public class AccountController {
         return ResponseEntity.ok(accountService.addNewAccountWithPhoneNumber(identifier, password));
     }
 
-    @PostMapping("/addWithEmail/{email}")
-    public ResponseEntity<String> addAccountWithEmail(@PathVariable String email) {
-        System.out.println(email);
+    @PostMapping("/addWithEmail")
+    public ResponseEntity<String> addAccountWithEmail(@RequestBody String email) {
         return ResponseEntity.ok(accountService.addNewAccountWithEmail(email));
     }
 }

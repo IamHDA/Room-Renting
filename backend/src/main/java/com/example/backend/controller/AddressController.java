@@ -21,14 +21,14 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
-    @GetMapping("/wards/{id}")
-    public ResponseEntity<List<WardDTO>> getWardsByDistrict(@PathVariable("id") int id){
-        return ResponseEntity.ok(addressService.getWardByDistrict(id));
+    @GetMapping("/wards/{districtId}")
+    public ResponseEntity<List<WardDTO>> getWardsByDistrict(@PathVariable int districtId){
+        return ResponseEntity.ok(addressService.getWardByDistrict(districtId));
     }
 
-    @GetMapping("/districts/{id}")
-    public ResponseEntity<List<DistrictDTO>> getDistrictsByCity(@PathVariable("id") int id){
-        return ResponseEntity.ok(addressService.getDistrictByCity(id));
+    @GetMapping("/districts/{cityId}")
+    public ResponseEntity<List<DistrictDTO>> getDistrictsByCity(@PathVariable int cityId){
+        return ResponseEntity.ok(addressService.getDistrictByCity(cityId));
     }
 
     @GetMapping("/cities")

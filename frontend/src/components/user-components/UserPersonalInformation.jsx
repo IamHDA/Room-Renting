@@ -12,6 +12,7 @@ const MyComponent = () => {
     const { allCities, allDistricts, allWards, setAllDistricts, setAllWards, fetchDistrictsByCity, fetchWardsByDistrict } = useContext(AddressContext);
     const { user, setUser } = useContext(AuthContext);
     const phoneNumberRef = useRef(null);
+    const userInformationRef = useRef(null);
     const [isSelected, setIsSelected] = useState(true);
     const [nameInput, setNameInput] = useState("");
     const [emailInput, setEmailInput] = useState("");
@@ -34,17 +35,19 @@ const MyComponent = () => {
     const [error, setError] = useState(0);
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2] = useState("");
+    const [edited, setEdited] = useState(false);
 
     useEffect(() => {
         const fetchInformation = async () => {
             try{
                 const information = await getPersonalInformation();
+                userInformationRef.current = information;
+                console.log(information);
                 setNameInput(information.fullName);
                 setEmailInput(information.email);
                 phoneNumberRef.current = information.phoneNumber;
                 setAddress(information.addressText);
                 if(information.email !== null) setEmailLocked(true);
-                console.log(information.email);
             }catch(err){
                 console.log(err);
             }
@@ -53,11 +56,30 @@ const MyComponent = () => {
         fetchInformation();
     }, [user]);
 
+    useEffect(() => {
+        if(user && userInformationRef.current){
+            const addressText = userInformationRef.current.addressText;
+            console.log(addressText);
+            if(emailInput !== userInformationRef.current.email) {
+                setEdited(true);
+                return;
+            }
+            if(phoneNumberRef.current !== userInformationRef.current.phoneNumber) {
+                setEdited(true);
+                return;
+            }
+            if(ward !== "" && (!addressText.includes(ward) || addressText.includes(detail))) {
+                setEdited(true);
+                return;
+            }
+            setEdited(false);
+        }
+    }, [emailInput, phoneNumberInput, ward])
+
     const toggleSelected = (num) => {
         setIsSelected(num);
         setAllDistricts(null);
         setAllWards(null);
-        console.log(isSelected);
     };
 
     const handleSubmitAddress = () => {
@@ -72,8 +94,11 @@ const MyComponent = () => {
     }
 
     const handleShowPassword = (num) => {
-        setShowPassword(num);
-        if(showPassword === num) setShowPassword(-1);
+        if (showPassword === num) {
+            setShowPassword(-1);
+        } else {
+            setShowPassword(num);
+        }
     }
 
     const changeInformationHandler = async () => {
@@ -143,7 +168,7 @@ const MyComponent = () => {
                         </div>
                     </>
                 )}
-                {showAddPhoneNumber && (
+                {showAddPhoneNumber === true && (
                     <>
                         <div className="curtain"></div>
                         <div className="pop-up-phone-number">
@@ -265,6 +290,11 @@ const MyComponent = () => {
                                                 onChange={(e) => setEmailInput(e.target.value)}
                                                 type="text"
                                                 disabled={emailLocked}
+                                                style={{
+                                                    backgroundColor: 'inherit',
+                                                    color: 'black',
+                                                    fontSize: '20px',
+                                                }}
                                             />
                                         </div>
                                         {!emailLocked && <p
@@ -364,7 +394,7 @@ const MyComponent = () => {
                                     </div>
                                     <button className="submit-button" onClick={handleSubmitAddress}>Xác nhận</button>
                                 </div>
-                                <button className="submit-information" onClick={changeInformationHandler}>
+                                <button className={`submit-information ${edited && "confirmed"}`} onClick={changeInformationHandler}>
                                     Thay đổi thông tin
                                 </button>
                             </>

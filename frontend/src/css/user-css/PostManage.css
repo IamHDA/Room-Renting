@@ -1,6 +1,6 @@
 .post-manage-body{
     background-color: #E8E8E8;
-    min-height: 1000px;
+    min-height: 800px;
     padding-top: 50px;
     padding-bottom: 50px;
     display: flex;
@@ -270,6 +270,7 @@
 .post-security-furniture .option{
     position: absolute;
     display: flex;
+    background-color: white;
     flex-direction: column;
     border: 1px solid #B7B7B7;
     width: 200px;

@@ -19,7 +19,7 @@ export const addNewAccountWithPhoneNumber = async (identifier, password) => {
 }
 
 export const addNewAccountWithEmail = async (email) => {
-    return await request.post("account/addWithEmail/" + email, {}, {
+    return await request.post("account/addWithEmail", email, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }

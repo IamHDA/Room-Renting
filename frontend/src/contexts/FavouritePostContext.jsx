@@ -44,7 +44,9 @@ export const FavouritePostProvider = ({children}) => {
             }else{
                 try{
                     const response = await addToFavourite(postId);
-                    if(response !== "Added post to favourite") alert("Có lỗi xảy ra");
+                    if(response === "Too much post"){
+                        alert("Bạn không thể lưu nhiều hơn 100 bài post");
+                    }
                     else{
                         const newFavouritePostList = [...favouritePostIds, postId];
                         setFavouritePostIds(newFavouritePostList);

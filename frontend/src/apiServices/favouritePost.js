@@ -17,7 +17,7 @@ export const removeFromFavourite = async (postId) => {
 }
 
 export const getFavouritePostsIdByUser = async () => {
-    return await request.get("favouritePost/getFavPostIdByUser", {
+    return await request.get("favouritePost/getFavPostIdsByUser", {
         headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken")
         }
