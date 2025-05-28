@@ -13,5 +13,6 @@ public class UserProfile {
     private String status;
     private int joinTime;
     private TotalRating totalRating;
+    private int replyPercentage;
     private String addressDTO;
 }

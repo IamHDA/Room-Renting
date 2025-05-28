@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class PostFilter {
+    private String keyword;
     private String addressDetail;
     private String addressWard;
     private String addressDistrict;

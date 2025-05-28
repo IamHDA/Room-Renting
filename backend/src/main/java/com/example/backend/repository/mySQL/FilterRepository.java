@@ -17,8 +17,6 @@ import java.util.List;
 
 @Repository
 public class FilterRepository {
-    @Autowired
-    private Util util;
     private final EntityManager entityManager;
 
     public FilterRepository(EntityManager entityManager) {
@@ -36,6 +34,15 @@ public class FilterRepository {
             PostFilter filter
     ) {
         List<Predicate> predicates = new ArrayList<>();
+        if(!filter.getKeyword().isBlank()) {
+            predicates.add(cb.or(
+                    cb.or(
+                            cb.like(cb.lower(address.get("detail")), '%' + filter.getKeyword().toLowerCase() + '%'),
+                            cb.like(cb.lower(ward.get("name")), '%' + filter.getKeyword().toLowerCase() + '%')
+                    ),
+                    cb.like(cb.lower(district.get("name")), '%' + filter.getKeyword().toLowerCase() + '%')
+            ));
+        }
         if (!filter.getAddressDetail().isBlank())
             predicates.add(cb.equal(cb.lower(address.get("detail")), filter.getAddressDetail().toLowerCase()));
         if (!filter.getAddressWard().isBlank())

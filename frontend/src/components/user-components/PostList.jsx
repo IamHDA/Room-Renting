@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faHeart as redHeart, faLocationDot} from '@fortawesome/free-solid-svg-icons';
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {getPostsByCriteria} from '../../apiServices/post.js';
-import {getCities, getDistrictsByCity} from '../../apiServices/address.js';
+import {getCities, getDistrictsByCity, searchAddress} from '../../apiServices/address.js';
 import FavouritePostContext from "../../contexts/FavouritePostContext.jsx";
 import {faHeart as normalHeart} from "@fortawesome/free-regular-svg-icons";
 import AuthContext from "../../contexts/AuthContext.jsx";
@@ -12,10 +12,12 @@ import BackendPaginationUI from "./BackendPaginationUI.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {addressFormat} from "../../utils/format.js";
 import NoDataFound from "../NoDataFound.jsx";
+import SearchBar from "./SearchBar.jsx";
 
 const MyComponent = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
+    const searchParamRef = useRef(new URLSearchParams());
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     const { heartButtonHandle, favouritePostIds } = useContext(FavouritePostContext);
@@ -25,7 +27,9 @@ const MyComponent = () => {
     const [selectedFurniture, setSelectedFurniture] = useState("");
     const [selectedSortCondition, setSelectedSortCondition] = useState("")
     const [searchInput, setSearchInput] = useState("");
+    const [addressesDropdown, setAddressesDropdown] = useState(false);
     const searchDebounce = useDebounce(searchInput, 500);
+    const [searchResult, setSearchResult] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [addressChoices, setAddressChoices] = useState([]);
     const [selectedCity, setSelectedCity] = useState("");
@@ -62,6 +66,7 @@ const MyComponent = () => {
     const totalLength = useRef(0);
 
     useEffect(() => {
+        setSelectedCity(searchParams.get("city"));
         const fetchCity = async () => {
             return await getCities();
         }
@@ -80,11 +85,7 @@ const MyComponent = () => {
             localStorage.removeItem("selectedArea");
             localStorage.removeItem("selectedFurniture");
         }
-    }, []);
-
-    useEffect(() => {
-
-    }, [searchDebounce]);
+    }, [user]);
 
     useEffect(() => {
         if(scrollToTop.current) {
@@ -98,6 +99,27 @@ const MyComponent = () => {
         }
         fetchPosts();
     }, [location.search]);
+
+    useEffect(() => {
+        const fetchAddress = async () => {
+            try {
+                const response = await searchAddress(searchInput, selectedCity);
+                setSearchResult(response);
+            }catch (e){
+                console.log(e);
+            }
+        }
+        fetchAddress();
+    }, [searchDebounce]);
+
+    const showAddress = (address) => {
+        let res = "";
+        if(address.detail) res += address.detail + ", ";
+        if(address.wardName) res += address.wardName + ", ";
+        if(address.districtName) res += address.districtName + ", ";
+        if(address.cityName) res += address.cityName;
+        return res;
+    }
 
     const updateSearchParams = (listParam) => {
         if(searchParams.get("pageNumber") === "1") deleteSearchParams("pageNumber");
@@ -184,69 +206,33 @@ const MyComponent = () => {
         <div className="list-container" onClick={() => setShowDropdown(false)}>
             <div className="list-container-left">
                 <div className="list-search-container">
-                    <div className="list-search-bounding">
-                        <img src="../../../public/list-icon/search.png"/>
-                        <input type="text"
-                               value={searchInput}
-                               id="list-search-input"
-                               onChange={(e) => setSearchInput(e.currentTarget.value)}
-                               onClick={(e) => {
-                                   e.stopPropagation();
-                                   setShowDropdown(true);
-                               }}
-                               placeholder="Nhập địa chỉ. Ví dụ: Ngách 16, 278 Kim Giang, Hoàng Mai"
-                        />
-                        <select
-                            value={selectedCity === "" ? "Tất cả" : cityOptions.find(city => (city.id === selectedCity)?.name)}
-                            id="list-search-city-bounding"
-                        >
-                            <option value="">Tất cả</option>
-                            {cityOptions && cityOptions.map(city => (
-                                <option
-                                    key={city.id}
-                                    value={city.id}
-                                    onClick={async () => {
-                                        setSelectedCity(city.id);
-                                        const response = await getDistrictsByCity(city.id);
-                                        const districts = response.map(district =>  {
-                                            return {
-                                                detail: "",
-                                                ward: "",
-                                                district: district.name,
-                                                city: city.name,
-                                            }
-                                        })
-                                        setAddressChoices(districts);
-                                    }}
-                                >{city.name}</option>
-                            ))}
+                    <div style={{
+                        backgroundColor: 'lightgray',
+                        display: 'flex',
+                        alignItems: 'center',
+                        position: 'relative',
+                        justifyContent: 'space-between',
+                        padding: '10px',
+                        borderRadius: '10px',
+                    }}>
+                        <FontAwesomeIcon icon={faLocationDot} className="location-icon"/>
+                        <select value={selectedCity} className="city-selector" onChange={(e) => {
+                            setSelectedCity(e.target.value)
+                            searchParamRef.current.set("city", e.target.value);
+                        }}>
+                            <option>Hà Nội</option>
+                            <option>Hồ Chí Minh</option>
                         </select>
-                        {showDropdown && (
-                            <div className="available-addresses">
-                                {addressChoices.map((address, index) =>
-                                    <div
-                                        className="address-text"
-                                        key={index}
-                                        onClick={() => updateSearchParams([{
-                                            param: "detail",
-                                            value: address.detail
-                                        }, {
-                                            param: "ward",
-                                            value: address.ward
-                                        }, {
-                                            param: "district",
-                                            value: address.district
-                                        }, {
-                                            param: "city",
-                                            value: address.city
-                                        }])}
-                                    >
-                                        <FontAwesomeIcon icon={faLocationDot}/>
-                                        {addressFormat(address)}
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        <img src="../../../public/homePage-icon/pipe.png" className="pipe"/>
+                        <SearchBar searchParamRef={searchParamRef}
+                                   setAddressesDropdown={setAddressesDropdown}
+                                   setSearchResult={setSearchResult}
+                                   setSearch={setSearchInput}
+                                   addressesDropdown={addressesDropdown}
+                                   searchResult={searchResult}
+                                   search={searchInput}
+                                   showAddress={showAddress}
+                        />
                     </div>
                     <div className="list-search-criteria">
                         <div className="filter">

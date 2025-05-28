@@ -45,6 +45,7 @@ public class PostController {
 
     @GetMapping("/postsByCriteria")
     public ResponseEntity<PostSummaryList> getPostByCriteria(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
             @RequestParam(name = "detail", defaultValue = "") String detail,
             @RequestParam(name = "ward", defaultValue = "") String ward,
             @RequestParam(name = "district", defaultValue = "") String district,
@@ -58,6 +59,7 @@ public class PostController {
             @RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber
     ){
         PostFilter filter = PostFilter.builder()
+                .keyword(keyword)
                     .addressDetail(detail)
                     .addressWard(ward)
                     .addressDistrict(district)
@@ -116,6 +118,7 @@ public class PostController {
 
     @DeleteMapping("/delete/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable long postId){
+        System.out.println(postId);
         return ResponseEntity.ok(postService.deletePost(postId));
     }
 }

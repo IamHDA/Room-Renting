@@ -10,6 +10,7 @@ import com.example.backend.repository.mongoDB.MessageRepository;
 import com.example.backend.service.ChatRoomService;
 import com.example.backend.service.MessageMediaService;
 import com.example.backend.service.MessageService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ public class MessageServiceImp implements MessageService {
         List<ChatRoom> chatRooms = chatRoomRepo.findByChatId(chatId);
         chatRooms.forEach(chatRoom -> {
             LastMessage lastMessage = modelMapper.map(message, LastMessage.class);
+            if(messageDTO.getContent().isBlank()) lastMessage.setContent("Đã gửi một file");
             if(message.getSenderId() == chatRoom.getSenderId()) lastMessage.setStatus(MessageStatus.SEEN);
             else lastMessage.setStatus(MessageStatus.UNSEEN);
             chatRoom.setLastMessage(lastMessage);
@@ -68,12 +70,11 @@ public class MessageServiceImp implements MessageService {
         return modelMapper.map(message, MessageDTO.class);
     }
 
+    @Transactional
     @Override
     public String revokeMessage(String messageId, String chatId) {
         Message message = messageRepo.findById(messageId).orElse(null);
-        System.out.println(message);
         List<MessageMedia> messageMediaList = message.getMediaList();
-        System.out.println(messageMediaList);
         if(!messageMediaList.isEmpty()) messageMediaService.deleteMessageMedias(messageMediaList);
         message.setContent("Đã thu hồi tin nhắn");
         message.setMediaList(new ArrayList<>());

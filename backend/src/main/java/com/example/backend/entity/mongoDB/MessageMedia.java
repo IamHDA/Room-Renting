@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MessageMedia {
     @Id
     private String id;
+    private String name;
     private String filePath;
     private String url;
     private MediaType type;

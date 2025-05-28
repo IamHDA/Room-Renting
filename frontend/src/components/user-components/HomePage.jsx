@@ -11,21 +11,20 @@ import {priceFormat} from "../../utils/format.js";
 import FavouritePostContext from "../../contexts/FavouritePostContext.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {searchAddress} from "../../apiServices/address.js";
+import SearchBar from "./SearchBar.jsx";
 
 
 const MyComponent = () => {
     const searchParamRef = useRef(new URLSearchParams());
-    const navigate = useNavigate();
+    const [search, setSearch] = useState("");
     const [newPosts, setNewPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const {user} = useContext(AuthContext);
-    const [search, setSearch] = useState("");
     const searchDebounce = useDebounce(search, 500);
     const [addressesDropdown, setAddressesDropdown] = useState(false);
     const [searchResult, setSearchResult] = useState([]);
     const { heartButtonHandle, favouritePostIds } = useContext(FavouritePostContext);
     const cityRef = useRef("Hà Nội");
-    const dropDownRef = useRef(null);
     const areaOptions = [
         { label: "Dưới 20 m²", value: "0-20" },
         { label: "20 - 30 m²", value: "20-30" },
@@ -49,6 +48,7 @@ const MyComponent = () => {
 
 
     useEffect(() => {
+        searchParamRef.current.set("city", "Hà Nội");
         const fetchData = async () => {
             setLoading(true);
             const tmpPosts = localStorage.getItem("posts");
@@ -71,29 +71,12 @@ const MyComponent = () => {
             try {
                 const response = await searchAddress(search, cityRef.current);
                 setSearchResult(response);
-                searchParamRef.current.set("city", "Hà Nội");
             }catch (e){
                 console.log(e);
             }
         }
         fetchAddress();
     }, [searchDebounce]);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropDownRef.current && !dropDownRef.current.contains(event.target)) {
-                setAddressesDropdown(false);
-            }
-        };
-
-        if (addressesDropdown) {
-            document.addEventListener("mousedown", handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [addressesDropdown]);
 
     const showAddress = (address) => {
         let res = "";
@@ -128,64 +111,15 @@ const MyComponent = () => {
                             <option>Hồ Chí Minh</option>
                         </select>
                         <img src="../../../public/homePage-icon/pipe.png" className="pipe"/>
-                        <div className="search">
-                            <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon"/>
-                            <input
-                                className="search-input"
-                                type="text"
-                                placeholder="Nhập địa điểm. Ví dụ: Đại Kim, Hoàng Mai"
-                                value={search}
-                                onClick={() => setAddressesDropdown(true)}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                            {addressesDropdown && (
-                                <div
-                                    ref={dropDownRef}
-                                    style={{
-                                        position: "absolute",
-                                        top: "90%",
-                                        left: "0",
-                                        right: "0",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        padding: "20px",
-                                        maxHeight: "200px",
-                                        overflowY: "auto",
-                                        zIndex: "100",
-                                        backgroundColor: "white",
-                                        borderBottomRightRadius: "10px",
-                                        borderBottomLeftRadius: "10px",
-                                    }}
-                                >
-                                    {searchResult.map((address, index) => (
-                                        <div
-                                            key={index}
-                                            className="address-choice"
-                                        >
-                                            <FontAwesomeIcon icon={faLocationDot} />
-                                            <p onClick={() => {
-                                                searchParamRef.current.set("ward", address.wardName);
-                                                searchParamRef.current.set("district", address.districtName);
-                                                searchParamRef.current.set("city", address.cityName);
-                                                setAddressesDropdown(false);
-                                                setSearch(showAddress(address));
-                                            }}
-                                            >
-                                                {showAddress(address)}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        <div
-                            className="search-button"
-                            onClick={() => {
-                                navigate(`/list?${searchParamRef.current.toString()}`);
-                            }}
-                        >
-                            Tìm kiếm
-                        </div>
+                        <SearchBar searchParamRef={searchParamRef}
+                                   setAddressesDropdown={setAddressesDropdown}
+                                   setSearchResult={setSearchResult}
+                                   setSearch={setSearch}
+                                   addressesDropdown={addressesDropdown}
+                                   searchResult={searchResult}
+                                   search={search}
+                                   showAddress={showAddress}
+                        />
                     </div>
                     <div className="lower">
                         <div className="price">

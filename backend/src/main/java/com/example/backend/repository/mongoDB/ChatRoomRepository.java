@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
     Optional<ChatRoom> findBySenderIdAndRecipientId(long senderId, long recipientId);
+    ChatRoom findByChatRoomPost_Id(long chatRoomPostId);
     List<ChatRoom> findByChatId(String chatId);
     List<ChatRoom> findBySenderId(long id, Sort sort);
     List<ChatRoom> findByRecipientNameContainingAndSenderId(String keyword, long id, Sort sort);

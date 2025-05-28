@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
-import { getEnablePostsByUserId, changePostStatus } from "../../apiServices/post.js";
+import {getEnablePostsByUserId, changePostStatus, deletePost} from "../../apiServices/post.js";
 import { getPostDetail } from "../../apiServices/post.js";
 import TablePagination from "./TablePagination.jsx";
 import NoDataFound from "../NoDataFound.jsx";
@@ -31,7 +31,6 @@ const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
         try{
             const postDetail = await getPostDetail(post.postDetailSummaryDTO.id);
             setCurrentEditingPost({post, postDetail});
-            console.log(post);
             setEditPost(true);
         }catch(error) {
             console.log(error);
@@ -47,6 +46,16 @@ const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
         }
     }
 
+    const handleDeletePost = async (postId) => {
+        try{
+            const response = await deletePost(postId);
+            if(response !== "Post deleted successfully!") alert("Có lỗi xảy ra");
+            else setPosts(posts.filter(p => p.id !== postId));
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     return userId && (
         <div className="visible-posts-container">
             {posts.length > 0 ? (
@@ -57,7 +66,7 @@ const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
                         <div className="visible-posts-post-information">
                             <p className="title">{post.title}</p>
                             <button className="delete-button">
-                                <FontAwesomeIcon icon={faTrashCan} />
+                                <FontAwesomeIcon icon={faTrashCan} onClick={() => handleDeletePost(post.id)}/>
                             </button>
                             <button className="edit-button">
                                 <FontAwesomeIcon icon={faPenToSquare} onClick={() => handleEditPostButton(post)}/>

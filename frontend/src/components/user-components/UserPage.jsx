@@ -305,7 +305,7 @@ const MyComponent = () => {
                             <div className="sub-bounding">
                                 <FontAwesomeIcon icon={faMessage}/>
                                 <p className="title">Phản hồi chat:</p>
-                                <p>Chưa có thông tin</p>
+                                <p>{userProfile.replyPercentage}%</p>
                             </div>
                             <div className="sub-bounding">
                                 <FontAwesomeIcon icon={faCalendar} />

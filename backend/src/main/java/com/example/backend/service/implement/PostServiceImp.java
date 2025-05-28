@@ -3,15 +3,20 @@ package com.example.backend.service.implement;
 import com.example.backend.Enum.MediaType;
 import com.example.backend.Enum.PostStatus;
 import com.example.backend.dto.address.AddressDTO;
+import com.example.backend.dto.chat.ChatRoomPost;
 import com.example.backend.dto.filter.PostFilter;
 import com.example.backend.dto.post.*;
+import com.example.backend.entity.mongoDB.ChatRoom;
 import com.example.backend.entity.mongoDB.PostMedia;
 import com.example.backend.entity.mySQL.*;
+import com.example.backend.repository.mongoDB.ChatRoomRepository;
+import com.example.backend.repository.mongoDB.MessageRepository;
 import com.example.backend.repository.mongoDB.PostMediaRepository;
 import com.example.backend.repository.mySQL.*;
 import com.example.backend.service.UserService;
 import com.example.backend.service.PostService;
 import com.example.backend.utils.Util;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +48,8 @@ public class PostServiceImp implements PostService {
     private Util util;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ChatRoomRepository chatRoomRepo;
 
     @Override
     public List<PostSummaryDTO> getNewPosts() {
@@ -162,6 +169,7 @@ public class PostServiceImp implements PostService {
         return "Change Post's Status Successfully!";
     }
 
+    @Transactional
     @Override
     public String deletePost(long postId) {
         Post post = postRepo.findById(postId).orElse(null);
@@ -181,6 +189,12 @@ public class PostServiceImp implements PostService {
         post.setTitle(changePostInformation.getTitle());
         post.setDescription(changePostInformation.getDescription());
         post.setUpdatedAt(LocalDateTime.now());
+        ChatRoom chatRoom = chatRoomRepo.findByChatRoomPost_Id(postId);
+        ChatRoomPost chatRoomPost = chatRoom.getChatRoomPost();
+        chatRoomPost.setArea(postDetail.getArea());
+        chatRoomPost.setPrice(postDetail.getPrice());
+        chatRoomPost.setTitle(post.getTitle());
+        chatRoomRepo.save(chatRoom);
         postRepo.save(post);
         return "Post updated successfully!";
     }

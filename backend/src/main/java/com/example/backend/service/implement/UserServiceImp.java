@@ -73,6 +73,7 @@ public class UserServiceImp implements UserService {
         userProfile.setJoinTime(util.getJoinTime(user.getCreatedAt()));
         userProfile.setAddressDTO(util.getTextAddress(user.getAddress()));
         userProfile.setTotalRating(userRatingService.getTotalRating(userId));
+        userProfile.setReplyPercentage(util.getMessageReplyPercentage(userId));
         return userProfile;
     }
 

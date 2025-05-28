@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import '../../css/user-css/PostManage.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -21,6 +21,7 @@ const MyComponent = () => {
     const {allCities, allDistricts, allWards, fetchDistrictsByCity, fetchWardsByDistrict, setAllWards, setAllDistricts} = useContext(AddressContext);
     const location = useLocation();
     const isPost = location.state?.toManage;
+    const fromOtherPageRef = useRef(location.state?.fromOtherPage);
     const [isSelected, setIsSelected] = useState(isPost);
     const [pickAddressPopUp, setPickAddressPopUp] = useState(false);
     const [pickAddress, setPickAddress] = useState(2);
@@ -34,6 +35,11 @@ const MyComponent = () => {
 
     useEffect(() => {
         const isManagePost = JSON.parse(localStorage.getItem("manage-post"));
+        if(fromOtherPageRef.current === true) {
+            fromOtherPageRef.current = false;
+            localStorage.removeItem("postManageEnablePostIndex");
+            localStorage.removeItem("postManageDisablePostIndex");
+        }
         if(isManagePost) setIsSelected(isManagePost);
     }, [user])
 
@@ -88,7 +94,6 @@ const MyComponent = () => {
                     security: currentEditingPost.postDetail.security,
                 }
             };
-            console.log(data);
             const response = await postService.changePostInformation(currentEditingPost.post.id, data);
             if(response !== "Post updated successfully!"){
                 alert("Có lỗi xảy ra");
@@ -118,11 +123,11 @@ const MyComponent = () => {
         else{
             const formData = new FormData();
             for(const file of images){
-                formData.append("file", file);
+                formData.append("files", file);
             }
             if(videosLength > 0){
                 for(const file of videos){
-                    formData.append("file", file);
+                    formData.append("files", file);
                 }
             }
             const postCreateRequest = {
@@ -132,6 +137,7 @@ const MyComponent = () => {
                 },
                 createPostDTO: {
                     title : title,
+                    price: price,
                     description : document.getElementById("post-create-description").value,
                     area : area,
                     bedroom : document.getElementById("post-create-bedroom").value,
@@ -446,6 +452,7 @@ const MyComponent = () => {
                                                     <div className="post-price-area">
                                                         <div className="container">
                                                             <p>Giá thuê</p>
+                                                            {console.log(currentEditingPost.postDetail)}
                                                             <input
                                                                 id="post-edit-price"
                                                                 value={currentEditingPost.postDetail.price}

@@ -492,7 +492,7 @@ const MyComponent = () => {
                                             id: post.id,
                                             title: post.title,
                                             thumbnailUrl: postImages[0].url,
-                                            price: post.postDetailDTO.area,
+                                            price: post.postDetailDTO.price,
                                             area: post.postDetailDTO.area
                                         }
                                         localStorage.setItem("chatRoomPost", JSON.stringify(chatRoomPost));

@@ -79,7 +79,7 @@ const Component = ({handleSignInPopUp , handleRegisterPopUp}) => {
                                         <FontAwesomeIcon icon={faBookmark} className="icon"/>
                                         <p>Bài đăng đã lưu</p>
                                     </Link>
-                                    <Link to="/postManage" state={{ toManage: true, userId: user.id }} className="header-posts-manage" >
+                                    <Link to="/postManage" state={{ toManage: true, userId: user.id, fromOtherPage: true }} className="header-posts-manage" >
                                         <FontAwesomeIcon icon={faPenToSquare} className="icon"/>
                                         <p>Quản lý bài đăng</p>
                                     </Link>

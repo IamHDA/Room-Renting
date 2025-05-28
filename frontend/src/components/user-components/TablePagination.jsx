@@ -8,7 +8,6 @@ const MyComponent = ({dataLength, setStartIndex, setEndIndex, storageName, curre
     const [selectedIndex, setSelectedIndex] = useState(currentPageIndex);
 
     useEffect(() => {
-        console.log(selectedIndex);
         setStartIndex(selectedIndex * 4);
         setEndIndex((selectedIndex + 1) * 4);
         localStorage.setItem(storageName, JSON.stringify(selectedIndex));

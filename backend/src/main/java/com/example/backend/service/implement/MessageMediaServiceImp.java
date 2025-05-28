@@ -42,11 +42,12 @@ public class MessageMediaServiceImp implements MessageMediaService {
                             .type(type)
                             .url(mediaUrl)
                             .filePath(filePath)
+                            .name(file.getOriginalFilename())
                         .build());
             }
         }catch (Exception e){
             log.error("e: ", e);
-            throw new RuntimeException("Upload images failed!");
+            throw new RuntimeException("Upload files failed!");
         }
         List<MessageMedia> res = messageMediaRepo.saveAll(messageMediaList);
         return res.stream()

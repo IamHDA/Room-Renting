@@ -1,6 +1,15 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import '../../css/user-css/Chat.css';
-import {faCamera, faCheck, faMagnifyingGlass, faPlus, faTrash, faX, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {
+    faCamera,
+    faCheck,
+    faFile,
+    faMagnifyingGlass,
+    faPlus,
+    faTrash,
+    faX,
+    faXmark
+} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {getImageMime} from "../../utils/format.js";
@@ -49,14 +58,23 @@ const MyComponent = () => {
     }, [])
 
     useEffect(() => {
-        chatIdRef.current = chatId;
         let subscription;
-        if(stompClientRef.current) {
-             subscription = stompClientRef.current.subscribe(
-                `/topic/chat/${chatId}`,
-                onMessageRevoke
-            );
+        chatIdRef.current = chatId;
+        const setUpSubscription = async () => {
+            if(chatId){
+                await fetchChatRoomMessage(chatId);
+            }
+            if(stompClientRef.current) {
+                if(!stompClientRef.current.connected){
+                    await setUpStompClient(user.id, onMessageReceived, onPublicChannel);
+                }
+                subscription = stompClientRef.current.subscribe(
+                    `/topic/chat/${chatId}`,
+                    onMessageRevoke
+                );
+            }
         }
+        setUpSubscription();
         return () => {
             if (subscription) subscription.unsubscribe();
         };
@@ -98,7 +116,6 @@ const MyComponent = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if(user) await setUpStompClient(user.id, onMessageReceived, onPublicChannel);
                 const chatRoomPostTmp = JSON.parse(localStorage.getItem("chatRoomPost"));
                 if (chatRoomPostTmp) setChatRoomPost(chatRoomPostTmp);
                 const tmpChatRooms = await fetchChatRooms();
@@ -189,6 +206,7 @@ const MyComponent = () => {
             e.preventDefault();
             return;
         }
+        if(!stompClientRef.current) await setUpStompClient(user.id, onMessageReceived, onPublicChannel);
         let response = [];
         if(mediaListState.length > 0){
             const formData = new FormData();
@@ -209,13 +227,11 @@ const MyComponent = () => {
             body: JSON.stringify(payload)
         })
         payload.id = await getLastMessageIdByChatId(chatId);
-        let check = false;
         if(virtualChatRoom){
             await updateChatRoomPost(chatRoomPost, `${user.id}_${recipientRef.current.id}`);
             const tmpChatRooms = await fetchChatRooms();
             setChatRooms(tmpChatRooms);
             setVirtualChatRoom(false);
-            check = true;
         }
         const tmpChatRooms = await fetchChatRooms();
         setChatRooms(tmpChatRooms);
@@ -223,10 +239,11 @@ const MyComponent = () => {
         setMediaListState([]);
         let mediaList = mediaListState.map(media => ({
             url: URL.createObjectURL(media),
-            type: extractMediaType(media.type)
+            type: extractMediaType(media.type),
+            name: media.name
         }));
         payload.mediaList = mediaList;
-        if(!check) setMessages((prevMessages) => [...prevMessages, payload]);
+        setMessages((prevMessages) => [...prevMessages, payload]);
     }
 
     const checkExistChatRooms = (tmpChatRooms) => {
@@ -259,14 +276,54 @@ const MyComponent = () => {
         setMessages(response);
     }
 
-    const displayMessageMedia = (messageMediaList) => {
-        return(
-            <div className={`media-grid media-count-${messageMediaList.length}`}>
-                {messageMediaList.map((media, index) => {
-                    if(media.type === "IMAGE") return <img src={media.url} key={index}></img>
-                    else return <img src="/chat-icon/play-video.png" alt="" style={{backgroundColor: "lightgray"}}/>
+    const getFileType = (type) => {
+        return type.split("/")[0];
+    }
+
+    const showFile = (list) => {
+        const mediaList = [];
+        const fileList = [];
+        for(const file of list) {
+            if(file.type === "IMAGE"){
+                mediaList.push(file);
+            }else{
+                console.log(file.name)
+                fileList.push(file);
+            }
+        }
+        return (
+            <React.Fragment>
+                <div className={`media-grid media-count-${mediaList.length}`}>
+                    {mediaList.map((media, index) => {
+                        if(media.type === "IMAGE") return <img src={media.url} key={index}></img>
+                        else return <img src="/chat-icon/play-video.png" alt="" style={{backgroundColor: "lightgray"}}/>
+                    })}
+                </div>
+                {fileList.map((file, index) => {
+                    return (
+                        <a target="_blank" href={file.url} download className={`file-container ${file.type === "VIDEO" && "video"}`} key={index} style={{
+                        }}>
+                            {file.type === "APPLICATION" ? (
+                                <React.Fragment>
+                                    <div className="file-icon" style={{fontSize: "30px"}}>
+                                        <FontAwesomeIcon icon={faFile} />
+                                    </div>
+                                    <p className="file-name" >{file.name}</p>
+                                </React.Fragment>
+                            ) : (
+                                <video controls src={file.url}
+                                    width="250px"
+                                   height="350px"
+                                       style={{
+                                            marginTop: "40px",
+                                           borderRadius: "10px",
+                                       }}
+                                ></video>
+                            )}
+                        </a>
+                    )
                 })}
-            </div>
+            </React.Fragment>
         )
     }
 
@@ -457,7 +514,7 @@ const MyComponent = () => {
                                                         )}
                                                     </p>
                                                 }
-                                                {message.mediaList && displayMessageMedia(message.mediaList)}
+                                                {message.mediaList.length > 0 && showFile(message.mediaList)}
                                             </div>
                                             {!(message.content === "Đã thu hồi tin nhắn") && (
                                                 <button className="delete-message-button" onClick={ async() => {
@@ -497,7 +554,7 @@ const MyComponent = () => {
                                             {<div className="message-create-time">{message.createdAt}</div>}
                                             <div className="recipient-avatar-message">
                                                 {message.content !== "" && <p className="recipient-message">{message.content === "Đã thu hồi tin nhắn" ? <i>{message.content}</i> : message.content}</p>}
-                                                {message.mediaList && displayMessageMedia(message.mediaList)}
+                                                {message.mediaList && showFile(message.mediaList)}
                                             </div>
                                         </div>
                                     );
@@ -513,7 +570,10 @@ const MyComponent = () => {
                                     id="mediaUpload"
                                     name="media"
                                     multiple
-                                    accept="image/*, video/*"
+                                    accept="image/*, video/*,
+                                    .doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                    .xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                                    .pdf,application/pdf"
                                     hidden
                                     onChange={(e) => setMediaListState([...e.target.files])}
                                 />
@@ -535,7 +595,10 @@ const MyComponent = () => {
                                                 type="file"
                                                 id="addMedia"
                                                 name="media"
-                                                accept="image/*, video/*"
+                                                accept="image/*, video/*,
+                                                    .doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                    .xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                                    .pdf,application/pdf"
                                                 multiple
                                                 hidden
                                                 onChange={(e) => {setMediaListState(prev => [...prev, ...e.target.files])}}
@@ -543,9 +606,16 @@ const MyComponent = () => {
                                         </label>
                                         {mediaListState.map((file, index) => (
                                             <div key={index} style={{position: "relative"}}>
-                                                <img src={URL.createObjectURL(file)}
-                                                     style={{width: "92px", height: "92px", borderRadius: "10px", objectFit:"cover"}} alt=""
-                                                />
+                                                {getFileType(file.type) === 'video' || getFileType(file.type) === 'image' ? (
+                                                    <img src={URL.createObjectURL(file)}
+                                                         style={{width: "92px", height: "92px", borderRadius: "10px", objectFit:"cover"}} alt=""
+                                                    />
+                                                ) : (
+                                                    <div className="file-container">
+                                                        <FontAwesomeIcon icon={faFile} style={{fontSize: "40px"}}/>
+                                                        <p className="file-name">{file.name}</p>
+                                                    </div>
+                                                )}
                                                 <div
                                                     style={{
                                                         position: "absolute",

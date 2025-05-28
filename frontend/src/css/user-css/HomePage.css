@@ -92,6 +92,7 @@ select{
     font-size: 22px;
     font-weight: bold;
     outline: none;
+    background-color: inherit;
 }
 
 .search-button{

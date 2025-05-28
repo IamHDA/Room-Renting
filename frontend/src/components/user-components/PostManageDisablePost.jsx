@@ -49,7 +49,8 @@ const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
     const handleDeletePost = async (postId) => {
         try{
             const response = await deletePost(postId);
-            if(response === "Change Post's Status Successfully!") setUpdatePost(prev => !prev);
+            if(response !== "Post deleted successfully!") alert("Có lỗi xảy ra");
+            else setPosts(posts.filter(p => p.id !== postId));
         }catch(error){
             console.log(error);
         }
@@ -64,8 +65,8 @@ const MyComponent = ({ setEditPost, userId, setCurrentEditingPost }) => {
                             <img src={post.thumbnailURL} className="post-img"/>
                             <div className="invisible-posts-post-information">
                                 <p className="title">{post.title}</p>
-                                <button className="delete-button" onClick={() => handleDeletePost(post.id)}>
-                                    <FontAwesomeIcon icon={faTrashCan} />
+                                <button className="delete-button">
+                                    <FontAwesomeIcon icon={faTrashCan} onClick={() => handleDeletePost(post.id)}/>
                                 </button>
                                 <button className="edit-button">
                                     <FontAwesomeIcon icon={faPenToSquare} onClick={() => handleEditPostButton(post)}/>
